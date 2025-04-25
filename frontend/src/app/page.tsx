@@ -1,7 +1,8 @@
-// This is a Next.js page component that serves as the entry point for the application.
+import FormLogin from "./components/FormLogin/FormLogin";
 export default function Home() {
   return (
     <>      
+      <FormLogin />
     </>
   );
 }
