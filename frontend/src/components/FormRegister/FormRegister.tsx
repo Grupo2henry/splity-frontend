@@ -5,6 +5,7 @@ import { IFormRegister } from "./types";
 import CustomAlert, {useCustomAlert} from "../CustomAlert/CustomAlert";
 import Link from "next/link";
 import { validation } from "./validation";
+import fetchRegister from "@/services/fetchRegister";
 
 export const FormRegister = () => {
 
@@ -15,6 +16,7 @@ export const FormRegister = () => {
     const onSubmit: SubmitHandler<IFormRegister> = async (data) => {
         try {
             console.log(data);
+            await fetchRegister(data);
             showAlert("Registration successful!");
         } catch (error) {
             console.error(error);
