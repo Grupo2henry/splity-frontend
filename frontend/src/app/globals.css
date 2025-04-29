@@ -7,7 +7,10 @@
 body {
   background: var(--background);
   font-family: var(--font-inria-sans), Helvetica, sans-serif;
-  padding: 3rem 2rem;
+  padding: 2rem;
+  width: 417px;
+  height: 912px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .custom-alert {

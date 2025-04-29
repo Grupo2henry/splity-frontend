@@ -2,8 +2,8 @@ export const validation = {
     username: {
         required: "El nombre de usuario es requerido",
         pattern: {
-            value: /^[A-Za-z0-9_]+$/,
-            message: "El nombre de usuario no es válido",
+            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i,
+            message: "El nombre de usuario debe tener al menos 8 caracteres, una letra y un número",
         },
     },
     password: {

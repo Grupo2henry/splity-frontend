@@ -34,17 +34,17 @@ export const FormLogin = () => {
                 <h1 className="text-[24px] text-center text-[#FFFFFF] mb-10">Ingresa para continuar</h1>
                 <div className="flex flex-col w-full gap-2 mb-2 rounded-lg bg-[#61587C] p-2">
                     <input {...register("username", validation.username)} type="text" placeholder="Nombre de Usuario" className="custom-input" />
-                    {errors.username && <p className="text-red-500">{errors.username.message}</p>}
+                    {errors.username && <p className="text-amber-50 text-[0.75rem]">{errors.username.message}</p>}
                     <div className='relative'>
                         <input {...register('password', validation.password)} type={passwordVisible} placeholder='Contraseña' className='custom-input'/>
                         <button type='button' className='absolute top-2 right-2' onClick={togglePasswordVisibility}>{passwordVisible === "password" ? "🔓" : "🔒"}</button>                    
                     </div>
-                    {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                    {errors.password && <p className="text-amber-50 text-[0.75rem]">{errors.password.message}</p>}
                 </div>
                 <h2 className="text-right text-[#FAFF00] mb-4">¿Olvidaste tu contraseña?</h2>
                 <div className="flex flex-col items-center justify-center">
                     <button type="submit" className="btn-yellow text-[24px] mt-4">Ingresar</button>                    
-                    <h2 className="text-[#FAFF00] mt-6">¿No tienes una cuenta? <Link href="/register" className="text-[#FAFF00] font-bold">Registrarse</Link></h2>
+                    <h2 className="text-[#FAFF00] mt-6">¿No tienes una cuenta? <Link href="/Register" className="text-[#FAFF00] font-bold">Registrarse</Link></h2>
                 </div>
             </form>
             <CustomAlert message={message} onClose={onClose} />
