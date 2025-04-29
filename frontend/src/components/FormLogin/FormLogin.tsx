@@ -6,6 +6,7 @@ import { validation } from "./validation";
 import { useState } from "react";
 import CustomAlert, { useCustomAlert } from "../CustomAlert/CustomAlert";
 import Link from "next/link";
+import fetchLogin from "@/services/fetchLogin";
 
 export const FormLogin = () => {
     const { message, showAlert, onClose } = useCustomAlert();
@@ -20,6 +21,7 @@ export const FormLogin = () => {
 
     const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
         try {
+            await fetchLogin(data);
             console.log(data);
             showAlert("Login successful!");
         } catch (error) {
