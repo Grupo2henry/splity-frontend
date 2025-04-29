@@ -37,10 +37,10 @@ export const FormRegister = () => {
                     {errors.username && <p className="text-amber-50 text-[0.75rem]">{errors.username.message}</p>}
                     <input {...register("password", validation.password)} type="password" placeholder="Contraseña" className="custom-input"/>
                     {errors.password && <p className="text-amber-50 text-[0.75rem]">{errors.password.message}</p>}
-                    <input {...register('confirmPassword', 
+                    <input {...register('confirm_password', 
                         {required: "La confirmación de la contraseña es requerida", validate: (value) => value === getValues("password") || "Las contraseñas no coinciden"})} 
                         type="password" placeholder="Confirmar Password" className="custom-input"/>
-                    {errors.confirmPassword && <p className='text-amber-50 text-[0.75rem]'>{errors.confirmPassword.message}</p>}
+                    {errors.confirm_password && <p className='text-amber-50 text-[0.75rem]'>{errors.confirm_password.message}</p>}
                 </div>
                 <h2 className="text-left text-[#FAFF00] mb-4">Al crear tu cuenta, aceptas nuestros términos y condiciones</h2>
                 <div className="flex flex-col items-center justify-center">
