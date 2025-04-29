@@ -35,8 +35,8 @@ export const FormLogin = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
                 <h1 className="text-[24px] text-center text-[#FFFFFF] mb-10">Ingresa para continuar</h1>
                 <div className="flex flex-col w-full gap-2 mb-2 rounded-lg bg-[#61587C] p-2">
-                    <input {...register("username", validation.username)} type="text" placeholder="Nombre de Usuario" className="custom-input" />
-                    {errors.username && <p className="text-amber-50 text-[0.75rem]">{errors.username.message}</p>}
+                    <input {...register("email", validation.email)} type="text" placeholder="Correo Electrónica" className="custom-input" />
+                    {errors.email && <p className="text-amber-50 text-[0.75rem]">{errors.email.message}</p>}
                     <div className='relative'>
                         <input {...register('password', validation.password)} type={passwordVisible} placeholder='Contraseña' className='custom-input'/>
                         <button type='button' className='absolute top-2 right-2' onClick={togglePasswordVisibility}>{passwordVisible === "password" ? "🔓" : "🔒"}</button>                    

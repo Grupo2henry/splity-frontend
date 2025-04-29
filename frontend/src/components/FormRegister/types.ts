@@ -5,5 +5,5 @@ export interface IFormRegister {
     email: string;
     password: string;
     phone: string;
-    confirmPassword: string;
+    confirm_password: string;
 }
