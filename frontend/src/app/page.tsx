@@ -1,13 +1,11 @@
-import FormLogin from "./components/FormLogin/FormLogin";
 import Image from "next/image";
 export default function Home() {
   return (
-    <> 
-      <div className="flex flex-col items-center">
-        <h1 className="text-[40px] text-center text-[#FFFFFF] mt-14">¡Bienvenido nuevamente!</h1>
-        <Image src="/logo-splity.png" alt="Logo" width={232} height={246}/>
+    <div className="flex items-center h-full"> 
+      <div className="relative">
+        <Image src="/logo-splity.png" alt="Logo" width={353} height={357}/>
+        <h1 className="absolute top-78 right-15 text-[12px] text-[#FFFFFF]">By Henry PF Grupo 2</h1>
       </div>
-      <FormLogin />
-    </>
+    </div>
   );
 }
