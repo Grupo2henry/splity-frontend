@@ -11,6 +11,8 @@ export const fetchLogin = async (data: IFormLogin) => {
         if (!response.ok) {
             throw new Error(result.message);
         }
+        localStorage.setItem('token', result.access_token);
+        console.log(localStorage.getItem('token'));
         return result;        
     } catch (error) {
         return Promise.reject(error);
