@@ -13,4 +13,4 @@ export const validation = {
             message: "La contraseña debe tener al menos 8 caracteres, una letra, un número y un carácter especial",
         },
     },  
-};
+}; //
