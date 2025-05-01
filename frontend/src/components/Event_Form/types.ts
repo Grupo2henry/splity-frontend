@@ -1,10 +1,12 @@
 export interface IFormEvent {
     eventName: string;
     currency: string;
-    participants: Participant[];
+    participants: string[];
     createrName: string;
 }
 
-interface Participant {
+export interface UserSuggestion {
+    id: string;
     name: string;
+    email: string;
 }
