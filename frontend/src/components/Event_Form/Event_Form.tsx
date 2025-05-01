@@ -37,7 +37,7 @@ export const Event_Form = () => {
             <div className="flex flex-col w-full gap-2">
                 <label className="text-[16px] text-start text-[#FFFFFF]">Moneda</label>
                 <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-                    <select {...register("currency")} id="moneda" name="moneda" className="custom-input">
+                    <select {...register("currency")} className="custom-input">
                         <option value="">-- Selecciona una opción --</option>
                         <option value="Pesos Argentinos">Pesos Argentinos</option>
                         <option value="Dolares Estadounidenses">Dolares Estadounidenses</option>

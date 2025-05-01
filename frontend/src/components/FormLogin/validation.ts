@@ -1,6 +1,6 @@
 export const validation = {
     email: {
-        required: "El nombre de usuario es requerido",
+        required: "El correo electrónico es requerido",
         pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
             message: "El email no es válido",

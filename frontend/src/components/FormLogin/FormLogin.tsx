@@ -21,8 +21,9 @@ export const FormLogin = () => {
 
     const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
         try {
-            await fetchLogin(data);
             console.log(data);
+            const response = await fetchLogin(data);
+            console.log(response);
             showAlert("Login successful!");
         } catch (error) {
             console.error(error);
