@@ -1,15 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #191F30;
+  --background: #0d101b;
 }
 
 body {
   background: var(--background);
-  font-family: var(--font-inria-sans), Helvetica, sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  /* font-family: var(--font-inria-sans), Helvetica, sans-serif;
   padding: 2rem;
   width: 417px;
-  height: 912px;
+  height: 912px;  */
+}
+.divDashboard{
+margin-top:50px
+}
+
+.main-container {
+  width: 417px;
+  min-height: 100vh;
+  /* padding: 2rem; */
+  margin: 0 auto; /* Para centrar horizontalmente */
 }
 
 .custom-alert {
