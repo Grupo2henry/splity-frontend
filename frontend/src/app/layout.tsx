@@ -15,9 +15,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
   return (
-    <html lang="en" className="flex justify-center bg-[url('/bg-retro.jpg')] bg-repeat">
-      <body className={`${inriaSans.variable} antialiased`}>
-        {children}
+    <html lang="en" className="flex justify-center">
+      <body className={`${inriaSans.variable} antialiased bg-[#191F30]`}>
+        <div className="min-h-screen w-full max-w-7xl mx-auto px-4">
+          {children}
+        </div>
       </body>
     </html>
   );
