@@ -4,7 +4,7 @@ import Card_Dashboard from "@/components/Card_Dashboard/Card_Dashboard";
 
 export const Dashboard = () => {
     return (
-        <div className="divDashboard flex flex-col w-full h-full items-center p-60 mt-4">
+        <div className="divDashboard flex flex-col w-full h-full items-center ">
             {/* <Image src="/logo-splity.png" alt="Logo" width={165} height={175}/> */}
             <Card_Dashboard/>
             <NavBar_Dashboard/>
