@@ -1,31 +1,22 @@
 "use client";
 
-import Link from "next/link";
+import styles from "./NavBar.module.css";
 import Image from "next/image";
 
-export const NavBar = () => {
-    return (
-        <nav className="w-full h-full flex flex-col justify-end">
-            <ul className="flex justify-between w-full">
-                <li className="flex flex-col items-center">
-                    <Link href="/Dashboard"><Image src="/home.svg" alt="Logo" width={50} height={50}/></Link>
-                    <p className="text-xs text-gray-500">Inicio</p>
-                </li>
-                <li className="flex flex-col items-center">
-                    <Link href="/Dashboard"><Image src="/person.svg" alt="Logo" width={50} height={50}/></Link>
-                    <p className="text-xs text-gray-500">Mi Cuenta</p>
-                </li>
-                <li className="flex flex-col items-center">
-                    <Link href="/Dashboard"><Image src="/notifications.svg" alt="Logo" width={50} height={50}/></Link>
-                    <p className="text-xs text-gray-500">Notificaciones</p>
-                </li>
-                <li className="flex flex-col items-center">
-                    <Link href="/Dashboard"><Image src="/contact_support.svg" alt="Logo" width={50} height={50}/></Link>
-                    <p className="text-xs text-gray-500">Ayuda</p>
-                </li>
-            </ul>
+export default function NavBar() {
+  return (
+    <header className={styles.navbar}>
+      <div className="container mx-auto flex justify-between items-center">
+        <Image src="/Logo-splity.png" alt="Splity Logo" width={60} height={20} />
+        <nav>
+          <ul className={styles.navList}>
+            <li><a href="/" className={styles.navLink}>Home</a></li>
+            <li><a href="/Dashboard" className={styles.navLink}>Dashboard</a></li>
+            <li><a href="/Login" className={styles.navLink}>Login</a></li>
+            <li><a href="/Register" className={styles.navLink}>Register</a></li>
+          </ul>
         </nav>
-    );
-};
-
-export default NavBar;
+      </div>
+    </header>
+  );
+}

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inria_Sans } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/NavBar/NavBar";
 
-const inriaSans = Inria_Sans({
-  weight: ["300"],
-  variable: "--font-inria-sans",
+const roboto = Roboto({
+  weight: ["300", "400", "700"],
+  variable: "--font-roboto",
   subsets: ["latin"],
 });
 
@@ -16,11 +17,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({children,}: Readonly<{children: React.ReactNode;}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="flex justify-center bg-[url('/bg-retro.jpg')] bg-repeat">
-      <body className={`${inriaSans.variable} antialiased`}>
-        {children}
+    <html lang="en" className="flex justify-center">
+      <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-white`}>
+        <NavBar />
+        <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+          {children}
+        </div>
       </body>
     </html>
   );

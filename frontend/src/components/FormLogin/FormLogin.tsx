@@ -7,6 +7,7 @@ import { useState } from "react";
 import CustomAlert, { useCustomAlert } from "../CustomAlert/CustomAlert";
 import Link from "next/link";
 import fetchLogin from "@/services/fetchLogin";
+import GoogleLoginButton from "../GoogleAuth/GoogleLoginButton";
 
 export const FormLogin = () => {
     const { message, showAlert, onClose } = useCustomAlert();
@@ -50,6 +51,9 @@ export const FormLogin = () => {
                     <h2 className="text-[#FAFF00] mt-6">¿No tienes una cuenta? <Link href="/Register" className="text-[#FAFF00] font-bold">Registrarse</Link></h2>
                 </div>
             </form>
+            <div className="flex justify-center items-center mt-8">
+                <GoogleLoginButton />
+            </div>
             <CustomAlert message={message} onClose={onClose} />
         </>
     );
