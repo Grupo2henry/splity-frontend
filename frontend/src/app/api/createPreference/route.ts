@@ -5,7 +5,7 @@ console.log("Mi token es: ", process.env.MP_ACCESS_TOKEN);
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
 const preference = new Preference(client);
-const url = process.env.URL_DOMAIN || 'http://localhost:3000';
+const url = process.env.URL_NGROK || 'http://localhost:3000';
 console.log(url)
 console.log("Este es el client: ", client);
 console.log("Este es el preference: ", preference)
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
           id: 'splity-suscripcion-anual',
           title: 'Suscripción anual a Splity',
           quantity: 1,
-          unit_price: 10000, // en pesos argentinos
+          unit_price: 10, // en pesos argentinos
         }],
         back_urls: {
           success: `${url}/Success`,
