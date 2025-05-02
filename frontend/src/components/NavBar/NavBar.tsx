@@ -3,6 +3,7 @@
 import styles from "./NavBar.module.css";
 import Image from "next/image";
 
+
 export default function NavBar() {
   return (
     <header className={styles.navbar}>

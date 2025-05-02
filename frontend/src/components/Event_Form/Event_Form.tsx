@@ -3,24 +3,35 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { IFormEvent } from "./types";
+import { IFormEvent, UserSuggestion, Iuser } from "./types";
 import { fetchUsersByEmail } from "@/services/fetchUsersByEmail";
-
-interface UserSuggestion {
-  id: string;
-  name: string;
-  email: string;
-}
+import fetchGetUser from "@/services/fetchGetUser";
+import { fetchCreateGroup } from "@/services/fetchCreateGroup";
 
 export const Event_Form = () => {
-  const createrName = "Nicolas Allende";
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<IFormEvent>({ mode: "onBlur" });
-
+  const { register, handleSubmit, formState: { errors }, setValue, /* watch */ } = useForm<IFormEvent>({ mode: "onBlur" });
+  
   const [emailSearch, setEmailSearch] = useState<string>("");
+  const [user, setUser] = useState< Iuser | null>(null);
   const [emailSuggestions, setEmailSuggestions] = useState<UserSuggestion[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<UserSuggestion[]>([]);
 
-  const watchedParticipants = watch("participants");
+  useEffect(() => {
+    const token = localStorage.getItem("token") || "";
+    const getUser = async () => {
+      try {
+        const user = await fetchGetUser(token);
+        setUser(user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    getUser();
+  }, []);
+  
+  /* const watchedParticipants = watch("participants");
+  console.log(watchedParticipants); */
 
   useEffect(() => {
     const delayDebounce = setTimeout(async () => {
@@ -49,7 +60,8 @@ export const Event_Form = () => {
   useEffect(() => {
     const participantIds = selectedParticipants.map(participant => participant.id);
     setValue("participants", participantIds);
-  }, [selectedParticipants, setValue]);
+    setValue("creatorId", user?.user.id || "");
+  }, [selectedParticipants, user, setValue]);
 
   const handleRemoveParticipant = (indexToRemove: number) => {
     setSelectedParticipants(prev => prev.filter((_, index) => index !== indexToRemove));
@@ -58,6 +70,9 @@ export const Event_Form = () => {
   const onSubmit: SubmitHandler<IFormEvent> = async (data) => {
     try {
       console.log(data);
+      const token = localStorage.getItem("token") || "";
+      const response = await fetchCreateGroup(data, token);
+      console.log(response);
     } catch (error) {
       console.error(error);
     }
@@ -70,8 +85,8 @@ export const Event_Form = () => {
         <div className="flex flex-row rounded-lg bg-[#61587C] gap-2 p-2">
           <Image src="/image1.svg" alt="Logo" width={77} height={77} />
           <div className="flex flex-col w-full gap-2">
-            <input {...register("eventName", { required: "Este campo es obligatorio" })} type="text" placeholder="Cena, Salida, Viaje, etc..." className="custom-input h-10" />
-            {errors.eventName && <p className="text-amber-50 text-[0.75rem]">{errors.eventName.message}</p>}
+            <input {...register("name", { required: "Este campo es obligatorio" })} type="text" placeholder="Cena, Salida, Viaje, etc..." className="custom-input h-10" />
+            {errors.name && <p className="text-amber-50 text-[0.75rem]">{errors.name.message}</p>}
           </div>
         </div>
       </div>
@@ -79,12 +94,11 @@ export const Event_Form = () => {
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Participantes</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-          <input {...register("createrName")} type="text" defaultValue={createrName} className="custom-input" readOnly />
+          <input type="text" defaultValue={user?.user.name} className="custom-input" readOnly />
           {selectedParticipants.map((participant, index) => (
             <div key={participant.id} className="flex flex-row items-center gap-2">
               <input
-                {...register(`participants.${index}`, { required: "Este campo es obligatorio" })}
-                defaultValue={participant.id}
+                type="text"
                 className="custom-input"
                 readOnly
                 value={participant.name} // Mostrar el nombre en el input
