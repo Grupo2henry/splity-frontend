@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { MercadoPagoConfig, Preference } from 'mercadopago';
+
+console.log("Mi token es: ", process.env.MP_ACCESS_TOKEN);
+
+const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
+const preference = new Preference(client);
+const url = process.env.URL_DOMAIN || 'http://localhost:3000';
+console.log(url)
+console.log("Este es el client: ", client);
+console.log("Este es el preference: ", preference)
+export async function POST(req: NextRequest) {
+  try {
+    const preferencePayload = {
+      body: {
+        items: [{
+          id: 'splity-suscripcion-anual',
+          title: 'Suscripción anual a Splity',
+          quantity: 1,
+          unit_price: 10000, // en pesos argentinos
+        }],
+        back_urls: {
+          success: `${url}/Success`,
+          failure: `${url}/Failure`,
+          pending: `${url}/Pending`,
+        },
+        auto_return: 'approved',
+      },
+    };
+    console.log(preferencePayload)
+    const response = await preference.create(preferencePayload);
+    console.log("Esto se espera: ", response);
+    return NextResponse.json({ id: response.id });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'Error al crear la preferencia' }, { status: 500 });
+  }
+}
+
+// Si en el futuro necesitas manejar otros métodos HTTP (GET, etc.),
+// puedes exportar funciones asíncronas con esos nombres:
+// export async function GET(req: NextRequest) { ... }
