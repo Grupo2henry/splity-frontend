@@ -1,4 +1,4 @@
-import Image from "next/image";
+//import Image from "next/image";
 import NavBar_Dashboard from "../../components/NavBar/NavBar_Dashboard/NavBar_Dashboard";
 import Card_Dashboard from "@/components/Card_Dashboard/Card_Dashboard";
 
