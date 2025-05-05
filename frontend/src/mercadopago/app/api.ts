@@ -1,9 +1,10 @@
-// api.ts
 import { MercadoPagoConfig, Preference } from "mercadopago";
 
 export const mercadopago = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,
 });
+
+const baseUrl = process.env.URL_NGROK!;
 
 const api = {
   async createPayment(): Promise<string> {
@@ -23,12 +24,9 @@ const api = {
           default_installments: 1,
         },
         back_urls: {
-          success:
-            "https://2271-2803-9800-98c5-a8c-6038-7bef-dd82-50e.ngrok-free.app", // URL de éxito
-          failure:
-            "https://2271-2803-9800-98c5-a8c-6038-7bef-dd82-50e.ngrok-free.app", // URL de fallo
-          pending:
-            "https://2271-2803-9800-98c5-a8c-6038-7bef-dd82-50e.ngrok-free.app", // URL de pendiente
+          success: baseUrl,
+          failure: baseUrl,
+          pending: baseUrl,
         },
         auto_return: "approved",
       },
