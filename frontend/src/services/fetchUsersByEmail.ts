@@ -4,7 +4,7 @@ export const fetchUsersByEmail = async (email: string) => {
     if (!token) {
         throw new Error("No hay token disponible. El usuario no está autenticado.");
       }
-    const response = await fetch(`http://localhost:4000/users/user-by-email?email=${email}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/user-by-email?email=${email}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -12,7 +12,7 @@ export async function reportPaymentStatus({
         if (!token) {
             throw new Error("No hay token disponible. El usuario no está autenticado.");
         }
-        const response = await fetch("https://empty-buttons-write.loca.lt/payment/test", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment/test`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
