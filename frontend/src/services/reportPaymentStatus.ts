@@ -8,10 +8,15 @@ export async function reportPaymentStatus({
     preferenceId: string;
   }) {
     try {
-      const response = await fetch("https://loud-chicken-raise.loca.lt/payment/test", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error("No hay token disponible. El usuario no está autenticado.");
+        }
+        const response = await fetch("https://empty-buttons-write.loca.lt/payment/test", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           status,
