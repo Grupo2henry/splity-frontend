@@ -6,9 +6,6 @@ console.log("Mi token es: ", process.env.MP_ACCESS_TOKEN);
 const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
 const preference = new Preference(client);
 const url = process.env.URL_NGROK || 'http://localhost:3000';
-console.log(url)
-console.log("Este es el client: ", client);
-console.log("Este es el preference: ", preference)
 export async function POST(req: NextRequest) {
   try {
     const preferencePayload = {
@@ -27,7 +24,6 @@ export async function POST(req: NextRequest) {
         auto_return: 'approved',
       },
     };
-    console.log(preferencePayload)
     const response = await preference.create(preferencePayload);
     console.log("Esto se espera: ", response);
     return NextResponse.json({ id: response.id });
