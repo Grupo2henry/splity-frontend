@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { GoogleLogin } from "@react-oauth/google"
+import { useRouter } from "next/navigation";
+import { GoogleLogin } from "@react-oauth/google";
 import React from "react";
+import { useToken } from "../TokenContext/token-context";
 
 const GoogleLoginButton: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const router = useRouter();
+  const { setToken } = useToken(); // Obtener la función para setear el token
   const handleSuccess = async (response: any) => {
     console.log("Google response:", response);
 
@@ -28,13 +32,15 @@ const GoogleLoginButton: React.FC = () => {
 
       const tokenFromHeaders = apiResponse.headers.get("Authorization");
       const responseData = await apiResponse.json();
-      const tokenFromBody = responseData.token || responseData.accessToken;
+      const tokenFromBody = responseData.access_token.token || responseData.accessToken;
       const token = tokenFromHeaders || tokenFromBody;
 
       if (token) {
         console.log("Token recibido:", token);
         localStorage.setItem("authToken", token);
-        // Aquí podrías redirigir usando useRouter de next/navigation
+        setToken(token);
+        console.log("se seteo token")
+        router.push("/Dashboard"); // o la ruta que prefieras
       } else {
         console.warn("No se encontró token en la respuesta");
       }
