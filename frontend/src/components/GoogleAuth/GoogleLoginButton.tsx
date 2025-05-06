@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -17,7 +18,7 @@ const GoogleLoginButton: React.FC = () => {
       if (token) {
         console.log("Token recibido:", token);
         localStorage.setItem("authToken", token);
-        router.push("/Dashboard");
+        router.push("/Dashboard"); // o la ruta que prefieras
       } else {
         console.warn("No se encontró token en la respuesta");
       }

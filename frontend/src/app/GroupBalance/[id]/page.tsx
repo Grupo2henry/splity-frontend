@@ -1,12 +1,15 @@
 import GroupBalance from '../GroupBalance';
 
-interface Props {
+interface PageProps {
   params: {
     id: string;
   };
+  searchParams?: { // Next.js espera esta propiedad opcional
+    [key: string]: string | string[] | undefined;
+  };
 }
 
-const GroupBalancePage = async ({ params }: Props) => {
+const GroupBalancePage = async ({ params }: PageProps) => {
   return <GroupBalance groupId={params.id} />;
 };
 
