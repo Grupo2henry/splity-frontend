@@ -5,7 +5,7 @@ console.log("Mi token es: ", process.env.MP_ACCESS_TOKEN);
 
 const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
 const preference = new Preference(client);
-const url = process.env.URL_NGROK || 'http://localhost:3000';
+const url = process.env.URL_APP || 'http://localhost:3000';
 export async function POST(req: NextRequest) {
   try {
     const preferencePayload = {
