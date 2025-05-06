@@ -1,37 +1,39 @@
+"use client"; // Marca el componente como un componente de cliente si usa hooks de Next.js
+
 import NavBar_Dashboard from "@/components/NavBar/NavBar_Dashboard/NavBar_Dashboard";
 import React from "react";
-
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 const Failure = () => {
   const searchParams = useSearchParams();
-  
-    useEffect(() => {
-      const status = searchParams.get('status');
-      const paymentId = searchParams.get('payment_id');
-  
-      if (status === 'approved' && paymentId) {
-        const token = localStorage.getItem('token');
-  
-        fetch('http://localhost:4000/payments/test', { //Cambiar payments/test por payments/
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-          body: JSON.stringify({
-            transaction_id: paymentId,
-            status: "approved",
-            amount: 100, // O el valor que corresponda
-            paid_at: new Date(),
-          }),
-        })
-        .then(res => res.json())
-        .then(data => console.log('✅ Pago registrado:', data))
-        .catch(err => console.error('❌ Error al registrar el pago:', err));
-      }
-    }, [searchParams]);
+
+  useEffect(() => {
+    const status = searchParams.get('status');
+    const paymentId = searchParams.get('payment_id');
+
+    if (status === 'approved' && paymentId) {
+      const token = localStorage.getItem('token');
+
+      fetch('http://localhost:4000/payments/test', { // ¡Cuidado! Esto apunta a localhost en producción
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({
+          transaction_id: paymentId,
+          status: "approved",
+          amount: 100, // O el valor que corresponda
+          paid_at: new Date(),
+        }),
+      })
+      .then(res => res.json())
+      .then(data => console.log('✅ Pago registrado:', data))
+      .catch(err => console.error('❌ Error al registrar el pago:', err));
+    }
+  }, [searchParams]);
+
   return (
     <div className="flex flex-col w-full h-full items-center justify-center bg-red-100">
       {/* <Image src="/icono-error.png" alt="Pago Fallido" width={100} height={100} /> */}
