@@ -1,20 +1,27 @@
 "use client";
 
-const participantes = ["Nicolas", "Lucía", "Juan", "Ana"];
-
 import { useForm, SubmitHandler } from "react-hook-form";
-//import { useState } from "react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import fetchGetGroup from "@/services/fetchGetGroup";
+import { group, member, IFormGasto } from "./types";
 
-interface IFormGasto {
-  titulo: string;
-  importe: number;
-  pagadoPor: string;
-  fecha: string;
-}
-
-export const Add_Expenses = () => {
+export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
   const { register, handleSubmit, formState: { errors } } = useForm<IFormGasto>({ mode: "onBlur" });
+  const [group, setGroup] = useState<group | null>(null);
+
+  useEffect(() => {
+    const getGroup = async () => {
+      try {
+        const response = await fetchGetGroup(slugNumber);
+        setGroup(response);
+      } catch (error) {
+        console.error("Error fetching group:", error);
+      }
+    };
+
+    if (slugNumber) getGroup();
+  }, [slugNumber]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     try {
@@ -64,8 +71,8 @@ export const Add_Expenses = () => {
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
             <select {...register("pagadoPor", { required: "Este campo es obligatorio" })} className="custom-input">
             <option value="">-- Selecciona un participante --</option>
-            {participantes.map((nombre, index) => (
-                <option key={index} value={nombre}>{nombre}</option>
+            {group && group.memberships.map((member: member, index: number) => (
+                <option key={index} value={member.user.name}>{member.user.name}</option>
             ))}
             </select>
             {errors.pagadoPor && <p className="text-amber-50 text-[0.75rem]">{errors.pagadoPor.message}</p>}

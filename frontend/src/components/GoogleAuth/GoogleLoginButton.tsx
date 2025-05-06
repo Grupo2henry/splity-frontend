@@ -1,42 +1,33 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
 import React from "react";
+<<<<<<< HEAD
 
 const GoogleLoginButton: React.FC = () => {
   const router = useRouter();
+=======
+import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";// Importa la función del servicio
+
+const GoogleLoginButton: React.FC = () => {
+  const router = useRouter();
+
+>>>>>>> bc422bd48d086ead9919afc5740804ef002e22fc
   const handleSuccess = async (response: any) => {
     console.log("Google response:", response);
 
     try {
-      const apiResponse = await fetch(
-        "http://localhost:4000/auth/google-authentication",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: response.credential,
-          }),
-        }
-      );
-
-      if (!apiResponse.ok) {
-        throw new Error(`Error: ${apiResponse.status}`);
-      }
-
-      const tokenFromHeaders = apiResponse.headers.get("Authorization");
-      const responseData = await apiResponse.json();
-      const tokenFromBody = responseData.access_token.token || responseData.accessToken;
-      const token = tokenFromHeaders || tokenFromBody;
+      const token = await fetchGoogleLogin(response.credential);
 
       if (token) {
         console.log("Token recibido:", token);
         localStorage.setItem("authToken", token);
+<<<<<<< HEAD
         router.push("/Dashboard"); // o la ruta que prefieras
+=======
+        router.push("/Dashboard");
+>>>>>>> bc422bd48d086ead9919afc5740804ef002e22fc
       } else {
         console.warn("No se encontró token en la respuesta");
       }
