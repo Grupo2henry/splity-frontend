@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="flex justify-center">
-      <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-white`}>
+      <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
         <NavBar />
         <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
           {children}
