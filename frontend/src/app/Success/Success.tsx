@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import NavBar_Dashboard from "@/components/NavBar/NavBar_Dashboard/NavBar_Dashboard";
 import { useEffect } from "react";
@@ -12,7 +12,8 @@ const Success = () => {
     const status = searchParams.get("status");
     const paymentId = searchParams.get("payment_id");
     const preferenceId = searchParams.get("preference_id");
-    console.log("status: ", status, " | ", "paymentId: ", paymentId, " | ", "preferenceId: ", preferenceId)
+    console.log("status: ", status, " | ", "paymentId: ", paymentId, " | ", "preferenceId: ", preferenceId);
+    
     if (status && paymentId && preferenceId) {
       reportPaymentStatus({ status, paymentId, preferenceId });
     }
