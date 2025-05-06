@@ -3,9 +3,9 @@
 "use client";
 import MercadoPagoButton from "@/mercadopago/app/button/mercadoPagoButton";
 import { useSearchParams } from "next/dist/client/components/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
-export default function PaymentsPage() {
+function PaymentsContent() {
   const params = useSearchParams();
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
@@ -58,5 +58,13 @@ export default function PaymentsPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function PaymentsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentsContent />
+    </Suspense>
   );
 }
