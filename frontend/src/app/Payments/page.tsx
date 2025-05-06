@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 "use client";
-import MercadoPagoButton from "@/mercadopago/app/button/mercadoPagoButton";
+import CheckoutButton from "@/components/Checkout_Button/Checkout_Button";
+//import MercadoPagoButton from "@/mercadopago/app/button/mercadoPagoButton";
 import { useSearchParams } from "next/dist/client/components/navigation";
 import { useState, useEffect, Suspense } from "react";
 
@@ -54,7 +55,7 @@ function PaymentsContent() {
           Realiza tu pago con Mercado Pago
         </h1>
         <div>
-          <MercadoPagoButton />
+          <CheckoutButton />
         </div>
       </div>
     </section>
