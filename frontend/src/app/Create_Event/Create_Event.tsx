@@ -1,6 +1,6 @@
-import Image from "next/image";
+//import Image from "next/image";
 import Event_Form from "@/components/Event_Form/Event_Form";
-import NavBar from "@/components/NavBar/NavBar";
+//import NavBar from "@/components/NavBar/NavBar";
 
 export const Create_Event = () => {
     return (
