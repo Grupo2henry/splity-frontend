@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+<<<<<<< HEAD
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
+=======
+import { NextRequest, NextResponse } from 'next/server';
+import { MercadoPagoConfig, Preference } from 'mercadopago';
+>>>>>>> 882eb58191cb3c04d00e61e41f9a394f9acc5f9a
 
 console.log("Mi token es: ", process.env.MP_ACCESS_TOKEN);
 
