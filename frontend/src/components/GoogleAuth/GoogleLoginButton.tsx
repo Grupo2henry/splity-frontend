@@ -4,11 +4,9 @@
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
 import React from "react";
-import { useToken } from "../TokenContext/token-context";
 
 const GoogleLoginButton: React.FC = () => {
   const router = useRouter();
-  const { setToken } = useToken(); // Obtener la función para setear el token
   const handleSuccess = async (response: any) => {
     console.log("Google response:", response);
 
@@ -38,8 +36,6 @@ const GoogleLoginButton: React.FC = () => {
       if (token) {
         console.log("Token recibido:", token);
         localStorage.setItem("authToken", token);
-        setToken(token);
-        console.log("se seteo token")
         router.push("/Dashboard"); // o la ruta que prefieras
       } else {
         console.warn("No se encontró token en la respuesta");
