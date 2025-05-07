@@ -86,11 +86,11 @@ export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
         <label className="text-[16px] text-start text-[#FFFFFF]">Fecha del gasto</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
           <input
-            {...register("fecha", { required: "Este campo es obligatorio" })}
+            {...register("date", { required: "Este campo es obligatorio" })}
             type="date"
             className="custom-input"
           />
-          {errors.fecha && <p className="text-amber-50 text-[0.75rem]">{errors.fecha.message}</p>}
+          {errors.date && <p className="text-amber-50 text-[0.75rem]">{errors.date.message}</p>}
         </div>
       </div>
 
