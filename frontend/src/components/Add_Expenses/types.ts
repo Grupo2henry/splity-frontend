@@ -1,8 +1,9 @@
 export interface IFormGasto {
-  titulo: string;
-  importe: number;
-  pagadoPor: string;
+  description: string;
+  amount: number;
+  paid_by: string;
   fecha: string;
+  imgUrl: string;
 }
 
 export interface member {
