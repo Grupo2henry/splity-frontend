@@ -4,7 +4,7 @@ export const mercadopago = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,
 });
 
-const baseUrl = process.env.URL_NGROK!;
+const baseUrl = process.env.URL_APP!;
 
 const api = {
   async createPayment(): Promise<string> {

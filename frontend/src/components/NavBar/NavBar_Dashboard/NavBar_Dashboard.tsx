@@ -1,6 +1,6 @@
-import NavBar from '../NavBar';
 import Link from "next/link";
 import Image from "next/image";
+
 export const NavBar_Dashboard = () => {
     return (
         <div className="w-full h-full flex flex-col justify-end">
