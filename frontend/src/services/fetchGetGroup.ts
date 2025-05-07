@@ -1,6 +1,6 @@
 export const fetchGetGroup = async (slug: number) => {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${Number(slug)}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/id/${Number(slug)}`, {
             method: 'GET',
             headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
         });

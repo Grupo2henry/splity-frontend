@@ -69,10 +69,8 @@ export const Event_Form = () => {
 
   const onSubmit: SubmitHandler<IFormEvent> = async (data) => {
     try {
-      console.log(data);
       const token = localStorage.getItem("token") || "";
-      const response = await fetchCreateGroup(data, token);
-      console.log(response);
+      await fetchCreateGroup(data, token);
     } catch (error) {
       console.error(error);
     }
