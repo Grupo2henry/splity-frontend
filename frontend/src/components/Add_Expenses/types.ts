@@ -2,7 +2,7 @@ export interface IFormGasto {
   description: string;
   amount: number;
   paid_by: string;
-  fecha: string;
+  date: string;
   imgUrl: string;
 }
 
