@@ -11,10 +11,9 @@ export const Card_Dashboard = () => {
     const [groups, setGroups] = useState<IGroup[]>([]);
 
     useEffect(() => {
-        const token = localStorage.getItem("token") || "";
         const getUser = async () => {
           try {
-            const groups = await fetchGetMyGroups(token);
+            const groups = await fetchGetMyGroups();
             setGroups(groups);
           } catch (error) {
             console.error("Error fetching user:", error);
