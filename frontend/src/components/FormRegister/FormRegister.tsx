@@ -17,13 +17,18 @@ export const FormRegister = () => {
     const onSubmit: SubmitHandler<IFormRegister> = async (data) => {
         try {
             const response = await fetchRegister(data);
+            console.log(response);
             showAlert("¡Registro exitoso!");
             router.push('/Login');
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            showAlert(error.message || "Error en el registro");
-        }
-    };
+            let errorMessage = "Error en el registro";
+            if (error instanceof Error) {
+                errorMessage = error.message || errorMessage;
+            }
+            showAlert(errorMessage);
+            }
+        };
 
     return (
         <>
