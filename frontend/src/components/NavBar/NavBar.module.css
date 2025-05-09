@@ -1,5 +1,5 @@
 .navbar {
-  background-color: rgba(255, 255, 255, 0.1); /* Transparent background */
+  background-color: rgba(130, 65, 65, 0.1); /* Transparent background */
   backdrop-filter: blur(10px); /* Adds a blur effect */
   padding: 1rem 2rem;
   display: flex;
