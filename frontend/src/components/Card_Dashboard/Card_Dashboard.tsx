@@ -9,6 +9,7 @@ import { IGroup } from "./types";
 export const Card_Dashboard = () => {
 
     const [groups, setGroups] = useState<IGroup[]>([]);
+    const [createdGroups, setCreatedGroups] = useState<IGroup[]>([]);
 
     useEffect(() => {
         const getUser = async () => {
@@ -19,8 +20,17 @@ export const Card_Dashboard = () => {
             console.error("Error fetching user:", error);
           }
         };
-    
+        const getCreatedGroups = async () => {
+          try{
+            const groupsCreated = await fetchGetMyGroups('ADMIN');
+            setCreatedGroups(groupsCreated);
+          }catch(error){
+            console.error("Error fetching user:", error)
+          }
+        }
         getUser();
+        getCreatedGroups();
+        console.log(createdGroups);
       }, []);
     
     return (
