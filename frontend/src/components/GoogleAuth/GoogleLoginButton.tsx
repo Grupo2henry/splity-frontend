@@ -4,17 +4,12 @@
 import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
 import React from "react";
-<<<<<<< HEAD
 
-const GoogleLoginButton: React.FC = () => {
-  const router = useRouter();
-=======
 import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";// Importa la función del servicio
 
 const GoogleLoginButton: React.FC = () => {
   const router = useRouter();
 
->>>>>>> main
   const handleSuccess = async (response: any) => {
     console.log("Google response:", response);
 
