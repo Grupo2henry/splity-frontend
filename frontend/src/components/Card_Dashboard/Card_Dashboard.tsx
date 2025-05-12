@@ -71,25 +71,25 @@ export const Card_Dashboard = () => {
         </Link>
       ))}
 
-      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Grupos Creados por Mí:</h3>
-      {createdGroups.map((group) => (
-        <Link key={group.id} href="/Event_Details">
-          <div className="flex w-full bg-[#388E3C] p-2 rounded-lg mb-6">
-            <Image src={"./image2.svg"} alt="Created Group Image" width={77} height={76}/>
-            <div className="w-full flex justify-between">
-              <div className="flex flex-col justify-start items-start ml-2">
-                <h2 className="text-[#FFFFFF]">{group.name}</h2>
-                {group.cantidad !== undefined && (
-                  <p className="text-[#A5D6A7]">{group.cantidad} miembros</p>
-                )}
-              </div>
-              <button>{'\u27A4'}</button>
-            </div>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
+            <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Grupos Creados por Mí:</h3>
+            {createdGroups.map((group) => (
+                <Link key={group.id} href="/Event_Details">
+                    <div className="flex w-full bg-[#388E3C] p-2 rounded-lg mb-6">
+                        <Image src={"./image2.svg"} alt="Created Group Image" width={77} height={76}/>
+                        <div className="w-full flex justify-between">
+                            <div className="flex flex-col justify-start items-start ml-2">
+                                <h2 className="text-[#FFFFFF]">{group.name}</h2>
+                                {group.cantidad !== undefined && (
+                                    <p className="text-[#A5D6A7]">{group.cantidad} miembros</p>
+                                )}
+                            </div>
+                            <button>{'\u27A4'}</button>
+                        </div>
+                    </div>
+                </Link>
+            ))}
+        </div>
+    );
 };
 
 export default Card_Dashboard;
