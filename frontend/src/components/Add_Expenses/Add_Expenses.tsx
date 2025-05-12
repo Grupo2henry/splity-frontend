@@ -8,6 +8,7 @@ import { group, member, IFormGasto } from "./types";
 import fetchCreateExpense from "@/services/fetchCreateExpense";
 
 export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
+  
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormGasto>({ mode: "onBlur" });
   const [group, setGroup] = useState<group | null>(null);
   setValue("imgUrl", "/image1.svg");  
