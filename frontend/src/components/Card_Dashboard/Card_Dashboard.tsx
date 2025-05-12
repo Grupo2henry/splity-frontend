@@ -13,7 +13,7 @@ export const Card_Dashboard = () => {
     useEffect(() => {
         const getUserGroups = async () => {
             try {
-                const fetchedGroups = await fetchGetMyGroups();
+                const fetchedGroups = await fetchGetMyGroups("MEMBER");
                 setGroups(fetchedGroups);
             } catch (error) {
                 console.error("Error fetching user groups:", error);
@@ -24,7 +24,6 @@ export const Card_Dashboard = () => {
             try {
                 const fetchedCreatedGroups = await fetchGetMyGroups('ADMIN');
                 setCreatedGroups(fetchedCreatedGroups);
-                // console.log("Created Groups:", fetchedCreatedGroups);
             } catch (error) {
                 console.error("Error fetching created groups:", error);
             }
@@ -32,7 +31,6 @@ export const Card_Dashboard = () => {
 
         getUserGroups();
         getMyCreatedGroups();
-        // console.log("Created Groups (after calls):", createdGroups);
     }, []);
 
     return (
