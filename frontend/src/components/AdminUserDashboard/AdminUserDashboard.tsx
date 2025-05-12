@@ -26,23 +26,23 @@ export default function AdminUserButton() {
   if (error) return <p className="text-red-500 text-center">Error: {error.message}</p>;
   if (!data) return <p className="text-center">No se encontraron datos</p>;
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Usuarios</h1>
-      <input type="text" placeholder="Busca por nombre" value={search} onChange={handleSearchChange} className="mb-4 p-2 border rounded-lg w-full custom-input"/>
-      <ul className="mb-4">
+    <div className="flex flex-col w-full items-center mx-auto m-10 min-h-min">
+      <h1 className="text-2xl text-white font-bold mb-4">Usuarios</h1>
+      <input type="text" placeholder="Busca por nombre" value={search} onChange={handleSearchChange} className="border custom-input !w-90 rounded-lg self-start mb-4 mx-auto"/>
+      <ul className="mb-4 w-full my-0">
         {data.data.map((user: any) => (
-          <li key={user.id} className="border-b py-2"> <Link href={`/AdminDashboard/UsersAdmin/${user.id}`} className="text-blue-500 hover:underline">
+          <li key={user.id} className="border-b py-2 mx-auto p-4"> <Link href={`/AdminDashboard/UsersAdmin/${user.id}`} className="text-[#F59E0B] hover:underline">
             {user.name} - {user.email}
             </Link>
           </li>
         ))}
       </ul>
 
-      <div className="flex gap-2">
+      <div className="flex gap-12">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-3 py-1 bg-gray-200 rounded"
+          className="px-3 py-1  bg-gray-200 rounded"
         >
           Anterior
         </button>
