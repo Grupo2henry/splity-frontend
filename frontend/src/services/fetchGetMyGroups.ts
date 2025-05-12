@@ -1,15 +1,13 @@
 export const fetchGetMyGroups = async (
-    role?: 'ADMIN' | 'MEMBER' // 👈 Define el tipo opcional para el rol
+    role?: 'ADMIN' | 'MEMBER'
   ) => {
     try {
       const token = localStorage.getItem("token") || "";
       let url = `${process.env.NEXT_PUBLIC_API_URL}/users/me/groups`;
   
-      // Agrega el parámetro 'role' a la URL si se proporciona
       if (role) {
         url += `?role=${role}`;
       }
-  
       const response = await fetch(url, {
         method: 'GET',
         headers: {
