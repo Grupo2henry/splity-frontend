@@ -17,14 +17,13 @@ export const Expenses_Card = ({slugNumber} : {slugNumber: number}) => {
             const response = await fetchGetGroup(slugNumber);
             const groupedByDate: Record<string, group["expenses"]> = {};
             for (const expense of response.expenses || []) {
-                const date = formatDate(expense.date.toString());
+                const date = formatDate(expense.created_at.toString());
                 if (!groupedByDate[date]) {
                     groupedByDate[date] = [];
                 }
                 groupedByDate[date].push(expense);
             };
             setGrouped(groupedByDate);
-            console.log(groupedByDate);
             } catch (error) {
             console.error("Error fetching group:", error);
             }

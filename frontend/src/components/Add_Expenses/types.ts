@@ -24,6 +24,7 @@ export interface expense {
     name: string};
   date: string;
   imgUrl: string;
+  created_at: string;
 }
 
 export interface group {
