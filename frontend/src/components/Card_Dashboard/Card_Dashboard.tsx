@@ -3,53 +3,41 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import fetchGetMyGroups from "@/services/fetchGetMyGroups";
+import { fetchGetMyGroups } from "@/services/fetchGetMyGroups";
 import { IGroup } from "./types";
-import { useCustomAlert } from "../CustomAlert/CustomAlert";
-import { useRouter } from "next/navigation";
+import { useError } from "@/context/ErrorContext";
 
 export const Card_Dashboard = () => {
+  const { triggerError } = useError();
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [createdGroups, setCreatedGroups] = useState<IGroup[]>([]);
-  const { showAlert } = useCustomAlert();
-  const router = useRouter();
-
   useEffect(() => {
-    const getUserGroups = async () => {
-      try {
-        const fetchedGroups = await fetchGetMyGroups("MEMBER");
-        setGroups(fetchedGroups);
-      } catch (error: unknown) { // Cambiamos 'any' a 'unknown'
-        console.error("Error fetching user groups:", error);
-        let errorMessage = "Error al obtener tus grupos. Redirigiendo al login...";
-        if (error instanceof Error) {
-          errorMessage = error.message || errorMessage;
-        }
-        console.log("Error: ", errorMessage);
-        showAlert(errorMessage, "/Login");
-        setGroups([]);
-      }
-    };
+  console.log("Estoy en el useEffect.")
+  const getUserGroups = async () => {
+    try {
+      const fetchedGroups = await fetchGetMyGroups("MEMBER");
+      setGroups(fetchedGroups);
+    } catch (error) {
+      console.log("Estoy en el error de try/catch");
+      console.error(error);
+      triggerError("No estás logueado o hubo un problema al obtener los grupos.");
+    }
+  };
 
-    const getMyCreatedGroups = async () => {
-      try {
-        const fetchedCreatedGroups = await fetchGetMyGroups('ADMIN');
-        setCreatedGroups(fetchedCreatedGroups);
-      } catch (error: unknown) { // Cambiamos 'any' a 'unknown'
-        console.error("Error fetching created groups:", error);
-        let errorMessage = "Error al obtener tus grupos creados. Redirigiendo al login...";
-        if (error instanceof Error) {
-          errorMessage = error.message || errorMessage;
-        }
-        console.log("Error: ", errorMessage);
-        showAlert(errorMessage, "/Login");
-        setCreatedGroups([])
-      }
-    };
+  const getMyCreatedGroups = async () => {
+    try {
+      const fetchedCreatedGroups = await fetchGetMyGroups('ADMIN');
+      setCreatedGroups(fetchedCreatedGroups);
+    } catch (error) {
+      console.log("Estoy en el error de try/catch");
+      console.error(error);
+      triggerError("No estás logueado o hubo un problema al obtener tus grupos creados.");
+    }
+  };
 
-    getUserGroups();
-    getMyCreatedGroups();
-  }, [showAlert, router]);
+  getUserGroups();
+  getMyCreatedGroups();
+}, [triggerError]);
 
   return (
     <div className="flex flex-col w-full">
