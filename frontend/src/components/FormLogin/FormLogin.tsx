@@ -8,12 +8,8 @@ import CustomAlert, { useCustomAlert } from "../CustomAlert/CustomAlert";
 import Link from "next/link";
 import fetchLogin from "@/services/fetchLogin";
 import GoogleLoginButton from "../GoogleAuth/GoogleLoginButton";
-import { getAuthToken } from "@/services/authToken";
 
 export const FormLogin = () => {
-
-    console.log("Este es el token actual: ", getAuthToken)
-    console.log(localStorage.getItem('token'));
 
     const { message, showAlert, onClose } = useCustomAlert();
 
