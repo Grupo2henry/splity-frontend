@@ -27,7 +27,7 @@ export default function AdminUserButton() {
   if (!data) return <p className="text-center">No se encontraron datos</p>;
   return (
     <div className="flex flex-col w-full items-center mx-auto m-10 min-h-min">
-      <h1 className="text-xl text-white font-bold mb-4">Usuarios</h1>
+      <h1 className="text-2xl text-white font-bold mb-4">Usuarios</h1>
       <input type="text" placeholder="Busca por nombre" value={search} onChange={handleSearchChange} className="border custom-input !w-90 rounded-lg self-start mb-4 mx-auto"/>
       <ul className="mb-4 w-full my-0">
         {data.data.map((user: any) => (
