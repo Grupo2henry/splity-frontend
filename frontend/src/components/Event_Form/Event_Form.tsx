@@ -3,35 +3,22 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { IFormEvent, UserSuggestion, Iuser } from "./types";
+import { IFormEvent, UserSuggestion } from "./types";
 import { fetchUsersByEmail } from "@/services/fetchUsersByEmail";
-import fetchGetUser from "@/services/fetchGetUser";
 import { fetchCreateGroup } from "@/services/fetchCreateGroup";
+import { useAuth } from "@/context/AuthContext";
 
 export const Event_Form = () => {
-  const { register, handleSubmit, formState: { errors }, setValue, /* watch */ } = useForm<IFormEvent>({ mode: "onBlur" });
-  
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormEvent>({ mode: "onBlur" });
+
+  const { user } = useAuth();
   const [emailSearch, setEmailSearch] = useState<string>("");
-  const [user, setUser] = useState< Iuser | null>(null);
   const [emailSuggestions, setEmailSuggestions] = useState<UserSuggestion[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<UserSuggestion[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || "";
-    const getUser = async () => {
-      try {
-        const user = await fetchGetUser(token);
-        setUser(user);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    getUser();
-  }, []);
-  
-  /* const watchedParticipants = watch("participants");
-  console.log(watchedParticipants); */
+    setValue("creatorId", user?.id || "");
+  }, [user, setValue]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(async () => {
@@ -60,8 +47,7 @@ export const Event_Form = () => {
   useEffect(() => {
     const participantIds = selectedParticipants.map(participant => participant.id);
     setValue("participants", participantIds);
-    setValue("creatorId", user?.user.id || "");
-  }, [selectedParticipants, user, setValue]);
+  }, [selectedParticipants, setValue]);
 
   const handleRemoveParticipant = (indexToRemove: number) => {
     setSelectedParticipants(prev => prev.filter((_, index) => index !== indexToRemove));
@@ -71,8 +57,10 @@ export const Event_Form = () => {
     try {
       const token = localStorage.getItem("token") || "";
       await fetchCreateGroup(data, token);
+      // Considerar mostrar un mensaje de éxito o redirigir
     } catch (error) {
       console.error(error);
+      // Considerar mostrar un mensaje de error al usuario
     }
   };
 
@@ -92,7 +80,7 @@ export const Event_Form = () => {
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Participantes</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-          <input type="text" defaultValue={user?.user.name} className="custom-input" readOnly />
+          <input type="text" defaultValue={user?.name} className="custom-input" readOnly />
           {selectedParticipants.map((participant, index) => (
             <div key={participant.id} className="flex flex-row items-center gap-2">
               <input

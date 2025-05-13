@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
-import { ErrorProvider } from "@/context/ErrorContext";
 import { AuthProvider } from "@/context/AuthContext";
 
 const roboto = Roboto({
@@ -24,12 +23,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className="flex justify-center">
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
           <AuthProvider>
-            <ErrorProvider>
               <NavBar />
               <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
                 {children}
               </div>
-            </ErrorProvider>
           </AuthProvider>
       </body>
     </html>
