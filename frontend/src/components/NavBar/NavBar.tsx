@@ -3,16 +3,20 @@
 import styles from "./NavBar.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { clearAuthToken } from "../../services/authToken";
 import { useRouter } from "next/navigation";
+import { clearAuthToken } from "../../services/authToken";
+import { useUser } from "@/context/UserContext";
 
 export default function NavBar() {
   const router = useRouter();
+  const { user, setUser } = useUser(); // obtenés el estado del usuario
 
   const handleLogout = () => {
-    clearAuthToken();
-    router.push('/Login');
-  };
+  clearAuthToken();   // borra token del localStorage
+  setUser(null);
+  console.log(localStorage.getItem('token'))      // borra el estado del usuario
+  router.push("/Login"); // redirige
+};
 
   return (
     <header className={styles.navbar}>
@@ -23,14 +27,32 @@ export default function NavBar() {
         <nav>
           <ul className={styles.navList}>
             <li><Link href="/" className={styles.navLink}>Home</Link></li>
-            <li><Link href="/Dashboard" className={styles.navLink}>Dashboard</Link></li>
-            <li><Link href="/Login" className={styles.navLink}>Login</Link></li>
-            <li><Link href="/Register" className={styles.navLink}>Register</Link></li>
-            <li>
-              <button onClick={handleLogout} className={styles.navLink}>
-                Cerrar Sesión
-              </button>
-            </li>
+
+            {/* Renderiza solo si el usuario está logueado */}
+            {user && (
+              <>
+                <li>
+                  <Link href="/Dashboard" className={styles.navLink}>Dashboard</Link>
+                </li>
+                <li>
+                  <button onClick={handleLogout} className={styles.navLink}>
+                    Cerrar Sesión
+                  </button>
+                </li>
+              </>
+            )}
+
+            {/* Renderiza solo si el usuario NO está logueado */}
+            {!user && (
+              <>
+                <li>
+                  <Link href="/Login" className={styles.navLink}>Login</Link>
+                </li>
+                <li>
+                  <Link href="/Register" className={styles.navLink}>Register</Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>

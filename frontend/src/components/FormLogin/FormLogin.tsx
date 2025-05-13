@@ -7,9 +7,10 @@ import { useState } from "react";
 import CustomAlert, { useCustomAlert } from "../CustomAlert/CustomAlert";
 import Link from "next/link";
 import fetchLogin from "@/services/fetchLogin";
-import GoogleLoginButton from "../GoogleAuth/GoogleLoginButton";
-
+import { useUser } from "@/context/UserContext";
 export const FormLogin = () => {
+
+    const { user, loading, triggerUserReload } = useUser();
 
     const { message, showAlert, onClose } = useCustomAlert();
 
@@ -21,11 +22,14 @@ export const FormLogin = () => {
         setPasswordVisible(passwordVisible === "password" ? "text" : "password");
     };
 
+    console.log("Este es el user desde FormLogin: ", user, loading);
+
     const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
-        try {
-            await fetchLogin(data);
-            showAlert("Login successful!", "/Dashboard");
-        } catch (error) {
+    try {
+        await fetchLogin(data);
+        showAlert("Login successful!", "/Dashboard");
+        triggerUserReload(); // Llama a la función para forzar la re-verificación
+    } catch (error) {
             console.error(error);
             showAlert("Login failed!");
         }
@@ -50,9 +54,6 @@ export const FormLogin = () => {
                     <h2 className="text-[#FAFF00] mt-6">¿No tienes una cuenta? <Link href="/Register" className="text-[#FAFF00] font-bold">Registrarse</Link></h2>
                 </div>
             </form>
-            <div className="flex justify-center items-center mt-8">
-                <GoogleLoginButton />
-            </div>
             <CustomAlert message={message} onClose={onClose} />
         </>
     );

@@ -18,7 +18,7 @@ export const ErrorProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => {
       setError(null);
       router.push(redirectTo);
-    }, 1000); // opcional: espera para mostrar modal antes de redirigir
+    }, 5000); // opcional: espera para mostrar modal antes de redirigir
   };
 
   return (
