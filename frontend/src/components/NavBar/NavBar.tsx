@@ -3,20 +3,14 @@
 import styles from "./NavBar.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { clearAuthToken } from "../../services/authToken";
-import { useUser } from "@/context/UserContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function NavBar() {
-  const router = useRouter();
-  const { user, setUser } = useUser(); // obtenés el estado del usuario
+  const { user, logout } = useAuth(); // Obtenemos el estado del usuario y la función logout
 
   const handleLogout = () => {
-  clearAuthToken();   // borra token del localStorage
-  setUser(null);
-  console.log(localStorage.getItem('token'))      // borra el estado del usuario
-  router.push("/Login"); // redirige
-};
+    logout(); // Llama a la función logout del AuthContext
+  };
 
   return (
     <header className={styles.navbar}>

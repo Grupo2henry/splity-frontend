@@ -5,48 +5,60 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { fetchGetMyGroups } from "@/services/fetchGetMyGroups";
 import { IGroup } from "./types";
-import { useError } from "@/context/ErrorContext";
-import { useUser } from "@/context/UserContext";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export const Card_Dashboard = () => {
-  const { triggerError } = useError();
-  const { user, loading } = useUser();
-
+  const { user, loading, userValidated } = useAuth();
+  const router = useRouter();
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [createdGroups, setCreatedGroups] = useState<IGroup[]>([]);
-  console.log("Este es el user: ", user);
+
+  console.log("Este es el user en Card_Dashboard: ", user, "Loading:", loading, "UserValidated:", userValidated);
 
   useEffect(() => {
-    if (loading) return;
-
-    if (!loading && !user) {
-      triggerError("No estás logueado.");
+    if (!userValidated && !loading) {
+      router.push("/Login");
       return;
     }
 
     const getUserGroups = async () => {
-      try {
-        const fetchedGroups = await fetchGetMyGroups("MEMBER");
-        setGroups(fetchedGroups);
-      } catch (error) {
-        console.error(error);
-        triggerError("Error al obtener los grupos.");
+      if (user) {
+        try {
+          const fetchedGroups = await fetchGetMyGroups("MEMBER");
+          setGroups(fetchedGroups);
+        } catch (error) {
+          console.error("Error al obtener los grupos:", error);
+          // Considerar mostrar un error visual en el componente en lugar de una redirección
+        }
       }
     };
 
     const getMyCreatedGroups = async () => {
-      try {
-        const fetchedCreatedGroups = await fetchGetMyGroups("ADMIN");
-        setCreatedGroups(fetchedCreatedGroups);
-      } catch (error) {
-        console.error(error);
-        triggerError("Error al obtener los grupos creados.");
+      if (user) {
+        try {
+          const fetchedCreatedGroups = await fetchGetMyGroups("ADMIN");
+          setCreatedGroups(fetchedCreatedGroups);
+        } catch (error) {
+          console.error("Error al obtener los grupos creados:", error);
+          // Considerar mostrar un error visual en el componente en lugar de una redirección
+        }
       }
     };
 
-    getUserGroups();
-    getMyCreatedGroups();
-  }, [loading, user, triggerError]);
+    if (user) {
+      getUserGroups();
+      getMyCreatedGroups();
+    }
+  }, [user, userValidated, router, loading]);
+
+  if (!userValidated && loading) {
+    return <div>Cargando...</div>; // O un spinner
+  }
+
+  if (!user) {
+    return null; // No renderizar nada si no hay usuario y no está cargando (ya se redirigió)
+  }
 
   return (
     <div className="flex flex-col w-full">

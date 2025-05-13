@@ -1,36 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
-import React from "react";
-import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";// Importa la función del servicio
-import { useUser } from "@/context/UserContext";
+import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import CustomAlert from "../CustomAlert/CustomAlert"; // Importa el componente modal de alerta
 
 export const GoogleLoginButton: React.FC = () => {
-  const router = useRouter();
-  const { user, loading, triggerUserReload } = useUser();
-  console.log("Este es el user desde GoogleLoginButton: ", user, loading);
+  const { googleLogin, errors } = useAuth();
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
   const handleSuccess = async (response: any) => {
-  try {
-    const token = await fetchGoogleLogin(response.credential);
-    if (token) {
-      localStorage.setItem("token", token); // Asegúrate de que el token se guarde
-      router.push("/Dashboard");
-      triggerUserReload(); // Llama a la función para forzar la re-verificación
-    } else {
-        console.warn("No se encontró token en la respuesta del servicio");
-      }
-    } catch (error) {
-      console.error("Error en la autenticación:", error);
+    await googleLogin(response.credential);
+    if (errors.length > 0) {
+      setShowErrorModal(true);
     }
   };
 
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+  };
+
   return (
-    <GoogleLogin
-      onSuccess={handleSuccess}
-      onError={() => console.log("Login Failed")}
-    />
+    <>
+      <GoogleLogin
+        onSuccess={handleSuccess}
+        onError={() => console.log("Login Failed")}
+      />
+      {showErrorModal && (
+        <CustomAlert
+          message={errors.join(", ")}
+          onClose={handleCloseErrorModal}
+          //type="error"
+        />
+      )}
+    </>
   );
 };
 
