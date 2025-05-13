@@ -10,6 +10,7 @@ import fetchLogin from "@/services/fetchLogin";
 import GoogleLoginButton from "../GoogleAuth/GoogleLoginButton";
 
 export const FormLogin = () => {
+
     const { message, showAlert, onClose } = useCustomAlert();
 
     const [passwordVisible, setPasswordVisible] = useState("password");    
@@ -22,10 +23,8 @@ export const FormLogin = () => {
 
     const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
         try {
-            console.log(data);
-            const response = await fetchLogin(data);
-            console.log(response);
-            showAlert("Login successful!");
+            await fetchLogin(data);
+            showAlert("Login successful!", "/Dashboard");
         } catch (error) {
             console.error(error);
             showAlert("Login failed!");

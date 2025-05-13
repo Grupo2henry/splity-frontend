@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import { fetchGroupBalance } from '@/services/fetchGroupBalance';
 import CustomAlert, { useCustomAlert } from '../CustomAlert/CustomAlert';
 
