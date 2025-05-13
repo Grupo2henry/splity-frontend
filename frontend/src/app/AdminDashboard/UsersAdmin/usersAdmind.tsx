@@ -1,7 +1,7 @@
 import AdminUserDashboard from "@/components/AdminUserDashboard/AdminUserDashboard";
 
-const usersAdmint = () => {
+const usersAdmin = () => {
     return <AdminUserDashboard></AdminUserDashboard>;
   };
-  export default usersAdmint;
+  export default usersAdmin;
   
