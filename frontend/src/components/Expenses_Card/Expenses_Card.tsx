@@ -62,7 +62,7 @@ export const Expenses_Card = ({slugNumber} : {slugNumber: number}) => {
                                 <div key={index} className="flex flex-col w-full">
                                     <div className="flex flex-col w-full px-2 bg-[#d9d9d9] rounded-lg" >
                                         <div className="flex flex-row justify-between items-center">
-                                            <Image src="/image1.svg" alt="Logo" width={25} height={25}/>
+                                            <Image src="/image7.svg" alt="Logo" width={25} height={25}/>
                                             <div className="flex w-full gap-2">
                                                 <div className="flex flex-col w-full ml-2">
                                                     <p className="font-bold">{expense.description}</p>
