@@ -8,16 +8,21 @@ import { formatDate } from "./dateFuntion";
 
 export const Expenses_Card = ({slugNumber} : {slugNumber: number}) => {
 
-    /* const [group, setGroup] = useState<group | null>(null); */
+    const [group, setGroup] = useState<group | null>(null);
     const [grouped, setGrouped] = useState<Record<string, group["expenses"]>>({});
+
+    const totalExpenses = group?.expenses.map((expense) => expense.amount).reduce((a, b) => a + b, 0);
+    const totalPaid = group?.expenses.filter((expense) => expense.paid_by.id === group?.created_by.id).map((expense) => expense.amount).reduce((a, b) => a + b, 0);
 
     useEffect(() => {
         const getGroup = async () => {
             try {
             const response = await fetchGetGroup(slugNumber);
+            setGroup(response);
+            console.log(response);
             const groupedByDate: Record<string, group["expenses"]> = {};
             for (const expense of response.expenses || []) {
-                const date = formatDate(expense.created_at.toString());
+                const date = formatDate(expense.date.toString());
                 if (!groupedByDate[date]) {
                     groupedByDate[date] = [];
                 }
@@ -28,11 +33,25 @@ export const Expenses_Card = ({slugNumber} : {slugNumber: number}) => {
             console.error("Error fetching group:", error);
             }
         };
-
         if (slugNumber) getGroup();
     }, [slugNumber]);
     
     return (
+        <>
+            <div className="flex w-full h-full items-center justify-between mb-6">
+                <div className="flex flex-col gap-2">
+                    <p className="text-[16px] text-[#FFFFFF] text-center">Mis gastos</p>
+                    <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
+                        <p className="custom-input font-bold">AR$ {totalPaid}</p>
+                    </div>
+                </div>  
+                <div className="flex flex-col gap-2">
+                    <p className="text-[16px] text-[#FFFFFF] text-center">Gastos grupales</p>
+                    <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
+                        <p className="custom-input font-bold">AR$ {totalExpenses}</p>
+                    </div>
+                </div>
+            </div>
             <div className="flex flex-col w-full h-full items-center">
                 <div className="flex flex-col w-full gap-6">
                     {Object.entries(grouped).map(([date, expenses]) => (
@@ -59,7 +78,8 @@ export const Expenses_Card = ({slugNumber} : {slugNumber: number}) => {
                         </div>
                     ))}                    
                 </div>
-            </div>      
+            </div>
+        </>      
     );
 }
 

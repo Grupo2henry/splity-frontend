@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export const NavBar_Event_Details = () => {
+export const NavBar_Event_Details = ({slugNumber}: {slugNumber: number}) => {
     return (
         <div className="w-full h-full flex flex-col justify-end mt-6">
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center">
-                    <Link href="/Add_Spent"><Image src="/add_circle.svg" alt="Logo" width={60} height={60}/></Link>
+                    <Link href={`/Add_Spent/${slugNumber}`}><Image src="/add_circle.svg" alt="Logo" width={60} height={60}/></Link>
                     <p className="text-[#FAFF00]">Agregar gasto</p>
                 </div>            
             </div>
