@@ -11,6 +11,10 @@ import { useGroup } from "@/context/GroupContext";
 import { useAuth } from "@/context/AuthContext"; // Importa useAuth
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
+import dynamic from "next/dynamic";
+import { LatLngLiteral } from "leaflet";
+
+const MapSelector = dynamic(() => import("../Map_Selector/Map_Selector"), { ssr: false });
 
 export const Event_Form = () => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormEvent>({ mode: "onBlur" });
@@ -22,6 +26,8 @@ export const Event_Form = () => {
   const [selectedParticipants, setSelectedParticipants] = useState<UserSuggestion[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emoji, setEmoji] = useState("");
+  const [location, setLocation] = useState<LatLngLiteral | null>(null);
+  const [locationName, setLocationName] = useState("");
 
   useEffect(() => {
     // Add the logged-in user as the first participant by default
@@ -67,11 +73,19 @@ export const Event_Form = () => {
   };
 
   const onSubmit: SubmitHandler<IFormEvent> = async (data) => {
-    // Include the logged-in user's ID in the participants array if not already present
-    const participantsToSend = [...new Set([...data.participants, user?.id].filter(Boolean) as string[])];
-    const groupDataToSend = { ...data, emoji, participants: participantsToSend };
-    createGroup(groupDataToSend);
+  const participantsToSend = [...new Set([...data.participants, user?.id].filter(Boolean) as string[])];
+
+  const groupDataToSend = {
+    name: data.name,
+    emoji,
+    participants: participantsToSend,
+    locationName: data.name,
+    latitude: location?.lat,
+    longitude: location?.lng,
   };
+
+  createGroup(groupDataToSend);
+};
 
   const handleEmojiSelect = (emojiObject: any) => {
     setEmoji(emojiObject.native);
@@ -168,7 +182,20 @@ export const Event_Form = () => {
           ))}
         </div>
       )}
+      <div className="flex flex-col w-full gap-2">
+        <label className="text-[16px] text-start text-[#FFFFFF]">Ubicación del evento</label>
+        <input
+          type="text"
+          value={locationName}
+          onChange={(e) => setLocationName(e.target.value)}
+          placeholder="Nombre de la ubicación"
+          className="custom-input"
+        />
 
+        <div className="w-full h-[300px] rounded-lg overflow-hidden">
+          <MapSelector onSelectLocation={setLocation} />
+        </div>
+      </div>
       <div className="flex flex-col items-center justify-center">
         <button type="submit" className="btn-yellow text-[16px] mt-8">Crear Evento</button>
       </div>

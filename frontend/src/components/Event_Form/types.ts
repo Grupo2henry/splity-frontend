@@ -2,6 +2,10 @@ export interface IFormEvent {
   name: string;
   participants: string[];
   emoji?: string; // Campo opcional para el emoji
+  location?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 export interface UserSuggestion {
