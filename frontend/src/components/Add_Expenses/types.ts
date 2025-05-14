@@ -32,4 +32,6 @@ export interface group {
   name: string;
   memberships: member[];
   expenses: expense[];
+  created_by: member;
+  owner: member;
 }
