@@ -30,7 +30,7 @@ export const Event_Details = () => {
                 ))}
              </div>
              {state === "Gastos" && <Expenses_Card slugNumber={slugNumber} />}            
-            <NavBar_Event_Details slugNumber={slugNumbenr} />            
+            <NavBar_Event_Details slugNumber={slugNumber} />            
         </div>
     );
 };
