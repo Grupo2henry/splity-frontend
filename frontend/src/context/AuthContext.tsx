@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       try {
-        const userData = await fetchGetUser(token);
+        const {userData} = await fetchGetUser(token);
         setUser(userData);
         setUserValidated(true);
       } catch (error) {

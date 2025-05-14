@@ -14,6 +14,7 @@ export const Card_Dashboard = () => {
   console.log("Este es el user en Card_Dashboard: ", user, "Loading:", loading, "UserValidated:", userValidated);
   console.log("Grupos miembro:", memberGroups);
   console.log("Grupos admin:", adminGroups);
+  console.log("Nombre de usuario: ", user?.name);
 
   useEffect(() => {
     if (!userValidated && !loading) {
