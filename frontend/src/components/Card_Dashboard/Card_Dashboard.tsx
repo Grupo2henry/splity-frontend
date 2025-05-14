@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link";
+import { Card_Group} from './../Card_Group/Card_Group'
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -39,42 +39,24 @@ export const Card_Dashboard = () => {
     <div className="flex flex-col w-full">
       <h3 className="text-lg font-semibold mb-4 text-white">Grupos Creados por Mí:</h3>
       {adminGroups.map((group) => (
-        <Link key={group.id} href="/Event_Details">
-          <div className="flex w-full bg-[#388E3C] p-2 rounded-lg mb-6">
-            <div className="text-5xl">
-              {group.emoji || "📁"}
-            </div>
-            <div className="w-full flex justify-between">
-              <div className="flex flex-col justify-start items-start ml-2">
-                <h2 className="text-[#FFFFFF]">{group.name}</h2>
-                {group.cantidad !== undefined && (
-                  <p className="text-[#A5D6A7]">{group.cantidad} miembros</p>
-                )}
-              </div>
-              <button>{'\u27A4'}</button>
-            </div>
-          </div>
-        </Link>
+        <Card_Group
+          key={group.id}
+          group={group}
+          subtitleText="miembros"
+          bgColor="bg-[#388E3C]"
+          subtitleColor="text-[#A5D6A7]"
+        />  
       ))}
 
-      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
+    <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
       {memberGroups.map((group) => (
-        <Link key={group.id} href="/Event_Details">
-          <div className="flex w-full bg-[#61587C] p-2 rounded-lg mb-6">
-            <div className="text-5xl">
-              {group.emoji || "📁"}
-            </div>
-            <div className="w-full flex justify-between">
-              <div className="flex flex-col justify-start items-start ml-2">
-                <h2 className="text-[#FFFFFF]">{group.name}</h2>
-                {group.cantidad !== undefined && (
-                  <p className="text-[#FFCD82]">{group.cantidad} amigos</p>
-                )}
-              </div>
-              <button>{'\u27A4'}</button>
-            </div>
-          </div>
-        </Link>
+        <Card_Group
+          key={group.id}
+          group={group}
+          subtitleText="amigos"
+          bgColor="bg-[#61587C]"
+          subtitleColor="text-[#FFCD82]"
+        />
       ))}
     </div>
   );

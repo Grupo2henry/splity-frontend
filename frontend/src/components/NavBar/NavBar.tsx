@@ -5,78 +5,124 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import CardProfile from "@/components/Card_Profile/Card_Profile";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function NavBar() {
   const { user, logout } = useAuth();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
-    setIsProfileMenuOpen(false); // Cerrar el menú después de cerrar sesión
+    setIsProfileMenuOpen(false);
   };
 
   const toggleProfileMenu = () => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
+    setIsProfileMenuOpen((prev) => !prev);
   };
 
+  // Cerrar sidebar al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    if (isProfileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
+
   return (
-    <header className={styles.navbar}>
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center">
-          <Image src="/Logo-splity.png" alt="Splity Logo" width={60} height={20} />
-        </Link>
-        <nav className="flex items-center">
-          <ul className={styles.navList}>
-            <li><Link href="/" className={styles.navLink}>Home</Link></li>
-
-            {/* Renderiza solo si el usuario está logueado */}
-            {user && (
+    <>
+      <header className={styles.navbar}>
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/Logo-splity.png"
+              alt="Splity Logo"
+              width={60}
+              height={20}
+            />
+          </Link>
+          <nav className="flex items-center">
+            <ul className={styles.navList}>
               <li>
-                <Link href="/Dashboard" className={styles.navLink}>Dashboard</Link>
+                <Link href="/" className={styles.navLink}>
+                  Home
+                </Link>
               </li>
-            )}
-
-            {/* Renderiza solo si el usuario NO está logueado */}
-            {!user && (
-              <>
+              {user && (
                 <li>
-                  <Link href="/Login" className={styles.navLink}>Login</Link>
+                  <Link href="/Dashboard" className={styles.navLink}>
+                    Dashboard
+                  </Link>
                 </li>
-                <li>
-                  <Link href="/Register" className={styles.navLink}>Register</Link>
-                </li>
-              </>
-            )}
-          </ul>
-
-          {/* Menú de perfil */}
-          {user && (
-            <div className="relative ml-4">
-              <CardProfile onToggle={toggleProfileMenu} />
-              {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-10">
-                  <div className="py-1">
-                    <div className="px-4 py-2 text-sm text-gray-700">
-                      ¡Hola, {user.name || user.username}!
-                    </div>
-                    <div className="px-4 py-2 text-sm text-gray-700">
-                      {user.email}
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 focus:outline-none"
-                    >
-                      Cerrar Sesión
-                    </button>
-                    {/* Puedes agregar más opciones al menú aquí */}
-                  </div>
-                </div>
               )}
-            </div>
-          )}
-        </nav>
+              {!user && (
+                <>
+                  <li>
+                    <Link href="/Login" className={styles.navLink}>
+                      Login
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/Register" className={styles.navLink}>
+                      Register
+                    </Link>
+                  </li>
+                </>
+              )}
+            </ul>
+
+            {user && (
+              <div className="ml-4">
+                <CardProfile onToggle={toggleProfileMenu} />
+              </div>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {/* Sidebar flotante */}
+      <div
+  ref={sidebarRef}
+  className={`fixed top-0 right-0 h-screen w-[400px] bg-gray-100 shadow-lg z-50 transition-transform duration-300 ease-in-out ${
+    isProfileMenuOpen ? "translate-x-0" : "translate-x-full"
+  }`}
+>
+  {/* Botón cerrar (X) */}
+          <button
+            onClick={() => setIsProfileMenuOpen(false)}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold focus:outline-none"
+            aria-label="Cerrar menú de perfil"
+              >
+            &times;
+          </button>
+
+            <div className="p-6 mt-10"> {/* Empujamos el contenido hacia abajo para que no se tape con la "X" */}
+              <h2 className="text-lg font-semibold mb-4">
+                ¡Hola, {user?.name || user?.username}!
+              </h2>
+              <p className="text-sm text-gray-600 mb-2">{user?.email}</p>
+              <button
+                onClick={handleLogout}
+                className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded"
+              >
+            Cerrar sesión
+          </button>
+        </div>
       </div>
-    </header>
+    </>
   );
 }

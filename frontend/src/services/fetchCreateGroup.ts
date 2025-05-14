@@ -2,6 +2,7 @@
 import { IFormEvent } from "@/components/Event_Form/types";
 
 export const fetchCreateGroup = async (data: IFormEvent, token: string) => {
+  console.log("Token: ", token)
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/`, {
     method: 'POST',
     headers: {

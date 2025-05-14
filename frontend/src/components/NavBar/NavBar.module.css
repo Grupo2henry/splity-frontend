@@ -34,3 +34,11 @@
 .navbar a:hover {
   color: #a5b4fc; /* Light indigo hover color */
 }
+
+.sidebarEnter {
+  transform: translateX(100%);
+}
+.sidebarEnterActive {
+  transform: translateX(0);
+  transition: transform 300ms ease-in-out;
+}

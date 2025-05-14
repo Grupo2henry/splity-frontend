@@ -14,7 +14,7 @@ import data from '@emoji-mart/data';
 
 export const Event_Form = () => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormEvent>({ mode: "onBlur" });
-  const { createGroup } = useGroup();
+  const { createGroup, groupErrors } = useGroup();
   const { user } = useAuth(); // Usa el hook useAuth para obtener el usuario
 
   const [emailSearch, setEmailSearch] = useState<string>("");
@@ -158,6 +158,16 @@ export const Event_Form = () => {
           )}
         </div>
       </div>
+      
+      {groupErrors.length > 0 && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
+          {groupErrors.map((error, index) => (
+            <p key={index} className="text-sm">
+              {error}
+            </p>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col items-center justify-center">
         <button type="submit" className="btn-yellow text-[16px] mt-8">Crear Evento</button>
