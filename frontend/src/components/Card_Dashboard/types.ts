@@ -11,5 +11,6 @@ export interface IGroup {
   };
   created_at: string; // O Date si quieres parsearlo
   cantidad?: number; // Agregamos 'cantidad' como opcional si a veces está presente
+  emoji?: string;
   // Puedes agregar otras propiedades que vengan en la respuesta de tu API
 }
