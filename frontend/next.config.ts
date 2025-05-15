@@ -1,4 +1,14 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+    ],
+  },
   allowedDevOrigins: [
     "local-origin.dev",
     "*.local-origin.dev",
@@ -7,3 +17,5 @@ module.exports = {
     "https://two-eagles-beam.loca.lt"
   ],
 };
+
+module.exports = nextConfig;
