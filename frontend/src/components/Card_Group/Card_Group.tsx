@@ -5,9 +5,9 @@ import { IGroup } from "../Card_Dashboard/types";
 
 interface CardGroupProps {
   group: IGroup;
-  subtitleText?: string;           // ej: "miembros" o "amigos"
-  bgColor?: string;                // color de fondo (tailwind)
-  subtitleColor?: string;          // color del subtítulo (tailwind)
+  subtitleText?: string;       // ej: "miembros" o "amigos"
+  bgColor?: string;            // color de fondo (tailwind)
+  subtitleColor?: string;      // color del subtítulo (tailwind)
 }
 
 export const Card_Group = ({
@@ -17,8 +17,8 @@ export const Card_Group = ({
   subtitleColor = "text-gray-300",
 }: CardGroupProps) => {
   return (
-    <Link href="/Event_Details">
-      <div className={`flex w-full ${bgColor} p-2 rounded-lg mb-6`}>
+    <Link href={`/Event_Detail/${group.id}`}>
+      <div className={`flex w-full ${bgColor} p-2 rounded-lg mb-6 cursor-pointer`}>
         <div className="text-5xl">
           {group.emoji || "📁"}
         </div>
@@ -35,3 +35,5 @@ export const Card_Group = ({
     </Link>
   );
 };
+
+export default Card_Group;
