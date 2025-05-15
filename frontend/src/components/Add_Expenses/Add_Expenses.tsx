@@ -3,15 +3,18 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useExpenses } from "@/context/ExpensesContext";
+import { useGroup } from "@/context/GroupContext";
+import { member, IFormGasto } from "./types";
 import fetchGetGroup from "@/services/fetchGetGroup";
-import { group, member, IFormGasto } from "./types";
-import fetchCreateExpense from "@/services/fetchCreateExpense";
 
-export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
-  
+export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormGasto>({ mode: "onBlur" });
-  const [group, setGroup] = useState<group | null>(null);
-  setValue("imgUrl", "/image1.svg");  
+  const [group, setGroup] = useState(null);
+  const { createExpense, expenseErrors } = useExpenses();
+  const { actualGroup } = useGroup();
+
+  setValue("imgUrl", "/image1.svg");
 
   useEffect(() => {
     const getGroup = async () => {
@@ -27,17 +30,14 @@ export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
   }, [slugNumber]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
-    try {
-      await fetchCreateExpense(data, slugNumber);
-      console.log(data);
-    } catch (error) {
-      console.error(error);
+    if (actualGroup?.id) {
+      await createExpense(data, actualGroup.id.toString());
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full gap-4">
-      {/* Titulo del gasto */}
+      {/* Título del gasto */}
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Título del gasto</label>
         <div className="flex flex-row rounded-lg bg-[#61587C] gap-2 p-2">
@@ -73,15 +73,16 @@ export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">¿Quién lo pagó?</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-            <select {...register("paid_by", /*{ required: "Este campo es obligatorio" }*/)} className="custom-input">
+          <select {...register("paid_by")} className="custom-input">
             <option value="">-- Selecciona un participante --</option>
             {group && group.memberships.map((member: member, index: number) => (
-                <option key={index} value={member.user.id}>{member.user.name}</option>
+              <option key={index} value={member.user.id}>{member.user.name}</option>
             ))}
-            </select>
-            {errors.paid_by && <p className="text-amber-50 text-[0.75rem]">{errors.paid_by.message}</p>}
+          </select>
+          {errors.paid_by && <p className="text-amber-50 text-[0.75rem]">{errors.paid_by.message}</p>}
         </div>
       </div>
+
       {/* Fecha del gasto */}
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Fecha del gasto</label>
@@ -94,6 +95,15 @@ export const Add_Expenses = ({slugNumber} : {slugNumber: number}) => {
           {errors.date && <p className="text-amber-50 text-[0.75rem]">{errors.date.message}</p>}
         </div>
       </div>
+
+      {/* Mostrar errores desde el contexto */}
+      {expenseErrors.length > 0 && (
+        <div className="bg-red-500 text-white p-3 rounded-md text-sm">
+          {expenseErrors.map((err, idx) => (
+            <p key={idx}>{err}</p>
+          ))}
+        </div>
+      )}
 
       {/* Botón de envío */}
       <div className="flex flex-col items-center justify-center">

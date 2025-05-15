@@ -1,10 +1,11 @@
 "use client"
 
-import { Card_Group} from './../Card_Group/Card_Group'
+import { Card_Group } from './../Card_Group/Card_Group'
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useGroup } from "@/context/GroupContext";
+import Loader from "@/components/Loader/Loader"; // Importa el Loader
 
 export const Card_Dashboard = () => {
   const { user, loading, userValidated } = useAuth();
@@ -23,8 +24,9 @@ export const Card_Dashboard = () => {
     }
   }, [userValidated, loading, router]);
 
-  if (!userValidated && loadingGroups) {
-    return <div>Cargando grupos...</div>; // O un spinner específico para grupos
+  // Mostrar el Loader mientras se cargan los grupos
+  if (loadingGroups) {
+    return <Loader isLoading={true} message="Cargando tus grupos..." />;
   }
 
   if (!userValidated && !loading) {
@@ -45,10 +47,10 @@ export const Card_Dashboard = () => {
           subtitleText="miembros"
           bgColor="bg-[#388E3C]"
           subtitleColor="text-[#A5D6A7]"
-        />  
+        />
       ))}
 
-    <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
+      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
       {memberGroups.map((group) => (
         <Card_Group
           key={group.id}

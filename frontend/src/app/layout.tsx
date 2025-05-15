@@ -5,6 +5,7 @@ import NavBar from "@/components/NavBar/NavBar";
 import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
+import { MembershipProvider } from "@/context/MembershipContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -27,10 +28,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <AuthProvider>
             <GroupProvider>
               <ExpensesProvider>
-                <NavBar />
-                  <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-                    {children}
-                  </div>
+                <MembershipProvider>
+                  <NavBar />
+                    <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+                      {children}
+                    </div>
+                  </MembershipProvider>
                 </ExpensesProvider>
               </GroupProvider>
           </AuthProvider>

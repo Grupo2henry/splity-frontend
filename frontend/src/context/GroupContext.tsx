@@ -9,6 +9,7 @@ import { fetchGetMyGroups } from "@/services/fetchGetMyGroups"; // Asegúrate de
 import { fetchGetGroupById } from "@/services/fetchGetGroupById"; // Nuevo servicio para obtener un grupo por ID
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthContext"; // Importa el AuthContext
+import { usePathname } from "next/navigation";
 
 interface GroupContextType {
   memberGroups: IGroup[];
@@ -44,6 +45,15 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
   const [actualGroup, setActualGroup] = useState<IGroup | null>(null); // Inicializar el estado del grupo actual
   const router = useRouter();
   const { user } = useAuth(); // Obtén el estado del usuario del AuthContext
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const isEventDetailsRoute = pathname.startsWith("/Event_Details/");
+    const isAddSpentRoute = pathname.startsWith("/Add_Spent/");
+    if (!isEventDetailsRoute && !isAddSpentRoute) {
+      setActualGroup(null); // ⬅️ limpia si salís de Event_Details o Add_Spent
+    }
+  }, [pathname]);
 
   useEffect(() => {
     if (groupErrors.length > 0) {

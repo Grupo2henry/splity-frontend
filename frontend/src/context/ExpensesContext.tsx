@@ -47,9 +47,9 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
     if (actualGroup?.id) {
       getExpensesByGroupId(actualGroup.id.toString());
     } else {
-      setExpenses([]); // Resetea los gastos cuando actualGroup es null
+      setExpenses([]);
     }
-  }, [actualGroup]); // Escucha los cambios en actualGroup
+  }, [actualGroup]);
 
   const createExpense = async (expenseData: IFormGasto, groupId: string): Promise<void> => {
     setLoadingExpenses(true);

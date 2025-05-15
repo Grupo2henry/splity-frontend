@@ -4,15 +4,18 @@ import styles from "./NavBar.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useGroup } from "@/context/GroupContext";
 import CardProfile from "@/components/Card_Profile/Card_Profile";
 import { useState, useEffect, useRef } from "react";
 
 export default function NavBar() {
   const { user, logout } = useAuth();
+  const {setActualGroup} = useGroup();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
+    setActualGroup(null);
     logout();
     setIsProfileMenuOpen(false);
   };

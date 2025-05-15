@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/context/AuthContext.tsx
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
@@ -22,7 +21,7 @@ interface AuthContextType {
   logout: () => void;
   userValidated: boolean;
   setUserValidated: (isValidated: boolean) => void;
-  googleLogin: (credential: string) => Promise<void>; // Nuevo método
+  googleLogin: (credential: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,7 +31,7 @@ export const useAuth = (): AuthContextType => {
   if (!context) {
     throw new Error("useAuth debe usarse dentro de un AuthProvider");
   }
-  return context as AuthContextType;
+  return context;
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -129,14 +128,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       try {
-        const {userData} = await fetchGetUser(token);
+        const userData = await fetchGetUser(token);
         setUser(userData);
         setUserValidated(true);
-      } catch (error) {
-        console.error("Token inválido o expirado:", error);
+      } catch (error: any) {
+        if (error.message === "Unauthorized") {
+          console.warn("Token expirado o inválido. Cerrando sesión...");
+        } else {
+          console.error("Error al verificar el token:", error.message);
+        }
         localStorage.removeItem("token");
         setUser(null);
-        setUserValidated(false);
+        setUserValidated(true); // para mostrar la UI de login
         router.push("/Login");
       }
     };
