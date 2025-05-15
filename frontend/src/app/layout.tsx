@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
 import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
+import { ExpensesProvider } from "@/context/ExpensesContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -25,10 +26,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
           <AuthProvider>
             <GroupProvider>
-              <NavBar />
-                <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-                  {children}
-                </div>
+              <ExpensesProvider>
+                <NavBar />
+                  <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+                    {children}
+                  </div>
+                </ExpensesProvider>
               </GroupProvider>
           </AuthProvider>
       </body>

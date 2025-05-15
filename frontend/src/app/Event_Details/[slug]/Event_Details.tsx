@@ -4,23 +4,51 @@ import Image from "next/image";
 import { NavBar_Event_Details } from "@/components/NavBar/NavBar_Event_Details/NaBar_Event_Details";
 import Expenses_Card from "@/components/Expenses_Card/Expenses_Card";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useGroup } from "@/context/GroupContext";
+import { useExpenses } from "@/context/ExpensesContext"; // Importa el ExpensesContext
 
 export const Event_Details = () => {
   const [state, setState] = useState("Gastos");
   const { slug } = useParams();
-  const { actualGroup, fetchGroupById, loadingGroups } = useGroup();
-  const slugNumber = Number(Array.isArray(slug) ? slug[0] : slug); // Asegúrate de que slug sea un string
+  const { actualGroup, fetchGroupById, loadingGroups, groupErrors } = useGroup();
+  const { getExpensesByGroupId } = useExpenses(); // Obtén la función del contexto
+
+  console.log("Este es el grupo actual", actualGroup);
+
+  const loadGroupData = useCallback(() => {
+    if (slug) {
+      fetchGroupById(Array.isArray(slug) ? slug[0] : slug);
+    }
+  }, [slug]);
 
   useEffect(() => {
-    if (slug) {
-      fetchGroupById(Array.isArray(slug) ? slug[0] : slug); // Pasa el primer elemento si es un array, o el string si no lo es
-    }
-  }, [slug, fetchGroupById]);
+    loadGroupData();
+  }, [loadGroupData]);
 
-  if (loadingGroups || !actualGroup) {
-    return <div>Cargando detalles del evento...</div>; // O un spinner
+  // Llama a getExpensesByGroupId cuando actualGroup cambia y tiene un ID
+  useEffect(() => {
+    if (actualGroup?.id) {
+      getExpensesByGroupId(actualGroup.id.toString());
+    }
+  }, [actualGroup?.id]); // Dependencias importantes
+
+  if (loadingGroups) {
+    return <div>Cargando detalles del evento...</div>;
+  }
+
+  if (groupErrors.length > 0) {
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
+        {groupErrors.map((error, index) => (
+          <p key={index} className="text-sm">{error}</p>
+        ))}
+      </div>
+    );
+  }
+
+  if (!actualGroup) {
+    return <div>No se pudo cargar la información del evento.</div>;
   }
 
   return (
@@ -44,8 +72,8 @@ export const Event_Details = () => {
           </div>
         ))}
       </div>
-      {state === "Gastos" && <Expenses_Card slugNumber={slugNumber} />}
-      <NavBar_Event_Details slugNumber={slugNumber} />
+      {state === "Gastos" && <Expenses_Card />}
+      <NavBar_Event_Details slugNumber={Number(Array.isArray(slug) ? slug[0] : slug)} />
     </div>
   );
 };

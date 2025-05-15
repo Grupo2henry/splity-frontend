@@ -118,7 +118,10 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No estás logueado");
       }
       const fetchedGroup = await fetchGetGroupById(groupId, token);
-      setActualGroup(fetchedGroup);
+      // Solo actualiza actualGroup si fetchedGroup es diferente del actual
+      if (!actualGroup || fetchedGroup?.id !== actualGroup.id) {
+        setActualGroup(fetchedGroup);
+      }
       return fetchedGroup;
     } catch (error: any) {
       console.error(`Error al obtener el grupo con ID ${groupId}:`, error);

@@ -17,7 +17,7 @@ export const Card_Group = ({
   subtitleColor = "text-gray-300",
 }: CardGroupProps) => {
   return (
-    <Link href={`/Event_Detail/${group.id}`}>
+    <Link href={`/Event_Details/${group.id}`}>
       <div className={`flex w-full ${bgColor} p-2 rounded-lg mb-6 cursor-pointer`}>
         <div className="text-5xl">
           {group.emoji || "📁"}
