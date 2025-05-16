@@ -6,6 +6,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
 import { MembershipProvider } from "@/context/MembershipContext";
+import { BalanceProvider } from "@/context/BalanceContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -29,10 +30,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <GroupProvider>
               <ExpensesProvider>
                 <MembershipProvider>
-                  <NavBar />
-                    <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-                      {children}
-                    </div>
+                  <BalanceProvider>
+                    <NavBar />
+                      <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+                        {children}
+                      </div>
+                    </BalanceProvider>
                   </MembershipProvider>
                 </ExpensesProvider>
               </GroupProvider>

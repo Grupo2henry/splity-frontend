@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation"; // Importa useRouter
 import { useMemo, useState, useEffect } from "react";
 import { useGroup } from "@/context/GroupContext";
 import Loader from "@/components/Loader/Loader"; // Importa el Loader
+import Balance_Board from "@/components/Balance_Board/Balance_Board";
 
 export const Event_Details = () => {
   const [viewState, setViewState] = useState<"Gastos" | "Saldos" | "Comprobantes">("Gastos");
@@ -90,9 +91,7 @@ export const Event_Details = () => {
 
       {viewState === "Gastos" && <Expenses_Card />}
       {/* Placeholder para futuros componentes */}
-      {viewState === "Saldos" && (
-        <div className="text-white">Saldos: función en desarrollo</div>
-      )}
+      {viewState === "Saldos" && actualGroup?.id && <Balance_Board />}
       {viewState === "Comprobantes" && (
         <div className="text-white">Comprobantes: función en desarrollo</div>
       )}
