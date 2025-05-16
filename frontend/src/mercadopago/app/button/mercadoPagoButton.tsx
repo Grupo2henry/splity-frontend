@@ -7,12 +7,6 @@ import add from "./add"
 import { useState, useEffect } from "react";
 
 export default function MercadoPagoButton() {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
- 
-=======
->>>>>>> develop
   const params = useSearchParams();
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
@@ -49,10 +43,6 @@ export default function MercadoPagoButton() {
    }
   
 }, [params]);
-<<<<<<< HEAD
-=======
->>>>>>> bc422bd48d086ead9919afc5740804ef002e22fc
->>>>>>> develop
 return (
   <section className="grid h-screen place-items-center">
     <form action={add}>

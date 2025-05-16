@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src\app\AdminDashboard\UsersAdmin
 "use client"
 import { useEffect, useState } from "react";
-import { useGroups } from "@/services/queryGroupsUsers";
 import Link from "next/link";
 import { useAuth } from "@/services/authContext/authContext";
 import React from "react";
+import { useExpensesOfGroups } from "@/services/queryExpensesGroup";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -17,10 +16,9 @@ const useDebouncedValue = (value: string, delay: number) => {
   return debouncedValue;
 };
 ;
-export default function GroupsUsersByAdmin({ params }: { params: Promise<{ id: string }> }) {
-  const { token } = useAuth();
+export default function GroupExpenses({params}: {params: Promise <{id:string}>}){ const { token } = useAuth();
   const resolvedParams = React.use(params);
-  const userId = resolvedParams.id;
+  const groupId = resolvedParams.id;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -28,7 +26,7 @@ export default function GroupsUsersByAdmin({ params }: { params: Promise<{ id: s
  const debouncedSearch = useDebouncedValue(search, 300);
   const debouncedStartDate = useDebouncedValue(startDate, 300);
   const debouncedEndDate = useDebouncedValue(endDate, 300);
-  const { data, isLoading, error } = useGroups(userId, page, debouncedSearch, debouncedStartDate, debouncedEndDate);
+  const { data, isLoading, error } = useExpensesOfGroups(groupId, page, debouncedSearch, debouncedStartDate, debouncedEndDate);
 
   /////
   console.log('Debounced values:', { debouncedSearch, debouncedStartDate, debouncedEndDate })
@@ -66,11 +64,11 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   if (error) return <p className="text-red-500 text-center">Error: {error.message}</p>;
   if (!data) return <p className="text-center">No se encontraron datos</p>;
   return (<div className="flex flex-col w-full items-center mx-auto m-10 min-h-min">
-      <h1 className="text-2xl text-white font-bold mb-4">Grupos del usuario</h1>
+      <h1 className="text-2xl text-white font-bold mb-4">Gastos del grupo</h1>
       <div className="flex flex-col gap-4 w-90 mb-4 mx-auto">
         <input
           type="text"
-          placeholder="Busca por nombre"
+          placeholder="Busca por descripción"
           value={search}
           onChange={handleSearchChange}
           className="border custom-input !w-full rounded-lg"
@@ -94,16 +92,16 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       </div>
       <ul className="mb-4 w-full my-0">
        {data.data.length > 0 ? (
-  data.data.map((group: any) => (
-    <li key={group.id} className="border-b py-2 mx-auto p-4">
-      <Link href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${group.id}`} className="text-[#F59E0B] hover:underline">
-        {group.name}
-      </Link>
+  data.data.map((expense: any) => (
+    <li key={expense.id} className="border-b py-2 mx-auto p-4 ">
+      <div className="text-[#F59E0B]">
+        {expense.name}- valor: ${expense.amount} fecha: {expense.createdAt}hs
+      </div>
     </li>
 
   ))
 ) : (
-  <p className="text-center">No se encontraron grupos</p>
+  <p className="text-center">No se encontraron gastos</p>
 )}
       </ul>
 
@@ -125,5 +123,4 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         </button>
       </div>
     </div>
-  );
-}
+  ); }

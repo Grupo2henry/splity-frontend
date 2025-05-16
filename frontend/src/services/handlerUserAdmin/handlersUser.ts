@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { User } from "./userInterface";
+import { useAuth } from "../authContext/authContext";
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;
 
 interface HandlerResponse {
   success: boolean;
   message: string;
 }
-
 export const handleDeletePhoto = async (
   userId: string,
   token: string | null,

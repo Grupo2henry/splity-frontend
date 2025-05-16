@@ -66,16 +66,14 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
       <h1 className="text-2xl font-bold mb-4 text-white">{user.name}</h1>
 
       <div className="grid grid-cols-2 gap-6 mb-6 w-full max-w-lg">
-        <div className="flex justify-center">
-          <Image
-            src={user.profile_picture_url ?? DEFAULT_PROFILE_IMAGE}
-            alt="Imagen de perfil"
-            width={100}
-            height={100}
-            className="rounded-full"
-          />
-        </div>
-
+       <div className="relative w-24 h-24 rounded-full overflow-hidden ml-10 mt-5">
+  <Image
+    src={user.profile_picture_url ?? DEFAULT_PROFILE_IMAGE}
+    alt="Imagen de perfil"
+    fill
+    className="object-cover"
+  />
+</div>
         <div className="flex flex-col gap-3">
           <button
             onClick={handlePhotoDelete}

@@ -1,9 +1,10 @@
 // hooks/useUsers.ts
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "./authContext/authContext";
 
 export const useUsers = (page: number, search: string) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+  const { token } = useAuth();
+  console.log("el token esta?", token);
   return useQuery({
     queryKey: ["users", page, search],
     queryFn: async () => {
