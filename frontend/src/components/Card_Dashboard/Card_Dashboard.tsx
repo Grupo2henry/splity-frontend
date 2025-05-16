@@ -1,95 +1,67 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import fetchGetMyGroups from "@/services/fetchGetMyGroups";
-import { IGroup } from "./types";
-import { useCustomAlert } from "../CustomAlert/CustomAlert";
+import { Card_Group } from './../Card_Group/Card_Group'
+import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useGroup } from "@/context/GroupContext";
+import Loader from "@/components/Loader/Loader"; // Importa el Loader
 
 export const Card_Dashboard = () => {
-  const [groups, setGroups] = useState<IGroup[]>([]);
-  const [createdGroups, setCreatedGroups] = useState<IGroup[]>([]);
-  const { showAlert } = useCustomAlert();
+  const { user, loading, userValidated } = useAuth();
   const router = useRouter();
+  const { memberGroups, adminGroups, loadingGroups } = useGroup();
+
+  console.log("Este es el user en Card_Dashboard: ", user, "Loading:", loading, "UserValidated:", userValidated);
+  console.log("Grupos miembro:", memberGroups);
+  console.log("Grupos admin:", adminGroups);
+  console.log("Nombre de usuario: ", user?.name);
 
   useEffect(() => {
-    const getUserGroups = async () => {
-      try {
-        const fetchedGroups = await fetchGetMyGroups("MEMBER");
-        setGroups(fetchedGroups);
-      } catch (error: unknown) { // Cambiamos 'any' a 'unknown'
-        console.error("Error fetching user groups:", error);
-        let errorMessage = "Error al obtener tus grupos. Redirigiendo al login...";
-        if (error instanceof Error) {
-          errorMessage = error.message || errorMessage;
-        }
-        console.log("Error: ", errorMessage);
-        showAlert(errorMessage, "/Login");
-        setGroups([]);
-      }
-    };
+    if (!userValidated && !loading) {
+      router.push("/Login");
+      return;
+    }
+  }, [userValidated, loading, router]);
 
-    const getMyCreatedGroups = async () => {
-      try {
-        const fetchedCreatedGroups = await fetchGetMyGroups('ADMIN');
-        setCreatedGroups(fetchedCreatedGroups);
-      } catch (error: unknown) { // Cambiamos 'any' a 'unknown'
-        console.error("Error fetching created groups:", error);
-        let errorMessage = "Error al obtener tus grupos creados. Redirigiendo al login...";
-        if (error instanceof Error) {
-          errorMessage = error.message || errorMessage;
-        }
-        console.log("Error: ", errorMessage);
-        showAlert(errorMessage, "/Login");
-        setCreatedGroups([])
-      }
-    };
+  // Mostrar el Loader mientras se cargan los grupos
+  if (loadingGroups) {
+    return <Loader isLoading={true} message="Cargando tus grupos..." />;
+  }
 
-    getUserGroups();
-    getMyCreatedGroups();
-  }, [showAlert, router]);
+  if (!userValidated && !loading) {
+    return <div>Redirigiendo a Login...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col w-full">
-      <h3 className="text-lg font-semibold mb-4 text-white">Mis Grupos:</h3>
-      {groups.map((group) => (
-        <Link key={group.id} href="/Event_Details">
-          <div className="flex w-full bg-[#61587C] p-2 rounded-lg mb-6">
-            <Image src={"./image1.svg"} alt="Image" width={77} height={76}/>
-            <div className="w-full flex justify-between">
-              <div className="flex flex-col justify-start items-start ml-2">
-                <h2 className="text-[#FFFFFF]">{group.name}</h2>
-                {group.cantidad !== undefined && (
-                  <p className="text-[#FFCD82]">{group.cantidad} amigos</p>
-                )}
-              </div>
-              <button>{'\u27A4'}</button>
-            </div>
-          </div>
-        </Link>
+      <h3 className="text-lg font-semibold mb-4 text-white">Grupos Creados por Mí:</h3>
+      {adminGroups.map((group) => (
+        <Card_Group
+          key={group.id}
+          group={group}
+          subtitleText="miembros"
+          bgColor="bg-[#388E3C]"
+          subtitleColor="text-[#A5D6A7]"
+        />
       ))}
 
-            <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Grupos Creados por Mí:</h3>
-            {createdGroups.map((group) => (
-                <Link key={group.id} href="/Event_Details">
-                    <div className="flex w-full bg-[#388E3C] p-2 rounded-lg mb-6">
-                        <Image src={"./image2.svg"} alt="Created Group Image" width={77} height={76}/>
-                        <div className="w-full flex justify-between">
-                            <div className="flex flex-col justify-start items-start ml-2">
-                                <h2 className="text-[#FFFFFF]">{group.name}</h2>
-                                {group.cantidad !== undefined && (
-                                    <p className="text-[#A5D6A7]">{group.cantidad} miembros</p>
-                                )}
-                            </div>
-                            <button>{'\u27A4'}</button>
-                        </div>
-                    </div>
-                </Link>
-            ))}
-        </div>
-    );
+      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
+      {memberGroups.map((group) => (
+        <Card_Group
+          key={group.id}
+          group={group}
+          subtitleText="amigos"
+          bgColor="bg-[#61587C]"
+          subtitleColor="text-[#FFCD82]"
+        />
+      ))}
+    </div>
+  );
 };
 
 export default Card_Dashboard;
