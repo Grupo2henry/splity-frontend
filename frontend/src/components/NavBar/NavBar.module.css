@@ -42,6 +42,7 @@
 .sidebarEnterActive {
   transform: translateX(0);
   transition: transform 300ms ease-in-out;
+}
 .profileImage {
   cursor: pointer;
   transition: transform 0.2s;
