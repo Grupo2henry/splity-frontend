@@ -6,13 +6,14 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   images: {
     domains: ['lh3.googleusercontent.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+    ],
   },
-  // podés incluir más configuraciones estándar si lo necesitás
-};
-
-// Exportá tanto la config como tus variables personalizadas si son necesarias en otro lado
-module.exports = {
-  ...nextConfig,
   allowedDevOrigins: [
     'local-origin.dev',
     '*.local-origin.dev',
@@ -21,3 +22,5 @@ module.exports = {
     'https://two-eagles-beam.loca.lt',
   ],
 };
+
+module.exports = nextConfig;
