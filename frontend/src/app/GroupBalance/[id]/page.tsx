@@ -16,7 +16,7 @@ const GroupBalancePage = () => {
   return (
     <div className="p-4">
       <h1>Balance del Grupo {id}</h1>
-      <BalanceBoard groupId={id} /> {/* Pasa el 'id' como prop a BalanceBoard */}
+      <BalanceBoard /> {/* Pasa el 'id' como prop a BalanceBoard */}
     </div>
   );
 };
