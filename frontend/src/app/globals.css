@@ -18,10 +18,18 @@ margin-top:50px
 }
 
 .main-container {
-  width: 417px;
+  width: 517px;
   min-height: 100vh;
   /* padding: 2rem; */
   margin: 0 auto; /* Para centrar horizontalmente */
+}
+
+
+@media (max-width: 420px) {
+  .main-container {
+    width: 100%;
+    padding: 0 1rem;
+  }
 }
 
 .custom-alert {
