@@ -2,32 +2,24 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useExpenses } from "@/context/ExpensesContext";
 import { useGroup } from "@/context/GroupContext";
-import { member, IFormGasto } from "./types";
-import fetchGetGroup from "@/services/fetchGetGroup";
+import { useMembership } from "@/context/MembershipContext"; // Importa el MembershipContext
+import { IFormGasto } from "./types";
 
 export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormGasto>({ mode: "onBlur" });
-  const [group, setGroup] = useState(null);
   const { createExpense, expenseErrors } = useExpenses();
   const { actualGroup } = useGroup();
+  const { participants, loadingParticipants, participantsErrors } = useMembership(); // Obtén participants del contexto
 
   setValue("imgUrl", "/image1.svg");
-
+  console.log(slugNumber)
   useEffect(() => {
-    const getGroup = async () => {
-      try {
-        const response = await fetchGetGroup(slugNumber);
-        setGroup(response);
-      } catch (error) {
-        console.error("Error fetching group:", error);
-      }
-    };
-
-    if (slugNumber) getGroup();
-  }, [slugNumber]);
+    // El MembershipContext ya se encarga de cargar los participantes cuando actualGroup cambia
+    // No necesitamos fetchGetGroup aquí
+  }, [actualGroup]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     if (actualGroup?.id) {
@@ -73,13 +65,17 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">¿Quién lo pagó?</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-          <select {...register("paid_by")} className="custom-input">
+          <select {...register("paid_by")} className="custom-input" disabled={loadingParticipants}>
             <option value="">-- Selecciona un participante --</option>
-            {group && group.memberships.map((member: member, index: number) => (
-              <option key={index} value={member.user.id}>{member.user.name}</option>
+            {participants && participants.map((participant) => (
+              <option key={participant.user.id} value={participant.user.id}>{participant.user.name}</option>
             ))}
           </select>
           {errors.paid_by && <p className="text-amber-50 text-[0.75rem]">{errors.paid_by.message}</p>}
+          {loadingParticipants && <p className="text-gray-400 text-sm">Cargando participantes...</p>}
+          {participantsErrors.length > 0 && (
+            <p className="text-red-500 text-sm">{participantsErrors[0]}</p>
+          )}
         </div>
       </div>
 
@@ -96,7 +92,7 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
         </div>
       </div>
 
-      {/* Mostrar errores desde el contexto */}
+      {/* Mostrar errores desde el contexto de gastos */}
       {expenseErrors.length > 0 && (
         <div className="bg-red-500 text-white p-3 rounded-md text-sm">
           {expenseErrors.map((err, idx) => (
@@ -107,7 +103,9 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
 
       {/* Botón de envío */}
       <div className="flex flex-col items-center justify-center">
-        <button type="submit" className="btn-yellow text-[16px] mt-8">Añadir Gasto</button>
+        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={loadingParticipants}>
+          Añadir Gasto
+        </button>
       </div>
     </form>
   );

@@ -9,6 +9,7 @@ import { fetchCreateExpense } from "@/services/fetchCreateExpense";
 import { fetchGetExpensesByGroupId } from "@/services/fetchGetExpensesByGroupId"; // Servicio a crear
 import { fetchGetExpenseById } from "@/services/fetchGetExpenseById"; // Servicio a crear
 import { useGroup } from "./GroupContext"; // Importa el GroupContext
+import { useRouter } from "next/navigation"; // Importa el useRouter
 
 interface ExpensesContextType {
   expenses: Expense[];
@@ -35,6 +36,7 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
   const [expenseErrors, setExpenseErrors] = useState<string[]>([]);
   const [loadingExpenses, setLoadingExpenses] = useState(false);
   const { actualGroup } = useGroup(); // Obtén actualGroup del GroupContext
+  const router = useRouter(); // Inicializa el router
 
   useEffect(() => {
     if (expenseErrors.length > 0) {
@@ -62,6 +64,13 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
       await fetchCreateExpense(expenseData, Number(groupId), token);
       // Después de crear el gasto, recargamos la lista de gastos del grupo
       await getExpensesByGroupId(groupId);
+      // Redirigir a la página de detalles del evento
+      if (actualGroup) {
+        router.push(`/Event_Details/${actualGroup}`);
+      } else {
+        console.warn("No se pudo redirigir a los detalles del evento porque actualGroup.slug es undefined.");
+        // Puedes agregar una redirección por defecto aquí si es necesario
+      }
     } catch (error: any) {
       console.error("Error al crear el gasto:", error);
       setExpenseErrors([error.message || "Error al crear el gasto."]);
