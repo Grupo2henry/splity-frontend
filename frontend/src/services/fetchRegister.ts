@@ -1,20 +1,15 @@
-import { IFormRegister } from "@/components/FormRegister/types"; 
+import { IFormRegister } from "@/components/FormRegister/types";
 
 export const fetchRegister = async (data: IFormRegister) => {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-            body: JSON.stringify(data),
-        });
-        const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.message);
-        }
-        return result;            
-    } catch (error) {
-        return Promise.reject(error);
-    }
-};
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register/`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify(data),
+  });
 
-export default fetchRegister;
+  if (!response.ok) {
+    const result = await response.json();
+    throw new Error(result.message);
+  }
+  return await response.json();
+};
