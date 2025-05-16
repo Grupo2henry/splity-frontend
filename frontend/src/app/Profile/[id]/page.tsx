@@ -16,7 +16,7 @@ const ProfilePage = () => {
   return (
     <div className="p-4">
       {/* <h1 className="text-2xl font-bold text-white mb-4">Perfil de Usuario</h1> */}
-      <ProfileBoard userId={id} />
+      <ProfileBoard />
     </div>
   );
 };

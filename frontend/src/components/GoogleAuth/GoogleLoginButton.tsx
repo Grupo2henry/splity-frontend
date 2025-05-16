@@ -1,37 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
-import React from "react";
-import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";// Importa la función del servicio
+import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import CustomAlert from "../CustomAlert/CustomAlert"; // Importa el componente modal de alerta
 
-const GoogleLoginButton: React.FC = () => {
-  const router = useRouter();
+export const GoogleLoginButton: React.FC = () => {
+  const { googleLogin, errors } = useAuth();
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const handleSuccess = async (response: any) => {
-    console.log("Google response:", response);
-
-    try {
-      const token = await fetchGoogleLogin(response.credential);
-
-      if (token) {
-        console.log("Token recibido:", token);
-        localStorage.setItem("authToken", token);
-        router.push("/Dashboard");
-      } else {
-        console.warn("No se encontró token en la respuesta");
-      }
-    } catch (error) {
-      console.error("Error en la autenticación:", error);
+    await googleLogin(response.credential);
+    if (errors.length > 0) {
+      setShowErrorModal(true);
     }
   };
 
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+  };
+
   return (
-    <GoogleLogin
-      onSuccess={handleSuccess}
-      onError={() => console.log("Login Failed")}
-    />
+    <>
+      <GoogleLogin
+        onSuccess={handleSuccess}
+        onError={() => console.log("Login Failed")}
+      />
+      {showErrorModal && (
+        <CustomAlert
+          message={errors.join(", ")}
+          onClose={handleCloseErrorModal}
+          //type="error"
+        />
+      )}
+    </>
   );
 };
 
