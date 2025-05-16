@@ -36,14 +36,12 @@
   color: #a5b4fc; /* Light indigo hover color */
 }
 
-<<<<<<< HEAD
 .sidebarEnter {
   transform: translateX(100%);
 }
 .sidebarEnterActive {
   transform: translateX(0);
   transition: transform 300ms ease-in-out;
-=======
 .profileImage {
   cursor: pointer;
   transition: transform 0.2s;
@@ -51,5 +49,4 @@
 
 .profileImage:hover {
   transform: scale(1.05);
->>>>>>> 0694b46db78cebe6cc53f8a23a17001e8095a09c
 }
