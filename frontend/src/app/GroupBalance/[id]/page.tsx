@@ -1,5 +1,6 @@
 'use client'; // Importante marcar como cliente si usas hooks en este componente o sus hijos
 
+
 import BalanceBoard from '@/components/Balance_Board/Balance_Board';
 import { useParams } from 'next/navigation'; // Hook para acceder a los parámetros de la ruta
 import { useEffect } from 'react';
@@ -19,6 +20,7 @@ const GroupBalancePage = () => {
       <BalanceBoard groupId={id} /> {/* Pasa el 'id' como prop a BalanceBoard */}
     </div>
   );
+
 };
 
 export default GroupBalancePage;
