@@ -1,39 +1,24 @@
 "use client"
 
 import { Card_Group } from './../Card_Group/Card_Group'
-import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import { useGroup } from "@/context/GroupContext";
 import { useMembership } from '@/context/MembershipContext';
-import Loader from "@/components/Loader/Loader"; // Importa el Loader
+import Loader from "@/components/Loader/Loader"; // Asegúrate de que Loader esté importado en ambos si lo usas directamente aquí
 
 export const Card_Dashboard = () => {
-  const { user, loading, userValidated } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth();
   const { memberGroups, adminGroups, loadingGroups } = useGroup();
-  const { userMemberships } = useMembership()
+  const { userMemberships } = useMembership();
 
-  console.log("Este es el user en Card_Dashboard: ", user, "Loading:", loading, "UserValidated:", userValidated);
   console.log("Grupos miembro:", memberGroups);
   console.log("Grupos admin:", adminGroups);
   console.log("Nombre de usuario: ", user?.name);
   console.log("Membresias del usuario: ", userMemberships );
 
-  useEffect(() => {
-    if (!userValidated && !loading) {
-      router.push("/Login");
-      return;
-    }
-  }, [userValidated, loading, router]);
-
   // Mostrar el Loader mientras se cargan los grupos
   if (loadingGroups) {
     return <Loader isLoading={true} message="Cargando tus grupos..." />;
-  }
-
-  if (!userValidated && !loading) {
-    return <div>Redirigiendo a Login...</div>;
   }
 
   if (!user) {
