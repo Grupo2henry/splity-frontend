@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
+    width: 80%; 
     /* background: linear-gradient(to bottom, #3b82f6, #6366f1); */
     /* color: white; */
   }
