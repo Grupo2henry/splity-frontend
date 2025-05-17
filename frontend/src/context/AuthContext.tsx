@@ -59,6 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userData = await fetchGetUser(token);
         setUser(userData);
         setUserValidated(true);
+        console.log("Usuario: ", user)
         router.push("/Dashboard");
       } else {
         setErrors(["No se recibió el token de autenticación."]);

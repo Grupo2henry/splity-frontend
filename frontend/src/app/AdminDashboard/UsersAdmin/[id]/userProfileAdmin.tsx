@@ -9,7 +9,7 @@ import Alert from "@/components/AdminUserDashboard/showAlert";
 import { User } from "@/services/handlerUserAdmin/userInterface";
 const DEFAULT_PROFILE_IMAGE = "/favicon.svg";
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;
-import { useAuth } from "@/services/authContext/authContext";
+import { useAuth } from "../../../../context/AuthContext";
 import Link from "next/link";
 
 async function fetchUser(userId: string, token: string | null) {
@@ -19,7 +19,7 @@ async function fetchUser(userId: string, token: string | null) {
 }
 
 export default function UserProfile({ params }: { params: Promise<{ id: string }> }) {
-  const { token } = useAuth();
+  const { user } = useAuth();
   const resolvedParams = React.use(params);
   const userId = resolvedParams.id;
   const router = useRouter();

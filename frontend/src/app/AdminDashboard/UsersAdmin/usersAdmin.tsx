@@ -3,5 +3,6 @@ import AdminUserDashboard from "@/components/AdminUserDashboard/AdminUserDashboa
 const usersAdmin = () => {
     return <AdminUserDashboard></AdminUserDashboard>;
   };
+
   export default usersAdmin;
   

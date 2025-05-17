@@ -3,15 +3,17 @@
 // src\app\AdminDashboard\UsersAdmin
 "use client"
 import { useEffect, useState } from "react";
-import { useUsers } from "@/services/queryUsers";
+import { useUsers } from "@/services/fetchAdminQueryUsers";
 import Link from "next/link";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
+
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedValue(value), delay);
     return () => clearTimeout(handler);
   }, [value, delay]);
   return debouncedValue;
+  
 };
 export default function AdminUserButton() {
   const [page, setPage] = useState(1);
