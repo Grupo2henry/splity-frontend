@@ -3,29 +3,13 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { IGroup } from "@/components/Card_Dashboard/types"; // Asegúrate de tener esta interfaz
-import { fetchCreateGroup } from "@/services/fetchCreateGroup"; // Asegúrate de tener este servicio
-import { fetchGetMyGroups } from "@/services/fetchGetMyGroups"; // Asegúrate de tener este servicio
-import { fetchGetGroupById } from "@/services/fetchGetGroupById"; // Nuevo servicio para obtener un grupo por ID
+import { Group } from "./interfaces/groups.interfaces"; 
+import { fetchCreateGroup } from "@/services/fetchCreateGroup"; 
+import { fetchGetMyGroups } from "@/services/fetchGetMyGroups"; 
 import { useRouter } from "next/navigation";
-import { useAuth } from "./AuthContext"; // Importa el AuthContext
-import { usePathname } from "next/navigation";
+import { useAuth } from "./AuthContext";
+import { GroupContextType } from "./interfaces/groups.interfaces";
 
-interface GroupContextType {
-  memberGroups: IGroup[];
-  setMemberGroups: (groups: IGroup[]) => void;
-  adminGroups: IGroup[];
-  setAdminGroups: (groups: IGroup[]) => void;
-  groupErrors: string[];
-  createGroup: (groupData: any) => Promise<void>; // Ajusta el tipo de groupData
-  fetchMemberGroups: () => Promise<void>;
-  fetchAdminGroups: () => Promise<void>;
-  loadingGroups: boolean;
-  setLoadingGroups: (loading: boolean) => void;
-  actualGroup: IGroup | null; // Nuevo estado para el grupo actual
-  setActualGroup: (group: IGroup | null) => void; // Función para actualizar el grupo actual
-  fetchGroupById: (groupId: string) => Promise<IGroup | null>; // Nueva función para obtener un grupo por ID
-}
 
 const GroupContext = createContext<GroupContextType | undefined>(undefined);
 
@@ -38,22 +22,12 @@ export const useGroup = (): GroupContextType => {
 };
 
 export const GroupProvider = ({ children }: { children: ReactNode }) => {
-  const [memberGroups, setMemberGroups] = useState<IGroup[]>([]);
-  const [adminGroups, setAdminGroups] = useState<IGroup[]>([]);
+  const [memberGroups, setMemberGroups] = useState<Group[]>([]);
+  const [adminGroups, setAdminGroups] = useState<Group[]>([]);
   const [groupErrors, setGroupErrors] = useState<string[]>([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
-  const [actualGroup, setActualGroup] = useState<IGroup | null>(null); // Inicializar el estado del grupo actual
   const router = useRouter();
-  const { user } = useAuth(); // Obtén el estado del usuario del AuthContext
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const isEventDetailsRoute = pathname.startsWith("/Event_Details/");
-    const isAddSpentRoute = pathname.startsWith("/Add_Spent/");
-    if (!isEventDetailsRoute && !isAddSpentRoute) {
-      setActualGroup(null); // ⬅️ limpia si salís de Event_Details o Add_Spent
-    }
-  }, [pathname]);
+  const { user } = useAuth(); // Obtén el estado del usuario del AuthContex
 
   useEffect(() => {
     if (groupErrors.length > 0) {
@@ -71,10 +45,9 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No hay token de autenticación.");
       }
       await fetchCreateGroup(groupData, token);
-      // Después de crear el grupo, recargamos ambas listas
       await fetchMemberGroups();
       await fetchAdminGroups();
-      router.push("/Dashboard"); // O donde quieras redirigir
+      router.push("/Dashboard");
     } catch (error: any) {
       console.error("Error al crear el grupo:", error);
       setGroupErrors([error.message || "Error al crear el grupo."]);
@@ -119,42 +92,16 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const fetchGroupById = async (groupId: string): Promise<IGroup | null> => {
-    setLoadingGroups(true);
-    setGroupErrors([]);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No estás logueado");
-      }
-      const fetchedGroup = await fetchGetGroupById(groupId, token);
-      // Solo actualiza actualGroup si fetchedGroup es diferente del actual
-      if (!actualGroup || fetchedGroup?.id !== actualGroup.id) {
-        setActualGroup(fetchedGroup);
-      }
-      return fetchedGroup;
-    } catch (error: any) {
-      console.error(`Error al obtener el grupo con ID ${groupId}:`, error);
-      setGroupErrors([error.message || "Error al obtener el grupo."]);
-      setActualGroup(null);
-      return null;
-    } finally {
-      setLoadingGroups(false);
-    }
-  };
 
-  // Efecto para cargar los grupos iniciales al loguearse el usuario
   useEffect(() => {
     if (user) {
       fetchMemberGroups();
       fetchAdminGroups();
     } else {
-      // Limpiar los estados de los grupos al desloguearse
       setMemberGroups([]);
       setAdminGroups([]);
-      setActualGroup(null); // Limpiar el grupo actual al desloguearse
     }
-  }, [user]); // Dependencia en el estado 'user' del AuthContext
+  }, [user]);
 
   return (
     <GroupContext.Provider value={{
@@ -167,10 +114,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
       fetchMemberGroups,
       fetchAdminGroups,
       loadingGroups,
-      setLoadingGroups,
-      actualGroup, // Proveer el estado actualGroup
-      setActualGroup, // Proveer la función para setear el grupo actual
-      fetchGroupById, // Proveer la función para obtener un grupo por ID
+      setLoadingGroups
     }}>
       {children}
     </GroupContext.Provider>

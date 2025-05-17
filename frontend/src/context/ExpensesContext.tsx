@@ -4,12 +4,13 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { IFormGasto } from "@/components/Add_Expenses/types";
-import { Expense } from "./interfaces/expense.interface"; // Asegúrate de tener esta interfaz
+import { Expense } from "./interfaces/expense.interface";
 import { fetchCreateExpense } from "@/services/fetchCreateExpense";
-import { fetchGetExpensesByGroupId } from "@/services/fetchGetExpensesByGroupId"; // Servicio a crear
-import { fetchGetExpenseById } from "@/services/fetchGetExpenseById"; // Servicio a crear
-import { useGroup } from "./GroupContext"; // Importa el GroupContext
-import { useRouter } from "next/navigation"; // Importa el useRouter
+import { fetchGetExpensesByGroupId } from "@/services/fetchGetExpensesByGroupId";
+import { fetchGetExpenseById } from "@/services/fetchGetExpenseById";
+import { useMembership } from "./MembershipContext";
+import { useRouter } from "next/navigation";
+
 
 interface ExpensesContextType {
   expenses: Expense[];
@@ -35,8 +36,8 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [expenseErrors, setExpenseErrors] = useState<string[]>([]);
   const [loadingExpenses, setLoadingExpenses] = useState(false);
-  const { actualGroup } = useGroup(); // Obtén actualGroup del GroupContext
-  const router = useRouter(); // Inicializa el router
+  const {actualGroupMembership} = useMembership();
+  const router = useRouter();
 
   useEffect(() => {
     if (expenseErrors.length > 0) {
@@ -46,12 +47,12 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
   }, [expenseErrors]);
 
   useEffect(() => {
-    if (actualGroup?.id) {
-      getExpensesByGroupId(actualGroup.id.toString());
+    if (actualGroupMembership?.group.id) {
+      getExpensesByGroupId(actualGroupMembership.group.id.toString());
     } else {
       setExpenses([]);
     }
-  }, [actualGroup]);
+  }, [actualGroupMembership]);
 
   const createExpense = async (expenseData: IFormGasto, groupId: string): Promise<void> => {
     setLoadingExpenses(true);
@@ -62,11 +63,9 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No hay token de autenticación.");
       }
       await fetchCreateExpense(expenseData, Number(groupId), token);
-      // Después de crear el gasto, recargamos la lista de gastos del grupo
       await getExpensesByGroupId(groupId);
-      // Redirigir a la página de detalles del evento
-      if (actualGroup) {
-        router.push(`/Event_Details/${actualGroup}`);
+      if (actualGroupMembership?.group.id) {
+        router.push(`/Event_Details/${actualGroupMembership.group.id.toString()}`);
       } else {
         console.warn("No se pudo redirigir a los detalles del evento porque actualGroup.slug es undefined.");
         // Puedes agregar una redirección por defecto aquí si es necesario

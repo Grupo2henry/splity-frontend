@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
 import { MembershipProvider } from "@/context/MembershipContext";
+import { BalanceProvider } from "@/context/BalanceContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -28,28 +29,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className="flex justify-center">
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
-     <QueryClientWrapper>
-      <AuthProvider>
-        {/* <TokenProvider> */}
-          <NavBar />
-          <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-            {children}
-          </div>
-        {/* </TokenProvider> */}
-        </AuthProvider>
-        </QueryClientWrapper>
+        <QueryClientWrapper>
           <AuthProvider>
             <GroupProvider>
-              <ExpensesProvider>
-                <MembershipProvider>
-                  <NavBar />
-                    <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-                      {children}
-                    </div>
-                  </MembershipProvider>
+              <MembershipProvider>
+                <ExpensesProvider>
+                  <BalanceProvider>
+                    <NavBar />
+                      <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+                        {children}
+                      </div>
+                  </BalanceProvider>  
                 </ExpensesProvider>
-              </GroupProvider>
+              </MembershipProvider>
+            </GroupProvider>
           </AuthProvider>
+        </QueryClientWrapper>
       </body>
     </html>
   );

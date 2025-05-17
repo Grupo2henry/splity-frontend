@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { IUser } from "./interfaces/user.interface";
+import { User } from "./interfaces/user.interface";
 import { IFormLogin } from "@/components/FormLogin/types";
 import { IFormRegister } from "@/components/FormRegister/types";
 import { fetchLogin } from "@/services/fetchLogin";
@@ -12,8 +12,8 @@ import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
-  user: IUser | null;
-  setUser: (user: IUser | null) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
   loading: boolean;
   errors: string[];
   login: (credentials: IFormLogin) => Promise<void>;
@@ -35,7 +35,7 @@ export const useAuth = (): AuthContextType => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [userValidated, setUserValidated] = useState(false);

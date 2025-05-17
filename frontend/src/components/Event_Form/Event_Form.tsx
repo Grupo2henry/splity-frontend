@@ -83,7 +83,7 @@ export const Event_Form = () => {
     latitude: location?.lat,
     longitude: location?.lng,
   };
-
+  console.log(groupDataToSend)
   createGroup(groupDataToSend);
 };
 
