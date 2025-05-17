@@ -1,29 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useEffect } from 'react';
 import Image from 'next/image';
 import CustomAlert, { useCustomAlert } from '@/components/CustomAlert/CustomAlert';
 import { useAuth } from '@/context/AuthContext';
-import { useGroup } from '@/context/GroupContext';
+import { useMembership } from '@/context/MembershipContext';
+import { useState } from 'react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const Profile_Board = () => {
   const { user } = useAuth();
-  const { memberGroups, fetchMemberGroups } = useGroup();
   const { message, showAlert, onClose } = useCustomAlert();
+  const { userMemberships } = useMembership();
+  const [isGroupsOpen, setIsGroupsOpen] = useState(true); // Estado para controlar si la sección de grupos está abierta
 
-  useEffect(() => {
-    if (!user) return;
-    fetchMemberGroups().catch((error) => {
-      console.error('Error al obtener los grupos:', error);
-      showAlert('Error al obtener los grupos del usuario.');
-    });
-  }, [user]);
+  console.log("Miembro de: ", userMemberships);
 
   if (!user) {
     return <div className="text-white text-center mt-10">Cargando perfil...</div>;
   }
+
+  const toggleGroups = () => {
+    setIsGroupsOpen(!isGroupsOpen);
+  };
 
   return (
     <div className="flex flex-col items-center p-6 bg-[#61587C] rounded-lg text-white">
@@ -73,33 +72,51 @@ const Profile_Board = () => {
               </div>
             </div>
           </div>
-          {/*          <div className="bg-[#4B4362] rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4">Grupos</h3>
-            {memberGroups.length > 0 ? (
-              <div className="space-y-3">
-                {memberGroups.map((group) => (
-                  <div key={group.id} className="bg-[#61587C] p-3 rounded-lg">
+
+          <div className="bg-[#4B4362] rounded-lg p-4">
+            <div
+              className="flex justify-between items-center cursor-pointer"
+              onClick={toggleGroups}
+            >
+              <h3 className="text-lg font-semibold">Grupos</h3>
+              {isGroupsOpen ? <FaChevronUp /> : <FaChevronDown />}
+            </div>
+            {userMemberships.length > 0 && isGroupsOpen ? (
+              <div className="space-y-3 mt-4">
+                {userMemberships.map((membership) => (
+                  <div key={membership.id} className="bg-[#61587C] p-3 rounded-lg">
                     <div className="flex justify-between items-center">
                       <div>
-                        <h4 className="font-semibold">{group.name}</h4>
-                        <p className="text-sm text-gray-300">{group.description}</p>
+                        <h4 className="font-semibold">{membership.group.name}</h4>
+                        {membership.group.emoji && (
+                          <span className="mr-2">{membership.group.emoji}</span>
+                        )}
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        group.role === 'ADMIN' ? 'bg-purple-500' : 'bg-blue-500'
-                      }`}>
-                        {group.role}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          membership.role === 'group_admin' ? 'bg-purple-500' : 'bg-blue-500'
+                        }`}
+                      >
+                        {membership.role === 'group_admin' ? 'Admin' : membership.role}
                       </span>
                     </div>
                     <p className="text-xs text-gray-300 mt-2">
-                      Creado el {new Date(group.created_at).toLocaleDateString('es-ES')}
+                      Se unió el {new Date(membership.joined_at).toLocaleDateString('es-ES')}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-300">No perteneces a ningún grupo.</p>
+              !isGroupsOpen && (
+                <p className="text-center text-gray-300 mt-4">
+                  {userMemberships.length === 0 ? 'No perteneces a ningún grupo.' : ''}
+                </p>
+              )
             )}
-          </div>*/}
+            {userMemberships.length === 0 && (
+              <p className="text-center text-gray-300 mt-4">No perteneces a ningún grupo.</p>
+            )}
+          </div>
         </div>
       </div>
 

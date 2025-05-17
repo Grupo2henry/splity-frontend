@@ -15,10 +15,8 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
   const { participants, loadingParticipants, participantsErrors } = useMembership(); // Obtén participants del contexto
 
   setValue("imgUrl", "/image1.svg");
-  console.log(slugNumber)
+  console.log("Participantes", participants, "Este es el slug: ", slugNumber);
   useEffect(() => {
-    // El MembershipContext ya se encarga de cargar los participantes cuando actualGroup cambia
-    // No necesitamos fetchGetGroup aquí
   }, [actualGroup]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {

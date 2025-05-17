@@ -3,8 +3,8 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useGroup } from "./GroupContext"; // Importa el GroupContext
-import { fetchGroupBalance } from "@/services/fetchGroupBalance"; // Importa el servicio de balance
+import { useMembership } from "./MembershipContext";
+import { fetchGroupBalance } from "@/services/fetchGroupBalance";
 import { 
     BalanceContextType, 
     BalanceByUser, 
@@ -26,7 +26,7 @@ export const BalanceProvider = ({ children }: { children: ReactNode }) => {
   const [recommendedLiquidations, setRecommendedLiquidations] = useState<RecommendedLiquidation[]>([]);
   const [balanceErrors, setBalanceErrors] = useState<string[]>([]);
   const [loadingBalances, setLoadingBalances] = useState(false);
-  const { actualGroup } = useGroup(); // Obtén actualGroup del GroupContext
+  const { actualGroupMembership } = useMembership();
 
   useEffect(() => {
     if (balanceErrors.length > 0) {
@@ -36,13 +36,13 @@ export const BalanceProvider = ({ children }: { children: ReactNode }) => {
   }, [balanceErrors]);
 
   useEffect(() => {
-    if (actualGroup?.id) {
-      getBalancesByGroupId(actualGroup.id.toString());
+    if (actualGroupMembership?.group.id) {
+      getBalancesByGroupId(actualGroupMembership.group.id.toString());
     } else {
       setBalanceByUser([]);
       setRecommendedLiquidations([]);
     }
-  }, [actualGroup]);
+  }, [actualGroupMembership]);
 
   const getBalancesByGroupId = async (groupId: string): Promise<void> => {
     setLoadingBalances(true);

@@ -5,17 +5,20 @@ import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useGroup } from "@/context/GroupContext";
+import { useMembership } from '@/context/MembershipContext';
 import Loader from "@/components/Loader/Loader"; // Importa el Loader
 
 export const Card_Dashboard = () => {
   const { user, loading, userValidated } = useAuth();
   const router = useRouter();
   const { memberGroups, adminGroups, loadingGroups } = useGroup();
+  const { userMemberships } = useMembership()
 
   console.log("Este es el user en Card_Dashboard: ", user, "Loading:", loading, "UserValidated:", userValidated);
   console.log("Grupos miembro:", memberGroups);
   console.log("Grupos admin:", adminGroups);
   console.log("Nombre de usuario: ", user?.name);
+  console.log("Membresias del usuario: ", userMemberships );
 
   useEffect(() => {
     if (!userValidated && !loading) {

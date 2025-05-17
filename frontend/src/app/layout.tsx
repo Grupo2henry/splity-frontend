@@ -28,17 +28,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
           <AuthProvider>
             <GroupProvider>
-              <ExpensesProvider>
-                <MembershipProvider>
+              <MembershipProvider>
+                <ExpensesProvider>
                   <BalanceProvider>
                     <NavBar />
                       <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
                         {children}
                       </div>
-                    </BalanceProvider>
-                  </MembershipProvider>
+                  </BalanceProvider>  
                 </ExpensesProvider>
-              </GroupProvider>
+              </MembershipProvider>
+            </GroupProvider>
           </AuthProvider>
       </body>
     </html>
