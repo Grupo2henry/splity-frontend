@@ -4,7 +4,7 @@
 // src\app\AdminDashboard\UsersAdmin
 "use client"
 import { useEffect, useState } from "react";
-import { useGroups } from "@/services/queryGroupsUsers";
+import { useGroupsAdmin } from "@/services/queryGroupsUsers";
 import Link from "next/link";
 import { useAuth } from "@/services/authContext/authContext";
 import React from "react";

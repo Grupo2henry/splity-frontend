@@ -2,12 +2,7 @@
 "use client";
 
 import { GoogleLogin } from "@react-oauth/google";
-<<<<<<< HEAD
-import React from "react";
-import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";// Importa la función del servicio
 
-const GoogleLoginButton: React.FC = () => {
-=======
 import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -17,7 +12,6 @@ import { useRouter } from "next/navigation";
 export const GoogleLoginButton: React.FC = () => {
   const { googleLogin, errors } = useAuth();
   const [showErrorModal, setShowErrorModal] = useState(false);
->>>>>>> develop
   const router = useRouter();
 
   const handleSuccess = async (response: any) => {
@@ -29,10 +23,7 @@ export const GoogleLoginButton: React.FC = () => {
       if (token) {
         console.log("Token recibido:", token);
         localStorage.setItem("authToken", token);
-<<<<<<< HEAD
-=======
         await googleLogin(response.credential);
->>>>>>> develop
         router.push("/Dashboard");
       } else {
         console.warn("No se encontró token en la respuesta");
