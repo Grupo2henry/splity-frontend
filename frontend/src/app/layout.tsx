@@ -2,17 +2,13 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
-<<<<<<< HEAD
+
 // import { TokenProvider } from "@/components/TokenContext/token-context";
 import QueryClientWrapper from "@/components/AdminUserDashboard/QueryClientWrapper";
-import { AuthProvider } from "@/services/authContext/authContext";
-
-=======
 import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
 import { MembershipProvider } from "@/context/MembershipContext";
->>>>>>> develop
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -32,7 +28,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className="flex justify-center">
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
-<<<<<<< HEAD
      <QueryClientWrapper>
       <AuthProvider>
         {/* <TokenProvider> */}
@@ -43,7 +38,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* </TokenProvider> */}
         </AuthProvider>
         </QueryClientWrapper>
-=======
           <AuthProvider>
             <GroupProvider>
               <ExpensesProvider>
@@ -56,7 +50,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 </ExpensesProvider>
               </GroupProvider>
           </AuthProvider>
->>>>>>> develop
       </body>
     </html>
   );

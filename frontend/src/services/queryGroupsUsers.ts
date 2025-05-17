@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./authContext/authContext";
 
-export const useGroups = (
+export const useGroupsAdmin = (
   userId: string,
   page: number,
   search: string,
