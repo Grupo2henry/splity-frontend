@@ -5,6 +5,7 @@ import Image from "next/image";
 import { NavBar_Event_Details } from "@/components/NavBar/NavBar_Event_Details/NaBar_Event_Details";
 import Expenses_Card from "@/components/Expenses_Card/Expenses_Card";
 import { useParams, useRouter } from "next/navigation";
+import Link from 'next/link'; // Importa Link desde 'next/link'
 import { useMemo, useState, useEffect } from "react";
 import { useMembership } from "@/context/MembershipContext";
 import Loader from "@/components/Loader/Loader";
@@ -22,10 +23,10 @@ export const Event_Details = () => {
     return Number.isNaN(num) ? null : num;
   }, [slug]);
 
-  const { 
-    actualGroupMembership, 
-    getActualGroupUserMembership, 
-    loadingActualGroupUserMembership, 
+  const {
+    actualGroupMembership,
+    getActualGroupUserMembership,
+    loadingActualGroupUserMembership,
     actualGroupMembershipErrors
   } = useMembership();
 
@@ -38,9 +39,9 @@ export const Event_Details = () => {
 
   useEffect(() => {
     if (
-      !loadingActualGroupUserMembership 
-      && actualGroupMembershipErrors.length === 0 
-      && groupId !== null 
+      !loadingActualGroupUserMembership
+      && actualGroupMembershipErrors.length === 0
+      && groupId !== null
       && !actualGroupMembership
     ) {
       const timer = setTimeout(() => {
@@ -49,10 +50,10 @@ export const Event_Details = () => {
       return () => clearTimeout(timer);
     }
   }, [
-    actualGroupMembershipErrors, 
-    groupId, 
-    router, 
-    loadingActualGroupUserMembership, 
+    actualGroupMembershipErrors,
+    groupId,
+    router,
+    loadingActualGroupUserMembership,
     actualGroupMembership
   ]);
 
@@ -72,9 +73,9 @@ export const Event_Details = () => {
   }
 
   if (
-    !loadingActualGroupUserMembership 
-    && groupId !== null 
-    && !actualGroupMembership 
+    !loadingActualGroupUserMembership
+    && groupId !== null
+    && !actualGroupMembership
     && actualGroupMembershipErrors.length === 0
   ) {
     return (
@@ -93,6 +94,11 @@ export const Event_Details = () => {
           {actualGroupMembership?.group.emoji || "📁"}
         </div>
         <p className="text-[16px] text-white text-center">{actualGroupMembership?.group.name}</p>
+        {actualGroupMembership?.group.id && (
+          <Link href={`/Update_Event/${actualGroupMembership.group.id}`} className="text-sm text-blue-500 hover:underline">
+            Editar Evento
+          </Link>
+        )}
       </div>
 
       <div className="flex w-full rounded-lg bg-[#61587C] gap-2 p-2 items-center justify-between mb-6">

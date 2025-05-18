@@ -40,13 +40,15 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
   const [updatingGroup, setUpdatingGroup] = useState(false);
   const [updateGroupErrors, setUpdateGroupErrors] = useState<string[]>([]);
   const { user } = useAuth();
-  const pathname = usePathname();
+  const pathname = usePathname(); // Llamada a usePathname fuera del callback
 
   useEffect(() => {
+    console.log("Current pathname:", pathname);
     const isEventDetailsRoute = pathname.startsWith("/Event_Details/");
     const isAddSpentRoute = pathname.startsWith("/Add_Spent/");
-
-    if (!isEventDetailsRoute && !isAddSpentRoute) {
+    const isUpdateEventRoute = pathname.startsWith("/Update_Event/");
+    console.log("actualGroupMembership: ", actualGroupMembership);
+    if (!isEventDetailsRoute && !isAddSpentRoute && !isUpdateEventRoute) {
       console.log("Se borro actualMembership.")
       setActualGroupMembership(null);
     }

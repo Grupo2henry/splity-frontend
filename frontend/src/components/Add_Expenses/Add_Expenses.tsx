@@ -14,6 +14,7 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
 
   setValue("imgUrl", "/image1.svg");
   console.log("Participantes", participants, "Este es el slug: ", slugNumber);
+  console.log("actualGroupMembersip: ", actualGroupMembership)
   useEffect(() => {
   }, [actualGroupMembership]);
 
