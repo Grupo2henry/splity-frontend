@@ -14,8 +14,6 @@ const Profile_Board = () => {
   const { userMemberships } = useMembership();
   const [isGroupsOpen, setIsGroupsOpen] = useState(true); // Estado para controlar si la sección de grupos está abierta
 
-  console.log("Miembro de: ", userMemberships);
-
   if (!user) {
     return <div className="text-white text-center mt-10">Cargando perfil...</div>;
   }

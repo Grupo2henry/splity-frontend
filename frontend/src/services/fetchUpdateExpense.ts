@@ -1,10 +1,11 @@
-// src/services/fetchCreateExpense.ts
+// src/services/fetchUpdateExpense.ts
 
 import { IFormGasto } from "@/components/Add_Expenses/types";
 
-export const fetchCreateExpense = async (data: IFormGasto, groupId: number, token: string) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/groups/${groupId}/expenses`, {
-    method: 'POST',
+export const fetchUpdateExpense = async (data: IFormGasto, expenseId: number, token: string) => {
+  console.log(`Data: ${data} | expenseId: ${expenseId} | `)
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses/${expenseId}`, {
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

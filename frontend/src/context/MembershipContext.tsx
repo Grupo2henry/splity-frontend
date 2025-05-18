@@ -43,13 +43,11 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname(); // Llamada a usePathname fuera del callback
 
   useEffect(() => {
-    console.log("Current pathname:", pathname);
     const isEventDetailsRoute = pathname.startsWith("/Event_Details/");
     const isAddSpentRoute = pathname.startsWith("/Add_Spent/");
     const isUpdateEventRoute = pathname.startsWith("/Update_Event/");
-    console.log("actualGroupMembership: ", actualGroupMembership);
-    if (!isEventDetailsRoute && !isAddSpentRoute && !isUpdateEventRoute) {
-      console.log("Se borro actualMembership.")
+    const isUpdateExpenseRoute = pathname.startsWith("/Update_Spent/");
+    if (!isEventDetailsRoute && !isAddSpentRoute && !isUpdateEventRoute && !isUpdateExpenseRoute) {
       setActualGroupMembership(null);
     }
   }, [pathname]);
@@ -101,7 +99,6 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No hay token de autenticación.");
       }
       const response = await fetchGetMembersByGroupId(token, groupId);
-      console.log("Usuarios de MembershipContext: ", response);
       setParticipants(response);
     } catch (error: any) {
       console.error(`Error al obtener los participantes del grupo ${groupId}:`, error);
@@ -120,7 +117,6 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
       if (token) {
         const memberships = await fetchGetUserMemberships(token);
         setUserMemberships(memberships);
-        console.log("Membresias desde el back: ", memberships);
       } else {
         setUserMemberships([]);
       }
@@ -144,7 +140,6 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
     errorLoadingActualGroupUserMembership(true);
     try {
       const response: ActualGroupMembership = await fetchGetActualGroupUserMembership(token, groupId);
-      console.log("Membresía del usuario en el grupo actual: ", response);
       setActualGroupMembership(response);
     } catch (error: any) {
       console.error(`Error al obtener la membresía del usuario en el grupo ${groupId}:`, error);
@@ -168,7 +163,6 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       const updatedGroup = await fetchUpdateGroup(groupData, token, groupId);
-      console.log("Grupo actualizado:", updatedGroup);
       // Actualizar el estado de actualGroupMembership
       if (actualGroupMembership) {
         setActualGroupMembership({

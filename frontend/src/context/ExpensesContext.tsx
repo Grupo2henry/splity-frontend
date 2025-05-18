@@ -8,9 +8,9 @@ import { Expense } from "./interfaces/expense.interface";
 import { fetchCreateExpense } from "@/services/fetchCreateExpense";
 import { fetchGetExpensesByGroupId } from "@/services/fetchGetExpensesByGroupId";
 import { fetchGetExpenseById } from "@/services/fetchGetExpenseById";
+import { fetchUpdateExpense } from "@/services/fetchUpdateExpense"; // Importa fetchUpdateExpense
 import { useMembership } from "./MembershipContext";
 import { useRouter } from "next/navigation";
-
 
 interface ExpensesContextType {
   expenses: Expense[];
@@ -20,6 +20,7 @@ interface ExpensesContextType {
   createExpense: (expenseData: IFormGasto, groupId: string) => Promise<void>;
   getExpensesByGroupId: (groupId: string) => Promise<void>;
   getExpenseById: (expenseId: string) => Promise<Expense | null>;
+  updateExpense: (expenseData: IFormGasto, expenseId: string, groupId: string) => Promise<void>; // Nueva función
 }
 
 const ExpensesContext = createContext<ExpensesContextType | undefined>(undefined);
@@ -36,7 +37,7 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [expenseErrors, setExpenseErrors] = useState<string[]>([]);
   const [loadingExpenses, setLoadingExpenses] = useState(false);
-  const {actualGroupMembership} = useMembership();
+  const { actualGroupMembership } = useMembership();
   const router = useRouter();
 
   useEffect(() => {
@@ -116,6 +117,30 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateExpense = async (expenseData: IFormGasto, expenseId: string, groupId: string): Promise<void> => {
+    setLoadingExpenses(true);
+    setExpenseErrors([]);
+    const token = localStorage.getItem('token');
+    try {
+      if (!token) {
+        throw new Error("No hay token de autenticación.");
+      }
+      await fetchUpdateExpense(expenseData, Number(expenseId), token);
+      await getExpensesByGroupId(groupId); // Recargar los gastos después de la actualización
+      if (actualGroupMembership?.group.id) {
+        router.push(`/Event_Details/${actualGroupMembership.group.id.toString()}`);
+      } else {
+        console.warn("No se pudo redirigir a los detalles del evento porque actualGroup.slug es undefined.");
+        // Puedes agregar una redirección por defecto aquí si es necesario
+      }
+    } catch (error: any) {
+      console.error("Error al actualizar el gasto:", error);
+      setExpenseErrors([error.message || "Error al actualizar el gasto."]);
+    } finally {
+      setLoadingExpenses(false);
+    }
+  };
+
   return (
     <ExpensesContext.Provider value={{
       expenses,
@@ -125,6 +150,7 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
       createExpense,
       getExpensesByGroupId,
       getExpenseById,
+      updateExpense, // Añade la nueva función al contexto
     }}>
       {children}
     </ExpensesContext.Provider>

@@ -42,18 +42,13 @@ export const Event_Form: React.FC<EventFormProps> = ({ slug }) => {
   useEffect(() => {
     if (slug) {
       setIsUpdate(true);
-      // Cargar los datos del evento para actualizar
-      console.log("slug: ", slug);
-      console.log("Participantes: ", participants);
-      console.log("Membresia actual: ", actualGroupMembership);
       if (actualGroupMembership?.group) {
         const { name, emoji: groupEmoji, latitude, longitude } = actualGroupMembership.group;
         setValue("name", name);
         setEmoji(groupEmoji || "");
         setValue("emoji", groupEmoji || "");
         setLocation(latitude && longitude ? { lat: latitude, lng: longitude } : null);
-        setLocationName(name); // Usar el nombre del grupo como nombre de ubicación inicial
-        // Cargar los participantes iniciales (excluyendo al usuario logueado)
+        setLocationName(name);
         const initialParticipants = participants.filter(member => member.user.id !== user?.id).map(member => ({
           id: member.user.id,
           name: member.user.name,
@@ -124,13 +119,11 @@ export const Event_Form: React.FC<EventFormProps> = ({ slug }) => {
     };
 
     if (isUpdate && slug) {
-      console.log("Datos para actualizar el grupo:", groupDataToSend);
       await updateGroup(slug, groupDataToSend);
       if (!updateGroupErrors.length && !updatingGroup) {
         router.push(`/Event_Details/${slug}`);
       }
     } else {
-      console.log("Datos para crear el grupo:", groupDataToSend);
       await createGroup(groupDataToSend);
       if (!groupErrors.length) {
         router.push('/'); // Redirigir a la página principal después de la creación exitosa

@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userData = await fetchGetUser(token);
         setUser(userData);
         setUserValidated(true);
-        console.log("Usuario: ", user)
         router.push("/Dashboard");
       } else {
         setErrors(["No se recibió el token de autenticación."]);
@@ -95,7 +94,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setErrors([]);
     try {
       await fetchRegister(credentials);
-      console.log("Registro exitoso");
       router.push("/Login");
     } catch (error: any) {
       console.error("Error en el registro:", error);

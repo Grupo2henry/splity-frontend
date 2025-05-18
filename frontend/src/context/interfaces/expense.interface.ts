@@ -7,7 +7,7 @@ export interface Expense {
   date: string;
   imgUrl: string | null;
   paid_by: {
-    id: number;
+    id: string;
     name: string;
     email: string;
     // ... otras propiedades del usuario pagador si las hay

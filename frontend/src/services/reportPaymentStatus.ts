@@ -24,14 +24,12 @@ export async function reportPaymentStatus({
           preferenceId,
         }),
       });
-      console.log("Este es el response: ", response)
       if (!response.ok) {
         throw new Error("Error al enviar el estado del pago al backend");
       }
   
       return await response.json();
     } catch (error) {
-      console.log("Sucedio un error.")
       console.error("Error reportando estado de pago:", error);
     }
   }

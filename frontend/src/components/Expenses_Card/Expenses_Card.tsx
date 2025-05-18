@@ -1,27 +1,24 @@
+// src/components/Expenses_Card/Expenses_Cars.tsx
 "use client"
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatDate } from "./dateFuntion";
 import { useExpenses } from "@/context/ExpensesContext";
-import { useAuth } from "@/context/AuthContext"; // Necesitamos el usuario para calcular "Mis gastos"
-import { Expense } from "@/context/interfaces/expense.interface"; // Importa la interfaz Expense
-import { useMembership } from "@/context/MembershipContext";
+import { useAuth } from "@/context/AuthContext";
+import { Expense } from "@/context/interfaces/expense.interface";
+import Link from 'next/link'; // Importa Link
 
 export const Expenses_Card = () => {
   const { expenses } = useExpenses();
   const { user } = useAuth();
-  const [ grouped, setGrouped ] = useState<Record<string, Expense[]>>({});
-  const { actualGroupMembership } = useMembership()
+  const [grouped, setGrouped] = useState<Record<string, Expense[]>>({});
 
-  // Calcular los gastos totales del grupo
   const totalExpenses = expenses?.map((expense) => expense.amount).reduce((a, b) => a + b, 0) || 0;
-  console.log("Gastos: ", expenses);
-  console.log("Membresía: ", actualGroupMembership)
-  // Calcular mis gastos dentro del grupo
+
   const totalPaidByMe = expenses?.filter((expense) => expense.paid_by?.id && user?.id && String(expense.paid_by.id) === user.id)
-  .map((expense) => expense.amount)
-  .reduce((a, b) => a + b, 0) || 0;
+    .map((expense) => expense.amount)
+    .reduce((a, b) => a + b, 0) || 0;
 
   useEffect(() => {
     const groupedByDate: Record<string, Expense[]> = {};
@@ -58,10 +55,14 @@ export const Expenses_Card = () => {
               <p className="text-[16px] text-start text-[#FFFFFF]">{date}</p>
               <div className="rounded-lg bg-[#61587C] p-2 gap-2 flex flex-col w-full">
                 {expenses.map((expense, index) => (
-                  <div key={index} className="flex flex-col w-full">
+                  <Link // Envolvemos cada gasto con un Link
+                    key={index}
+                    href={`/Update_Spent/${expense.id}`}
+                    className="flex flex-col w-full"
+                  >
                     <div className="flex flex-col w-full px-2 bg-[#d9d9d9] rounded-lg" >
                       <div className="flex flex-row justify-between items-center">
-                        <Image src="/image7.svg" alt="Logo" width={25} height={25}/>
+                        <Image src="/image7.svg" alt="Logo" width={25} height={25} />
                         <div className="flex w-full gap-2">
                           <div className="flex flex-col w-full ml-2">
                             <p className="font-bold">{expense.description}</p>
@@ -71,7 +72,7 @@ export const Expenses_Card = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -19,8 +19,6 @@ export const FormLogin = () => {
     setPasswordVisible(passwordVisible === "password" ? "text" : "password");
   };
 
-  console.log("Este es el loading desde FormLogin: ", loading, "Errores:", errors);
-
   const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
     await login(data);
     if (errors.length > 0) {

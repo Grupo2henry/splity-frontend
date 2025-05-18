@@ -11,6 +11,5 @@ export const fetchGetUserMemberships = async (token: string) => {
         const errorBody = await response.json();
         throw new Error(errorBody.message || `Error al obtener membresias`);
         }
-    console.log("membresias: ", response);
     return await response.json();
 };

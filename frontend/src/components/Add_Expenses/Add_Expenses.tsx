@@ -2,25 +2,85 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useExpenses } from "@/context/ExpensesContext";
-import { useMembership } from "@/context/MembershipContext"; // Importa el MembershipContext
+import { useMembership } from "@/context/MembershipContext";
 import { IFormGasto } from "./types";
+import { useParams, usePathname } from "next/navigation";
 
-export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormGasto>({ mode: "onBlur" });
-  const { createExpense, expenseErrors } = useExpenses();
-  const { participants, loadingParticipants, participantsErrors, actualGroupMembership } = useMembership(); // Obtén participants del contexto
+export const Add_Expenses = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm<IFormGasto>({ mode: "onBlur" });
 
-  setValue("imgUrl", "/image1.svg");
-  console.log("Participantes", participants, "Este es el slug: ", slugNumber);
-  console.log("actualGroupMembersip: ", actualGroupMembership)
+  const {
+    createExpense,
+    expenseErrors,
+    getExpenseById,
+    updateExpense,
+    loadingExpenses: loadingExpenseContext,
+  } = useExpenses();
+
+  const {
+    participants,
+    loadingParticipants,
+    participantsErrors,
+    actualGroupMembership,
+  } = useMembership();
+
+  const { slug } = useParams();
+  const pathname = usePathname();
+
+  const isUpdatePage = pathname.includes("Update_Spent");
+  const expenseId = isUpdatePage && typeof slug === "string" ? slug : undefined;
+
+  // ✅ setValue solo una vez
   useEffect(() => {
-  }, [actualGroupMembership]);
+    setValue("imgUrl", "/image1.svg");
+  }, [setValue]);
+
+  // ✅ useCallback para evitar cambios de referencia
+  const memoizedGetExpenseById = useCallback(getExpenseById, []);
+
+  // ✅ Carga datos si es edición
+  useEffect(() => {
+    const loadExpenseData = async () => {
+      if (isUpdatePage && expenseId) {
+        const expenseData = await memoizedGetExpenseById(expenseId);
+        if (expenseData) {
+          reset({
+            description: expenseData.description,
+            amount: expenseData.amount,
+            paid_by: expenseData.paid_by?.id,
+            date: expenseData.date.substring(0, 10),
+            imgUrl: "/image1.svg",
+          });
+        }
+      } else {
+        reset({
+          description: "",
+          amount: undefined,
+          paid_by: "",
+          date: "",
+          imgUrl: "/image1.svg",
+        });
+      }
+    };
+
+    loadExpenseData();
+  }, [expenseId, isUpdatePage, memoizedGetExpenseById, reset]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     if (actualGroupMembership?.group.id) {
-      await createExpense(data, actualGroupMembership.group.id.toString());
+      if (isUpdatePage && expenseId) {
+        await updateExpense(data, expenseId, actualGroupMembership.group.id.toString());
+      } else {
+        await createExpense(data, actualGroupMembership.group.id.toString());
+      }
     }
   };
 
@@ -62,21 +122,22 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">¿Quién lo pagó?</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-          <select {...register("paid_by")} className="custom-input" disabled={loadingParticipants}>
+          <select {...register("paid_by")} className="custom-input" disabled={loadingParticipants || loadingExpenseContext}>
             <option value="">-- Selecciona un participante --</option>
-            {participants && participants.map((participant) => (
-              <option key={participant.user.id} value={participant.user.id}>{participant.user.name}</option>
-            ))}
+            {participants &&
+              participants.map((participant) => (
+                <option key={participant.user.id} value={participant.user.id}>
+                  {participant.user.name}
+                </option>
+              ))}
           </select>
           {errors.paid_by && <p className="text-amber-50 text-[0.75rem]">{errors.paid_by.message}</p>}
           {loadingParticipants && <p className="text-gray-400 text-sm">Cargando participantes...</p>}
-          {participantsErrors.length > 0 && (
-            <p className="text-red-500 text-sm">{participantsErrors[0]}</p>
-          )}
+          {participantsErrors.length > 0 && <p className="text-red-500 text-sm">{participantsErrors[0]}</p>}
         </div>
       </div>
 
-      {/* Fecha del gasto */}
+      {/* Fecha */}
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Fecha del gasto</label>
         <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
@@ -89,7 +150,7 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
         </div>
       </div>
 
-      {/* Mostrar errores desde el contexto de gastos */}
+      {/* Errores del contexto */}
       {expenseErrors.length > 0 && (
         <div className="bg-red-500 text-white p-3 rounded-md text-sm">
           {expenseErrors.map((err, idx) => (
@@ -98,10 +159,10 @@ export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
         </div>
       )}
 
-      {/* Botón de envío */}
+      {/* Botón */}
       <div className="flex flex-col items-center justify-center">
-        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={loadingParticipants}>
-          Añadir Gasto
+        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={loadingParticipants || loadingExpenseContext}>
+          {isUpdatePage ? "Guardar Cambios" : "Añadir Gasto"}
         </button>
       </div>
     </form>
