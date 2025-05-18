@@ -3,16 +3,18 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useAuth } from "./AuthContext"; // Importa el AuthContext
+import { useAuth } from "./AuthContext";
 import { fetchGetMembersByGroupId } from "@/services/fetchGetMembersByGroupId";
 import { fetchGetUserMemberships } from "@/services/fetchGetUserMemberships";
 import { fetchGetActualGroupUserMembership } from "@/services/fetchGetActualGroupUserMembership";
+import { fetchUpdateGroup } from "@/services/fetchUpdateGroup";
 import {
   MembershipContextType,
   Membership,
   UserMembership,
-  ActualGroupMembership, // Importa la nueva interfaz
+  ActualGroupMembership,
 } from "./interfaces/memberships.interfaces";
+import { IFormEvent } from "@/components/Event_Form/types";
 import { usePathname } from "next/navigation";
 
 const MembershipContext = createContext<MembershipContextType | undefined>(undefined);
@@ -32,19 +34,31 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
   const [userMemberships, setUserMemberships] = useState<UserMembership[]>([]);
   const [userMembershipsErrors, setUserMembershipsErrors] = useState<string[]>([]);
   const [loadingUserMemberships, setLoadingUserMemberships] = useState(false);
-  const [actualGroupMembership, setActualGroupMembership] = useState<ActualGroupMembership| null>(null);
+  const [actualGroupMembership, setActualGroupMembership] = useState<ActualGroupMembership | null>(null);
   const [actualGroupMembershipErrors, setActualGroupMembershipErrors] = useState<string[]>([]);
   const [loadingActualGroupUserMembership, errorLoadingActualGroupUserMembership] = useState(false);
+  const [updatingGroup, setUpdatingGroup] = useState(false);
+  const [updateGroupErrors, setUpdateGroupErrors] = useState<string[]>([]);
   const { user } = useAuth();
   const pathname = usePathname();
 
   useEffect(() => {
     const isEventDetailsRoute = pathname.startsWith("/Event_Details/");
     const isAddSpentRoute = pathname.startsWith("/Add_Spent/");
+
     if (!isEventDetailsRoute && !isAddSpentRoute) {
+      console.log("Se borro actualMembership.")
       setActualGroupMembership(null);
     }
   }, [pathname]);
+
+  useEffect(() => {
+    if (actualGroupMembership?.group?.id) {
+      getParticipantsByGroupId(actualGroupMembership.group.id.toString());
+    } else {
+      setParticipants([]);
+    }
+  }, [actualGroupMembership]);
 
   useEffect(() => {
     if (participantsErrors.length > 0) {
@@ -59,6 +73,13 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
       return () => clearTimeout(timer);
     }
   }, [userMembershipsErrors]);
+
+  useEffect(() => {
+    if (updateGroupErrors.length > 0) {
+      const timer = setTimeout(() => setUpdateGroupErrors([]), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [updateGroupErrors]);
 
   useEffect(() => {
     if (user) {
@@ -97,7 +118,7 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
       if (token) {
         const memberships = await fetchGetUserMemberships(token);
         setUserMemberships(memberships);
-        console.log("Membresias desde el back: ",memberships)
+        console.log("Membresias desde el back: ", memberships);
       } else {
         setUserMemberships([]);
       }
@@ -132,6 +153,35 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateGroup = async (groupId: string, groupData: Omit<IFormEvent, 'participants'> & { participants: string[], locationName?: string | null, latitude?: number | null, longitude?: number | null, emoji?: string }): Promise<void> => {
+    setUpdatingGroup(true);
+    setUpdateGroupErrors([]);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No hay token de autenticación para actualizar el grupo.");
+      setUpdateGroupErrors(["No hay token de autenticación."]);
+      setUpdatingGroup(false);
+      return;
+    }
+
+    try {
+      const updatedGroup = await fetchUpdateGroup(groupData, token, groupId);
+      console.log("Grupo actualizado:", updatedGroup);
+      // Actualizar el estado de actualGroupMembership
+      if (actualGroupMembership) {
+        setActualGroupMembership({
+          ...actualGroupMembership,
+          group: updatedGroup,
+        });
+      }
+    } catch (error: any) {
+      console.error(`Error al actualizar el grupo ${groupId}:`, error);
+      setUpdateGroupErrors([error.message || "Error al actualizar el grupo."]);
+    } finally {
+      setUpdatingGroup(false);
+    }
+  };
+
   return (
     <MembershipContext.Provider
       value={{
@@ -147,7 +197,10 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
         setActualGroupMembership,
         actualGroupMembershipErrors,
         loadingActualGroupUserMembership,
-        getActualGroupUserMembership
+        getActualGroupUserMembership,
+        updateGroup,
+        updatingGroup,
+        updateGroupErrors,
       }}
     >
       {children}

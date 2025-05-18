@@ -1,3 +1,4 @@
+// src/components/Event_Form/Event_Form.tsx
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -8,18 +9,26 @@ import Image from "next/image";
 import { IFormEvent, UserSuggestion, User } from "./types";
 import { fetchUsersByEmail } from "@/services/fetchUsersByEmail";
 import { useGroup } from "@/context/GroupContext";
-import { useAuth } from "@/context/AuthContext"; // Importa useAuth
+import { useAuth } from "@/context/AuthContext";
+import { useMembership } from "@/context/MembershipContext"; // Importa useMembership
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import dynamic from "next/dynamic";
 import { LatLngLiteral } from "leaflet";
+import { useRouter } from "next/navigation";
 
 const MapSelector = dynamic(() => import("../Map_Selector/Map_Selector"), { ssr: false });
 
-export const Event_Form = () => {
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormEvent>({ mode: "onBlur" });
+interface EventFormProps {
+  slug?: string;
+}
+
+export const Event_Form: React.FC<EventFormProps> = ({ slug }) => {
+  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<IFormEvent>({ mode: "onBlur" });
   const { createGroup, groupErrors } = useGroup();
-  const { user } = useAuth(); // Usa el hook useAuth para obtener el usuario
+  const { participants, updateGroup, updatingGroup, updateGroupErrors, actualGroupMembership } = useMembership();
+  const { user } = useAuth();
+  const router = useRouter();
 
   const [emailSearch, setEmailSearch] = useState<string>("");
   const [emailSuggestions, setEmailSuggestions] = useState<UserSuggestion[]>([]);
@@ -28,13 +37,43 @@ export const Event_Form = () => {
   const [emoji, setEmoji] = useState("");
   const [location, setLocation] = useState<LatLngLiteral | null>(null);
   const [locationName, setLocationName] = useState("");
+  const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
-    // Add the logged-in user as the first participant by default
-    if (user?.id && !selectedParticipants.some(p => p.id === user.id)) {
-      setSelectedParticipants([{ id: user.id, name: user.name, email: user.email }]);
+    if (slug) {
+      setIsUpdate(true);
+      // Cargar los datos del evento para actualizar
+      console.log("slug: ", slug);
+      console.log("Participantes: ", participants);
+      console.log("Membresia actual: ", actualGroupMembership);
+      if (actualGroupMembership?.group) {
+        const { name, emoji: groupEmoji, latitude, longitude } = actualGroupMembership.group;
+        setValue("name", name);
+        setEmoji(groupEmoji || "");
+        setValue("emoji", groupEmoji || "");
+        setLocation(latitude && longitude ? { lat: latitude, lng: longitude } : null);
+        setLocationName(name); // Usar el nombre del grupo como nombre de ubicación inicial
+        // Cargar los participantes iniciales (excluyendo al usuario logueado)
+        const initialParticipants = participants.filter(member => member.user.id !== user?.id).map(member => ({
+          id: member.user.id,
+          name: member.user.name,
+          email: member.user.email,
+        }));
+        setSelectedParticipants(initialParticipants);
+      }
+    } else {
+      setIsUpdate(false);
+      // Add the logged-in user as the first participant by default for creating
+      if (user?.id && !selectedParticipants.some(p => p.id === user.id)) {
+        setSelectedParticipants([{ id: user.id, name: user.name, email: user.email }]);
+      }
+      reset({ name: "", emoji: "", participants: [] });
+      setEmoji("");
+      setLocation(null);
+      setLocationName("");
+      setSelectedParticipants(user?.id ? [{ id: user.id, name: user.name, email: user.email }] : []);
     }
-  }, [user?.id, user?.name, user?.email, selectedParticipants]);
+  }, [slug, user?.id, user?.name, user?.email, setValue, actualGroupMembership, reset]);
 
   useEffect(() => {
     const participantIds = selectedParticipants.map(participant => participant.id);
@@ -46,7 +85,7 @@ export const Event_Form = () => {
       if (emailSearch.length >= 2) {
         try {
           const results: User[] = await fetchUsersByEmail(emailSearch);
-          const filteredResults = results.filter((u: User) => u.id !== user?.id);
+          const filteredResults = results.filter((u: User) => u.id !== user?.id && !selectedParticipants.some(p => p.id === u.id));
           setEmailSuggestions(filteredResults.slice(0, 5));
         } catch (error) {
           console.error(error);
@@ -58,7 +97,7 @@ export const Event_Form = () => {
     }, 300);
 
     return () => clearTimeout(delayDebounce);
-  }, [emailSearch]);
+  }, [emailSearch, user?.id, selectedParticipants]);
 
   const handleSelectEmail = (suggestedUser: UserSuggestion) => {
     if (!selectedParticipants.some(p => p.id === suggestedUser.id)) {
@@ -73,19 +112,31 @@ export const Event_Form = () => {
   };
 
   const onSubmit: SubmitHandler<IFormEvent> = async (data) => {
-  const participantsToSend = [...new Set([...data.participants, user?.id].filter(Boolean) as string[])];
+    const participantsToSend = [...new Set([...data.participants, user?.id].filter(Boolean) as string[])];
 
-  const groupDataToSend = {
-    name: data.name,
-    emoji,
-    participants: participantsToSend,
-    locationName: data.name,
-    latitude: location?.lat,
-    longitude: location?.lng,
+    const groupDataToSend = {
+      name: data.name,
+      emoji,
+      participants: participantsToSend,
+      locationName: locationName || data.name,
+      latitude: location?.lat,
+      longitude: location?.lng,
+    };
+
+    if (isUpdate && slug) {
+      console.log("Datos para actualizar el grupo:", groupDataToSend);
+      await updateGroup(slug, groupDataToSend);
+      if (!updateGroupErrors.length && !updatingGroup) {
+        router.push(`/Event_Details/${slug}`);
+      }
+    } else {
+      console.log("Datos para crear el grupo:", groupDataToSend);
+      await createGroup(groupDataToSend);
+      if (!groupErrors.length) {
+        router.push('/'); // Redirigir a la página principal después de la creación exitosa
+      }
+    }
   };
-  console.log(groupDataToSend)
-  createGroup(groupDataToSend);
-};
 
   const handleEmojiSelect = (emojiObject: any) => {
     setEmoji(emojiObject.native);
@@ -123,7 +174,7 @@ export const Event_Form = () => {
                 data={data}
                 onEmojiSelect={handleEmojiSelect}
                 theme="light"
-             />
+              />
             </div>
           )}
         </div>
@@ -143,7 +194,7 @@ export const Event_Form = () => {
               />
               <button
                 type="button"
-                onClick={() => handleRemoveParticipant(index + (user?.id ? 1 : 0))} // Adjust index
+                onClick={() => handleRemoveParticipant(index)}
                 className="p-1 rounded-full bg-red-500 text-white text-xs focus:outline-none"
               >
                 X
@@ -172,16 +223,17 @@ export const Event_Form = () => {
           )}
         </div>
       </div>
-      
-      {groupErrors.length > 0 && (
+
+      {(groupErrors.length > 0 || updateGroupErrors.length > 0) && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
-          {groupErrors.map((error, index) => (
+          {(groupErrors.length > 0 ? groupErrors : updateGroupErrors).map((error, index) => (
             <p key={index} className="text-sm">
               {error}
             </p>
           ))}
         </div>
       )}
+
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Ubicación del evento</label>
         <input
@@ -193,11 +245,13 @@ export const Event_Form = () => {
         />
 
         <div className="w-full h-[300px] rounded-lg overflow-hidden">
-          <MapSelector onSelectLocation={setLocation} />
+          <MapSelector onSelectLocation={setLocation} initialLocation={location} />
         </div>
       </div>
       <div className="flex flex-col items-center justify-center">
-        <button type="submit" className="btn-yellow text-[16px] mt-8">Crear Evento</button>
+        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={updatingGroup}>
+          {isUpdate ? (updatingGroup ? "Actualizando Evento..." : "Actualizar Evento") : "Crear Evento"}
+        </button>
       </div>
     </form>
   );

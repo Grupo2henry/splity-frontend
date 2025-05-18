@@ -4,24 +4,22 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useExpenses } from "@/context/ExpensesContext";
-import { useGroup } from "@/context/GroupContext";
 import { useMembership } from "@/context/MembershipContext"; // Importa el MembershipContext
 import { IFormGasto } from "./types";
 
 export const Add_Expenses = ({ slugNumber }: { slugNumber: number }) => {
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<IFormGasto>({ mode: "onBlur" });
   const { createExpense, expenseErrors } = useExpenses();
-  const { actualGroup } = useGroup();
-  const { participants, loadingParticipants, participantsErrors } = useMembership(); // Obtén participants del contexto
+  const { participants, loadingParticipants, participantsErrors, actualGroupMembership } = useMembership(); // Obtén participants del contexto
 
   setValue("imgUrl", "/image1.svg");
   console.log("Participantes", participants, "Este es el slug: ", slugNumber);
   useEffect(() => {
-  }, [actualGroup]);
+  }, [actualGroupMembership]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
-    if (actualGroup?.id) {
-      await createExpense(data, actualGroup.id.toString());
+    if (actualGroupMembership?.group.id) {
+      await createExpense(data, actualGroupMembership.group.id.toString());
     }
   };
 

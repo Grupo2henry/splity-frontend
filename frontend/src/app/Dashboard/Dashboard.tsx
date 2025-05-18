@@ -12,6 +12,7 @@ import Button from "@/components/Button/Button";
 export const Dashboard = () => {
   const { user, loading, userValidated } = useAuth();
   const router = useRouter();
+  console.log("Usuario: ", user)
 
   useEffect(() => {
     if (!userValidated && !loading) {

@@ -31,8 +31,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
         <QueryClientWrapper>
           <AuthProvider>
-            <GroupProvider>
-              <MembershipProvider>
+            <MembershipProvider>
+              <GroupProvider>
                 <ExpensesProvider>
                   <BalanceProvider>
                     <NavBar />
@@ -41,8 +41,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                       </div>
                   </BalanceProvider>  
                 </ExpensesProvider>
-              </MembershipProvider>
-            </GroupProvider>
+              </GroupProvider>
+            </MembershipProvider>
           </AuthProvider>
         </QueryClientWrapper>
       </body>

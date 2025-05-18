@@ -69,4 +69,9 @@ export interface MembershipContextType {
   actualGroupMembershipErrors: string[];
   loadingActualGroupUserMembership: boolean;
   getActualGroupUserMembership: (groupId: string) => Promise<void>
+
+  updateGroup: (groupId: string, groupData: any) => Promise<void>;
+  updatingGroup: boolean;
+  updateGroupErrors: string[];
+
 }

@@ -6,15 +6,18 @@ import { formatDate } from "./dateFuntion";
 import { useExpenses } from "@/context/ExpensesContext";
 import { useAuth } from "@/context/AuthContext"; // Necesitamos el usuario para calcular "Mis gastos"
 import { Expense } from "@/context/interfaces/expense.interface"; // Importa la interfaz Expense
+import { useMembership } from "@/context/MembershipContext";
 
 export const Expenses_Card = () => {
   const { expenses } = useExpenses();
   const { user } = useAuth();
   const [ grouped, setGrouped ] = useState<Record<string, Expense[]>>({});
+  const { actualGroupMembership } = useMembership()
 
   // Calcular los gastos totales del grupo
   const totalExpenses = expenses?.map((expense) => expense.amount).reduce((a, b) => a + b, 0) || 0;
-
+  console.log("Gastos: ", expenses);
+  console.log("Membresía: ", actualGroupMembership)
   // Calcular mis gastos dentro del grupo
   const totalPaidByMe = expenses?.filter((expense) => expense.paid_by?.id && user?.id && String(expense.paid_by.id) === user.id)
   .map((expense) => expense.amount)

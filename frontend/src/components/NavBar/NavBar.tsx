@@ -16,6 +16,7 @@ export default function NavBar() {
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
+    console.log("Se quito la membresia")
     setActualGroupMembership(null);
     logout();
     setIsProfileMenuOpen(false);
