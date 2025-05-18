@@ -145,7 +145,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
 
   // Efecto para cargar los grupos iniciales al loguearse el usuario
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
       fetchMemberGroups();
       fetchAdminGroups();
     } else {

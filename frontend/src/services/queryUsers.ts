@@ -1,15 +1,17 @@
 // hooks/useUsers.ts
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "./authContext/authContext";
 
-export const useUsers = (page: number, search: string) => {
-  const { token } = useAuth();
+export const useUsers = (
+  page: number,
+  search: string,
+  token: string | null
+) => {
   console.log("el token esta?", token);
   return useQuery({
     queryKey: ["users", page, search],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:4000/users/usersByAdmin?page=${page}&limit=6&search=${search}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/usersAdmin?page=${page}&limit=8&search=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

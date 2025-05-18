@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState } from "react";
@@ -7,13 +7,13 @@ import { useGroupDetails } from "@/services/groupsDetailsHook";
 import { useRouter } from "next/navigation";
 import { handleGroupDeactivate, handleGroupActivate } from "@/services/handlerUserAdmin/handlerGroup";
 import Link from "next/link";
-import { useAuth } from "@/services/authContext/authContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function GroupsDetails({ params }: { params: Promise<{ id: string }> }) {
+  const {token} = useAuth()
   const resolvedParams = React.use(params);
   const groupId = resolvedParams.id;
-  const { data, isLoading, error } = useGroupDetails(groupId);
-  const { token } = useAuth();
+  const { data, isLoading, error } = useGroupDetails(groupId, token );
   const router = useRouter();
   const queryClient = useQueryClient();
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);

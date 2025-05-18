@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { User } from "./userInterface";
-import { useAuth } from "../authContext/authContext";
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;
 
 interface HandlerResponse {
   success: boolean;
@@ -16,12 +14,15 @@ export const handleDeletePhoto = async (
   ) => Promise<QueryObserverResult<User, Error>>
 ): Promise<HandlerResponse> => {
   try {
-    const res = await fetch(`${API_URL}/${userId}/profile-picture`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-picture`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (!res.ok) throw new Error("Error al eliminar la foto de perfil");
     await refetch();
@@ -39,14 +40,17 @@ export const handleActivateUser = async (
   ) => Promise<QueryObserverResult<User, Error>>
 ): Promise<HandlerResponse> => {
   try {
-    const res = await fetch(`${API_URL}/activate-admin/${userId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ active: true }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/activate-admin/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ active: true }),
+      }
+    );
 
     if (!res.ok) throw new Error("Error al activar el usuario");
     await refetch();
@@ -64,14 +68,17 @@ export const handleDesactivateUser = async (
   ) => Promise<QueryObserverResult<User, Error>>
 ): Promise<HandlerResponse> => {
   try {
-    const res = await fetch(`${API_URL}/desactivate-admin/${userId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ active: false }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/desactivate-admin/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ active: false }),
+      }
+    );
 
     if (!res.ok) throw new Error("Error al desactivar el usuario");
     await refetch();
