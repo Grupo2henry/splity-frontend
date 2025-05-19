@@ -141,7 +141,6 @@
   .button:hover {
     background: #c9daff;
     color: #1e3a8a;
-  }
     border-radius: 0.75rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 223, 0, 0.2);

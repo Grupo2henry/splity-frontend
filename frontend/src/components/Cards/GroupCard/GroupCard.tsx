@@ -10,7 +10,7 @@ interface CardGroupProps {
   subtitleColor?: string;      // color del subtítulo (tailwind)
 }
 
-export const Card_Group = ({
+export const GroupCard = ({
   group,
   subtitleText = "miembros",
   bgColor = "bg-gray-700",
@@ -36,4 +36,4 @@ export const Card_Group = ({
   );
 };
 
-export default Card_Group;
+export default GroupCard;
