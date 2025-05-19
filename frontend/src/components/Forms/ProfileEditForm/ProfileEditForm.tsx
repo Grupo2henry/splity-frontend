@@ -2,8 +2,9 @@
 
 import { useState, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import CustomAlert, { useCustomAlert } from '@/components/CustomAlert/CustomAlert';
+import { useCustomAlert } from '@/components/CustomAlert/CustomAlert';
 import updateUserProfile from '@/services/auth-services/updateUserProfile';
+import Image from 'next/image'; // Import the Image component
 
 interface ProfileEditFormProps {
   onCancel: () => void;
@@ -92,10 +93,12 @@ const ProfileEditForm = ({ onCancel, onSave }: ProfileEditFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex flex-col items-center gap-2">
-        <img
+        <Image
           src={imagePreview || '/default-avatar.svg'}
           alt="Imagen de perfil"
-          className="w-24 h-24 rounded-full object-cover border border-gray-200 mb-2"
+          width={96} // Adjust as needed
+          height={96} // Adjust as needed
+          className="rounded-full object-cover border border-gray-200 mb-2"
         />
         <input
           type="file"
@@ -166,4 +169,4 @@ const ProfileEditForm = ({ onCancel, onSave }: ProfileEditFormProps) => {
   );
 };
 
-export default ProfileEditForm; 
+export default ProfileEditForm;

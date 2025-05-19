@@ -1,4 +1,3 @@
-// src/components/Event_Form/Event_Form.tsx
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -10,14 +9,14 @@ import { IFormEvent, UserSuggestion, User } from "./types";
 import { fetchUsersByEmail } from "@/services/auth-services/fetchUsersByEmail";
 import { useGroup } from "@/context/GroupContext";
 import { useAuth } from "@/context/AuthContext";
-import { useMembership } from "@/context/MembershipContext"; // Importa useMembership
+import { useMembership } from "@/context/MembershipContext";
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import dynamic from "next/dynamic";
 import { LatLngLiteral } from "leaflet";
 import { useRouter } from "next/navigation";
 
-const MapSelector = dynamic(() => import("../../MapSelector/MapSelector"), { ssr: false });
+const MapSelector = dynamic(() => import("../../MapSelector/GoogleMapSelector"), { ssr: false });
 
 interface EventFormProps {
   slug?: string;
@@ -40,35 +39,37 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
-    if (slug) {
+    if (slug && actualGroupMembership?.group) {
       setIsUpdate(true);
-      if (actualGroupMembership?.group) {
-        const { name, emoji: groupEmoji, latitude, longitude } = actualGroupMembership.group;
-        setValue("name", name);
-        setEmoji(groupEmoji || "");
-        setValue("emoji", groupEmoji || "");
-        setLocation(latitude && longitude ? { lat: latitude, lng: longitude } : null);
-        setLocationName(name);
-        const initialParticipants = participants.filter(member => member.user.id !== user?.id).map(member => ({
+      const { name, emoji: groupEmoji, latitude, longitude } = actualGroupMembership.group;
+
+      reset({ name, emoji: groupEmoji || "", participants: [] });
+      setEmoji(groupEmoji || "");
+      setValue("emoji", groupEmoji || "");
+      setLocation(latitude && longitude ? { lat: latitude, lng: longitude } : null);
+      setLocationName(name);
+
+      const initialParticipants = participants
+        .filter(member => member.user.id !== user?.id)
+        .map(member => ({
           id: member.user.id,
           name: member.user.name,
           email: member.user.email,
         }));
-        setSelectedParticipants(initialParticipants);
-      }
-    } else {
+
+      setSelectedParticipants([
+        ...(user ? [{ id: user.id, name: user.name, email: user.email }] : []),
+        ...initialParticipants
+      ]);
+    } else if (!slug && user) {
       setIsUpdate(false);
-      // Add the logged-in user as the first participant by default for creating
-      if (user?.id && !selectedParticipants.some(p => p.id === user.id)) {
-        setSelectedParticipants([{ id: user.id, name: user.name, email: user.email }]);
-      }
       reset({ name: "", emoji: "", participants: [] });
       setEmoji("");
       setLocation(null);
       setLocationName("");
-      setSelectedParticipants(user?.id ? [{ id: user.id, name: user.name, email: user.email }] : []);
+      setSelectedParticipants([{ id: user.id, name: user.name, email: user.email }]);
     }
-  }, [slug, user?.id, user?.name, user?.email, setValue, actualGroupMembership, reset]);
+  }, [slug, user?.id, actualGroupMembership, participants, reset, setValue]);
 
   useEffect(() => {
     const participantIds = selectedParticipants.map(participant => participant.id);
@@ -80,7 +81,9 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       if (emailSearch.length >= 2) {
         try {
           const results: User[] = await fetchUsersByEmail(emailSearch);
-          const filteredResults = results.filter((u: User) => u.id !== user?.id && !selectedParticipants.some(p => p.id === u.id));
+          const filteredResults = results.filter((u: User) => 
+            u.id !== user?.id && !selectedParticipants.some(p => p.id === u.id)
+          );
           setEmailSuggestions(filteredResults.slice(0, 5));
         } catch (error) {
           console.error(error);
@@ -126,7 +129,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
     } else {
       await createGroup(groupDataToSend);
       if (!groupErrors.length) {
-        router.push('/'); // Redirigir a la página principal después de la creación exitosa
+        router.push('/');
       }
     }
   };
