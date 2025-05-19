@@ -17,7 +17,7 @@ import dynamic from "next/dynamic";
 import { LatLngLiteral } from "leaflet";
 import { useRouter } from "next/navigation";
 
-const MapSelector = dynamic(() => import("../../MapSelector/MapSelector"), { ssr: false });
+const MapSelector = dynamic(() => import("../../MapSelector/GoogleMapSelector"), { ssr: false });
 
 interface EventFormProps {
   slug?: string;
@@ -38,7 +38,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   const [location, setLocation] = useState<LatLngLiteral | null>(null);
   const [locationName, setLocationName] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
-
+  console.log("Longitud ", actualGroupMembership?.group.latitude, " | Latitud: ", actualGroupMembership?.group.latitude);
   useEffect(() => {
     if (slug) {
       setIsUpdate(true);
