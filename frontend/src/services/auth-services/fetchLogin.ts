@@ -1,5 +1,5 @@
 // src/services/fetchLogin.ts
-import { IFormLogin } from "@/components/FormLogin/types";
+import { IFormLogin } from "@/components/Forms/LoginForm/types";
 
 export const fetchLogin = async (data: IFormLogin) => {
   const response = await fetch(

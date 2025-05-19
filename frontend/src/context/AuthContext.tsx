@@ -23,6 +23,7 @@ interface AuthContextType {
   userValidated: boolean;
   setUserValidated: (isValidated: boolean) => void;
   googleLogin: (credential: string) => Promise<void>;
+  updateUser: (userData: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -154,6 +155,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     verifyToken();
   }, [router]);
 
+  const updateUser = (userData: User) => {
+    setUser(userData);
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -167,6 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       userValidated,
       setUserValidated,
       googleLogin,
+      updateUser,
     }}>
       {children}
     </AuthContext.Provider>
