@@ -3,12 +3,13 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { IFormGasto } from "@/components/Add_Expenses/types";
+import { IFormGasto } from "@/components/Forms/ExpensesForm/types";
 import { Expense } from "./interfaces/expense.interface";
-import { fetchCreateExpense } from "@/services/fetchCreateExpense";
-import { fetchGetExpensesByGroupId } from "@/services/fetchGetExpensesByGroupId";
-import { fetchGetExpenseById } from "@/services/fetchGetExpenseById";
-import { fetchUpdateExpense } from "@/services/fetchUpdateExpense"; // Importa fetchUpdateExpense
+import { fetchCreateExpense } from "@/services/expenses-services/fetchCreateExpense";
+import { fetchGetExpensesByGroupId } from "@/services/expenses-services/fetchGetExpensesByGroupId";
+import { fetchGetExpenseById } from "@/services/expenses-services/fetchGetExpenseById";
+import { fetchUpdateExpense } from "@/services/expenses-services/fetchUpdateExpense";
+import { fetchDeactivateExpense } from "@/services/expenses-services/fetchDeactivateExpense"; // Importa el nuevo servicio
 import { useMembership } from "./MembershipContext";
 import { useRouter } from "next/navigation";
 
@@ -20,7 +21,8 @@ interface ExpensesContextType {
   createExpense: (expenseData: IFormGasto, groupId: string) => Promise<void>;
   getExpensesByGroupId: (groupId: string) => Promise<void>;
   getExpenseById: (expenseId: string) => Promise<Expense | null>;
-  updateExpense: (expenseData: IFormGasto, expenseId: string, groupId: string) => Promise<void>; // Nueva función
+  updateExpense: (expenseData: IFormGasto, expenseId: string, groupId: string) => Promise<void>;
+  deactivateExpense: (expenseId: string, groupId: string) => Promise<void>; // Nuevo método
 }
 
 const ExpensesContext = createContext<ExpensesContextType | undefined>(undefined);
@@ -141,6 +143,24 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const deactivateExpense = async (expenseId: string, groupId: string): Promise<void> => {
+    setLoadingExpenses(true);
+    setExpenseErrors([]);
+    const token = localStorage.getItem('token');
+    try {
+      if (!token) {
+        throw new Error("No hay token de autenticación.");
+      }
+      await fetchDeactivateExpense(expenseId, token);
+      await getExpensesByGroupId(groupId); // Recargar los gastos después de la desactivación
+    } catch (error: any) {
+      console.error(`Error al desactivar el gasto con ID ${expenseId}:`, error);
+      setExpenseErrors([error.message || "Error al desactivar el gasto."]);
+    } finally {
+      setLoadingExpenses(false);
+    }
+  };
+
   return (
     <ExpensesContext.Provider value={{
       expenses,
@@ -150,7 +170,8 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
       createExpense,
       getExpensesByGroupId,
       getExpenseById,
-      updateExpense, // Añade la nueva función al contexto
+      updateExpense,
+      deactivateExpense, // Añade el nuevo método al contexto
     }}>
       {children}
     </ExpensesContext.Provider>

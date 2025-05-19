@@ -1,13 +1,13 @@
 "use client";
 
-import CheckoutButton from "@/components/Checkout_Button/Checkout_Button";
+import CheckoutButton from "@/components/CheckoutButton/CheckoutButton";
 import NavBar_Dashboard from "@/components/NavBar/NavBar_Dashboard/NavBar_Dashboard";
-import Card_Dashboard from "@/components/Card_Dashboard/Card_Dashboard";
+import GroupsBoard from "@/components/Boards/GroupsBoard/GroupsBoard";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Loader from "@/components/Loader/Loader";
-import Button from "@/components/Button/Button";
+import Button from "@/components/Buttons/Button";
 
 export const Dashboard = () => {
   const { user, loading, userValidated } = useAuth();
@@ -36,7 +36,7 @@ export const Dashboard = () => {
 
   return (
     <div className="divDashboard flex flex-col w-full h-full items-center p-4 relative">
-      <Card_Dashboard />
+      <GroupsBoard />
 
       {shouldBlockFeatures && (
         <>

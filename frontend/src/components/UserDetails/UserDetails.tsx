@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import fetchUserDetails from '@/services/fetchUserDetails';
+import fetchUserDetails from '@/services/auth-services/fetchUserDetails';
 import { useCustomAlert } from '@/components/CustomAlert/CustomAlert';
 
 interface UserDetails {

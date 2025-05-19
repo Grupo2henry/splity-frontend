@@ -1,4 +1,4 @@
-import AdminUserDashboard from "@/components/AdminUserDashboard/AdminUserDashboard";
+import AdminUserDashboard from "@/components/Boards/AdminUserDashboard/AdminUserDashboard";
 
 const usersAdmin = () => {
     return <AdminUserDashboard></AdminUserDashboard>;

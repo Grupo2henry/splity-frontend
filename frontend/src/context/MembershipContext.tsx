@@ -4,17 +4,17 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
-import { fetchGetMembersByGroupId } from "@/services/fetchGetMembersByGroupId";
-import { fetchGetUserMemberships } from "@/services/fetchGetUserMemberships";
-import { fetchGetActualGroupUserMembership } from "@/services/fetchGetActualGroupUserMembership";
-import { fetchUpdateGroup } from "@/services/fetchUpdateGroup";
+import { fetchGetMembersByGroupId } from "@/services/memberships-services/fetchGetMembersByGroupId";
+import { fetchGetUserMemberships } from "@/services/memberships-services/fetchGetUserMemberships";
+import { fetchGetActualGroupUserMembership } from "@/services/memberships-services/fetchGetActualGroupUserMembership";
+import { fetchUpdateGroup } from "@/services/groups-services/fetchUpdateGroup";
 import {
   MembershipContextType,
   Membership,
   UserMembership,
   ActualGroupMembership,
 } from "./interfaces/memberships.interfaces";
-import { IFormEvent } from "@/components/Event_Form/types";
+import { IFormEvent } from "@/components/Forms/EventForm/types";
 import { usePathname } from "next/navigation";
 
 const MembershipContext = createContext<MembershipContextType | undefined>(undefined);
@@ -44,10 +44,15 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const isEventDetailsRoute = pathname.startsWith("/Event_Details/");
-    const isAddSpentRoute = pathname.startsWith("/Add_Spent/");
+    const isAddSpentRoute = pathname.startsWith("/Add_Spent");
     const isUpdateEventRoute = pathname.startsWith("/Update_Event/");
     const isUpdateExpenseRoute = pathname.startsWith("/Update_Spent/");
+    console.log("Estoy en useEffect de MembershipContext");
+    console.log(actualGroupMembership)
+    console.log(isAddSpentRoute);
     if (!isEventDetailsRoute && !isAddSpentRoute && !isUpdateEventRoute && !isUpdateExpenseRoute) {
+      console.log(isEventDetailsRoute, isAddSpentRoute, isUpdateEventRoute, isUpdateExpenseRoute)
+      console.log("Se borro membresía");
       setActualGroupMembership(null);
     }
   }, [pathname]);

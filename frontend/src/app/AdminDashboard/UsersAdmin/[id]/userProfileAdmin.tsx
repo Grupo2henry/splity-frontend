@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { handleDeletePhoto, handleActivateUser, handleDesactivateUser } from "@/services/handlerUserAdmin/handlersUser";
 import { useQuery } from "@tanstack/react-query";
-import Alert from "@/components/AdminUserDashboard/showAlert";
+import Alert from "@/components/Boards/AdminUserDashboard/showAlert";
 import { User } from "@/services/handlerUserAdmin/userInterface";
 const DEFAULT_PROFILE_IMAGE = "/favicon.svg";
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;

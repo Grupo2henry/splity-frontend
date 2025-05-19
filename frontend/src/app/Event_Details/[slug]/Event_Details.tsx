@@ -3,13 +3,13 @@
 
 import Image from "next/image";
 import { NavBar_Event_Details } from "@/components/NavBar/NavBar_Event_Details/NaBar_Event_Details";
-import Expenses_Card from "@/components/Expenses_Card/Expenses_Card";
+import ExpensesBoard from "@/components/Boards/ExpensesBoard/ExpensesBoard";
 import { useParams, useRouter } from "next/navigation";
 import Link from 'next/link'; // Importa Link desde 'next/link'
 import { useMemo, useState, useEffect } from "react";
 import { useMembership } from "@/context/MembershipContext";
 import Loader from "@/components/Loader/Loader";
-import Balance_Board from "@/components/Balance_Board/Balance_Board";
+import BalanceBoard from "@/components/Boards/BalanceBoard/BalanceBoard";
 
 export const Event_Details = () => {
   const [viewState, setViewState] = useState<"Gastos" | "Saldos" | "Comprobantes">("Gastos");
@@ -116,14 +116,14 @@ export const Event_Details = () => {
         ))}
       </div>
 
-      {viewState === "Gastos" && <Expenses_Card />}
+      {viewState === "Gastos" && <ExpensesBoard />}
       {/* Placeholder para futuros componentes */}
-      {viewState === "Saldos" && actualGroupMembership?.group.id && <Balance_Board />}
+      {viewState === "Saldos" && actualGroupMembership?.group.id && <BalanceBoard />}
       {viewState === "Comprobantes" && (
         <div className="text-white">Comprobantes: función en desarrollo</div>
       )}
 
-      {groupId !== null && <NavBar_Event_Details slugNumber={groupId} />}
+      {groupId !== null && <NavBar_Event_Details/>}
     </div>
   );
 };

@@ -4,8 +4,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Group } from "./interfaces/groups.interfaces"; 
-import { fetchCreateGroup } from "@/services/fetchCreateGroup"; 
-import { fetchGetMyGroups } from "@/services/fetchGetMyGroups"; 
+import { fetchCreateGroup } from "@/services/groups-services/fetchCreateGroup"; 
+import { fetchGetMyGroups } from "@/services/groups-services/fetchGetMyGroups"; 
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthContext";
 import { GroupContextType } from "./interfaces/groups.interfaces";

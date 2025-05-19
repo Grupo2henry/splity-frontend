@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
-import ReceiptsBoard from '@/components/Receipts_Board/Receipts_Board';
+import ReceiptsBoard from '@/components/Boards/ReceiptsBoard/ReceiptsBoard';
 
 const ReceiptsPage = () => {
   const { id } = useParams<{ id: string }>();

@@ -4,11 +4,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User } from "./interfaces/user.interface";
 import { IFormLogin } from "@/components/FormLogin/types";
-import { IFormRegister } from "@/components/FormRegister/types";
-import { fetchLogin } from "@/services/fetchLogin";
-import { fetchRegister } from "@/services/fetchRegister";
-import { fetchGetUser } from "@/services/fetchGetUser";
-import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";
+import { IFormRegister } from "@/components/Forms/RegisterForm/types";
+import { fetchLogin } from "@/services/auth-services/fetchLogin";
+import { fetchRegister } from "@/services/auth-services/fetchRegister";
+import { fetchGetUser } from "@/services/auth-services/fetchGetUser";
+import { fetchGoogleLogin } from "@/services/auth-services/fetchGoogleLogin";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {

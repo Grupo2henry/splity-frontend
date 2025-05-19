@@ -4,7 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
 
 // import { TokenProvider } from "@/components/TokenContext/token-context";
-import QueryClientWrapper from "@/components/AdminUserDashboard/QueryClientWrapper";
+import QueryClientWrapper from "@/components/Boards/AdminUserDashboard/QueryClientWrapper";
 import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";

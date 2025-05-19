@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useMembership } from "./MembershipContext";
-import { fetchGroupBalance } from "@/services/fetchGroupBalance";
+import { fetchGroupBalance } from "@/services/groups-services/fetchGroupBalance";
 import { 
     BalanceContextType, 
     BalanceByUser, 

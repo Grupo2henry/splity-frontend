@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useMembership } from "@/context/MembershipContext";
-import CardProfile from "@/components/Card_Profile/Card_Profile";
+import CardProfile from "@/components/Cards/ProfileCard/ProfileCard";
 import { useState, useEffect, useRef } from "react";
-import ProfileBoard from "@/components/Profile_Board/Profile_Board"; // Importa Profile_Board
+import ProfileBoard from "@/components/Boards/ProfileBoard/ProfileBoard"; // Importa Profile_Board
 
 export default function NavBar() {
   const { user, logout } = useAuth();
