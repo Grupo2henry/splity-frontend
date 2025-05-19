@@ -5,14 +5,9 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { handleDeletePhoto, handleActivateUser, handleDesactivateUser } from "@/services/handlerUserAdmin/handlersUser";
 import { useQuery } from "@tanstack/react-query";
-import Alert from "@/components/Boards/AdminUserDashboard/showAlert";
 import { User } from "@/services/handlerUserAdmin/userInterface";
 const DEFAULT_PROFILE_IMAGE = "/favicon.svg";
-<<<<<<< HEAD
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;
-import { useAuth } from "../../../../context/AuthContext";
-=======
->>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
@@ -24,11 +19,7 @@ async function fetchUser(userId: string, token: string | null) {
 }
 
 export default function UserProfile({ params }: { params: Promise<{ id: string }> }) {
-<<<<<<< HEAD
-  const { user } = useAuth();
-=======
   const {token} = useAuth()
->>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
   const resolvedParams = React.use(params);
   const userId = resolvedParams.id;
   const router = useRouter();
