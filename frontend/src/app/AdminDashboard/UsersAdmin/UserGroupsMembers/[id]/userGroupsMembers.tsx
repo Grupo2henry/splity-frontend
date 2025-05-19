@@ -1,7 +1,7 @@
 
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import { useMembersAdmin } from "@/services/queryMembers";
+import { useMembersAdmin } from "@/services/admin-services.ts/queryMembers";
 import Link from "next/link";
 import React, { useState } from "react";
 
