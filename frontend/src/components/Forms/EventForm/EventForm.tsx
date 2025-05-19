@@ -17,7 +17,7 @@ import dynamic from "next/dynamic";
 import { LatLngLiteral } from "leaflet";
 import { useRouter } from "next/navigation";
 
-const MapSelector = dynamic(() => import("../../Map_Selector/Map_Selector"), { ssr: false });
+const MapSelector = dynamic(() => import("../../MapSelector/MapSelector"), { ssr: false });
 
 interface EventFormProps {
   slug?: string;

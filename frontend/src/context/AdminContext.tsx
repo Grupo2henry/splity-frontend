@@ -9,7 +9,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { fetchAdminQueryUsers } from "@/services/fetchAdminQueryUsers";
+import { fetchAdminQueryUsers } from "@/services/admin-services.ts/fetchAdminQueryUsers";
 import { useAuth } from "./AuthContext";
 
 // Definición de la interfaz para un usuario (ajústala según tu modelo)

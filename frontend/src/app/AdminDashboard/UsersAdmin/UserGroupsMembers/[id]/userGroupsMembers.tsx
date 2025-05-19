@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useMembers } from "@/services/queryMembers";
+import { useMembers } from "@/services/admin-services.ts/queryMembers";
 import Link from "next/link";
 import React, { useState } from "react";
 

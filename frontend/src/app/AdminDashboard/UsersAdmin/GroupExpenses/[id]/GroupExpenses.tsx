@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/services/authContext/authContext";
 import React from "react";
-import { useExpensesOfGroups } from "@/services/queryExpensesGroup";
+import { useExpensesOfGroups } from "@/services/admin-services.ts/queryExpensesGroup";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {

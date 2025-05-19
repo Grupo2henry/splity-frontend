@@ -3,7 +3,7 @@
 import NavBar_Dashboard from "@/components/NavBar/NavBar_Dashboard/NavBar_Dashboard";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { reportPaymentStatus } from "@/services/reportPaymentStatus";
+import { reportPaymentStatus } from "@/services/admin-services.ts/reportPaymentStatus";
 
 const Success = () => {
   const searchParams = useSearchParams();

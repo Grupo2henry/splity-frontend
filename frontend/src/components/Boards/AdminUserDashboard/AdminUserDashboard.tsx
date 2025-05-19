@@ -3,7 +3,7 @@
 // src\app\AdminDashboard\UsersAdmin
 "use client"
 import { useEffect, useState } from "react";
-import { useUsers } from "@/services/fetchAdminQueryUsers";
+import { useUsers } from "@/services/admin-services.ts/fetchAdminQueryUsers";
 import Link from "next/link";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
