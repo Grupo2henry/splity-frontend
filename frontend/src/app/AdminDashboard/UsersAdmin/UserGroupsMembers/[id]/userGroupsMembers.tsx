@@ -1,11 +1,7 @@
 
 "use client";
-<<<<<<< HEAD
-import { useMembers } from "@/services/admin-services.ts/queryMembers";
-=======
 import { useAuth } from "@/context/AuthContext";
-import { useMembers } from "@/services/queryMembers";
->>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
+import { useMembersAdmin } from "@/services/queryMembers";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -29,7 +25,7 @@ export default function UserGroupMembers({ params }: { params: Promise<{ id: str
   const resolvedParams = React.use(params);
   const groupId = resolvedParams.id;
   const [page, setPage] = useState(1);
-  const { data, isLoading, error, refetch } = useMembers(groupId, page);
+  const { data, isLoading, error, refetch } = useMembersAdmin(groupId, page);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const {token} = useAuth()
   const toggleUserStatus = async (memberId: string) => {
