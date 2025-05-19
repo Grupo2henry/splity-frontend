@@ -5,18 +5,27 @@ import Image from "next/image";
 import { NavBar_Event_Details } from "@/components/NavBar/NavBar_Event_Details/NaBar_Event_Details";
 import ExpensesBoard from "@/components/Boards/ExpensesBoard/ExpensesBoard";
 import { useParams, useRouter } from "next/navigation";
-import Link from 'next/link'; // Importa Link desde 'next/link'
+import Link from "next/link";
 import { useMemo, useState, useEffect } from "react";
 import { useMembership } from "@/context/MembershipContext";
 import Loader from "@/components/Loader/Loader";
 import BalanceBoard from "@/components/Boards/BalanceBoard/BalanceBoard";
+import GoogleMapSelector from "@/components/MapSelector/GoogleMapSelector";
+
+// 📍 Tipo para coordenadas
+type LatLngLiteral = {
+  lat: number;
+  lng: number;
+};
 
 export const Event_Details = () => {
   const [viewState, setViewState] = useState<"Gastos" | "Saldos" | "Comprobantes">("Gastos");
+  const [selectedLocation, setSelectedLocation] = useState<LatLngLiteral | null>(null);
+  const [locationName, setLocationName] = useState<string | null>(null);
+
   const { slug } = useParams();
   const router = useRouter();
 
-  // 🧠 Memoizar el ID del grupo y validarlo
   const groupId = useMemo(() => {
     const id = Array.isArray(slug) ? slug[0] : slug;
     const num = Number(id);
@@ -27,8 +36,10 @@ export const Event_Details = () => {
     actualGroupMembership,
     getActualGroupUserMembership,
     loadingActualGroupUserMembership,
-    actualGroupMembershipErrors
+    actualGroupMembershipErrors,
   } = useMembership();
+
+  console.log("longitude: ", actualGroupMembership?.group.longitude, "latitude: ", actualGroupMembership?.group.latitude)
 
   // 📦 Traer datos del grupo al montar
   useEffect(() => {
@@ -37,12 +48,30 @@ export const Event_Details = () => {
     }
   }, [groupId]);
 
+  // 🗺️ Inicializar ubicación seleccionada
   useEffect(() => {
     if (
-      !loadingActualGroupUserMembership
-      && actualGroupMembershipErrors.length === 0
-      && groupId !== null
-      && !actualGroupMembership
+      actualGroupMembership?.group.latitude &&
+      actualGroupMembership?.group.longitude
+    ) {
+      setSelectedLocation({
+        lat: actualGroupMembership.group.latitude,
+        lng: actualGroupMembership.group.longitude,
+      });
+    }
+
+    if (actualGroupMembership?.group.locationName) {
+      setLocationName(actualGroupMembership.group.locationName);
+    }
+  }, [actualGroupMembership]);
+
+  // ❌ Manejar caso de grupo no encontrado
+  useEffect(() => {
+    if (
+      !loadingActualGroupUserMembership &&
+      actualGroupMembershipErrors.length === 0 &&
+      groupId !== null &&
+      !actualGroupMembership
     ) {
       const timer = setTimeout(() => {
         router.push("/Dashboard");
@@ -54,10 +83,9 @@ export const Event_Details = () => {
     groupId,
     router,
     loadingActualGroupUserMembership,
-    actualGroupMembership
+    actualGroupMembership,
   ]);
 
-  // 🧾 Estados de carga y error
   if (loadingActualGroupUserMembership) {
     return <Loader isLoading={true} message="Cargando detalles del evento..." />;
   }
@@ -73,10 +101,10 @@ export const Event_Details = () => {
   }
 
   if (
-    !loadingActualGroupUserMembership
-    && groupId !== null
-    && !actualGroupMembership
-    && actualGroupMembershipErrors.length === 0
+    !loadingActualGroupUserMembership &&
+    groupId !== null &&
+    !actualGroupMembership &&
+    actualGroupMembershipErrors.length === 0
   ) {
     return (
       <div className="text-white text-center mt-8">
@@ -84,6 +112,8 @@ export const Event_Details = () => {
       </div>
     );
   }
+
+  console.log(selectedLocation);
 
   return (
     <div className="flex flex-col w-full h-full items-center">
@@ -93,9 +123,14 @@ export const Event_Details = () => {
         <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[#61587C] text-5xl">
           {actualGroupMembership?.group.emoji || "📁"}
         </div>
-        <p className="text-[16px] text-white text-center">{actualGroupMembership?.group.name}</p>
+        <p className="text-[16px] text-white text-center">
+          {actualGroupMembership?.group.name}
+        </p>
         {actualGroupMembership?.group.id && (
-          <Link href={`/Update_Event/${actualGroupMembership.group.id}`} className="text-sm text-blue-500 hover:underline">
+          <Link
+            href={`/Update_Event/${actualGroupMembership.group.id}`}
+            className="text-sm text-blue-500 hover:underline"
+          >
             Editar Evento
           </Link>
         )}
@@ -117,13 +152,30 @@ export const Event_Details = () => {
       </div>
 
       {viewState === "Gastos" && <ExpensesBoard />}
-      {/* Placeholder para futuros componentes */}
       {viewState === "Saldos" && actualGroupMembership?.group.id && <BalanceBoard />}
-      {viewState === "Comprobantes" && (
-        <div className="text-white">Comprobantes: función en desarrollo</div>
-      )}
+      {viewState === "Comprobantes"}
 
-      {groupId !== null && <NavBar_Event_Details/>}
+      {groupId !== null && <NavBar_Event_Details />}
+      <div className="flex flex-col items-center gap-4 w-full px-4">
+          <p className="text-white text-sm">Ubicación del comprobante</p>
+
+          <div className="w-full h-[300px] rounded-lg overflow-hidden pointer-events-none">
+            <GoogleMapSelector
+              initialLocation={selectedLocation}
+              onSelectLocation={() => {
+                // Esta función no debe hacer nada ya que el mapa no es modificable
+              }}
+            />
+          </div>
+          {selectedLocation && (
+            <div className="text-white text-xs text-center mt-2">
+              Ubicación: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
+              {locationName && (
+                <div className="mt-1 italic">({locationName})</div>
+              )}
+            </div>
+          )}
+        </div>
     </div>
   );
 };
