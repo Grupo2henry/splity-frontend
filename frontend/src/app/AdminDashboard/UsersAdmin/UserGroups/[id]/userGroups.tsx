@@ -6,7 +6,6 @@
 import { useEffect, useState } from "react";
 import { useGroupsAdmin } from "@/services/admin-services.ts/queryGroupsUsers";
 import Link from "next/link";
-import { useAuth } from "@/services/authContext/authContext";
 import React from "react";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -18,7 +17,6 @@ const useDebouncedValue = (value: string, delay: number) => {
 };
 ;
 export default function GroupsUsersByAdmin({ params }: { params: Promise<{ id: string }> }) {
-  const { token } = useAuth();
   const resolvedParams = React.use(params);
   const userId = resolvedParams.id;
   const [page, setPage] = useState(1);
@@ -28,10 +26,11 @@ export default function GroupsUsersByAdmin({ params }: { params: Promise<{ id: s
  const debouncedSearch = useDebouncedValue(search, 300);
   const debouncedStartDate = useDebouncedValue(startDate, 300);
   const debouncedEndDate = useDebouncedValue(endDate, 300);
-  const { data, isLoading, error } = useGroups(userId, page, debouncedSearch, debouncedStartDate, debouncedEndDate);
+
+  const { data, isLoading, error } = useGroupsAdmin(userId, page, debouncedSearch, debouncedStartDate, debouncedEndDate);
 
   /////
-  console.log('Debounced values:', { debouncedSearch, debouncedStartDate, debouncedEndDate })
+  console.log('Debounced values:', { debouncedSearch, debouncedStartDate, debouncedEndDate})
 
 const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

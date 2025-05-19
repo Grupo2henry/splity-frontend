@@ -3,7 +3,8 @@
 // src\app\AdminDashboard\UsersAdmin
 "use client"
 import { useEffect, useState } from "react";
-import { useUsers } from "@/services/admin-services.ts/fetchAdminQueryUsers";
+import { useUsers } from "@/services/queryUsers";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -16,10 +17,11 @@ const useDebouncedValue = (value: string, delay: number) => {
   
 };
 export default function AdminUserButton() {
+   const {token} = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 300);
-  const { data, isLoading, error } = useUsers(page, debouncedSearch);
+  const { data, isLoading, error } = useUsers(page, debouncedSearch, token);
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setPage(1);

@@ -1,6 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
+<<<<<<< HEAD
 import { useMembers } from "@/services/admin-services.ts/queryMembers";
+=======
+import { useAuth } from "@/context/AuthContext";
+import { useMembers } from "@/services/queryMembers";
+>>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -26,15 +31,15 @@ export default function UserGroupMembers({ params }: { params: Promise<{ id: str
   const [page, setPage] = useState(1);
   const { data, isLoading, error, refetch } = useMembers(groupId, page);
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
-
+  const {token} = useAuth()
   const toggleUserStatus = async (memberId: string) => {
     setLoadingStates((prev) => ({ ...prev, [memberId]: true }));
     try {
       const response = await fetch(
-        `http://localhost:4000/groups/${groupId}/members/${memberId}/status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/groups/${groupId}/members/${memberId}/status`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {  Authorization: `Bearer ${token}`, },
         }
       );
 

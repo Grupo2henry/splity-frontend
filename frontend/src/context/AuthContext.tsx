@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User } from "./interfaces/user.interface";
-import { IFormLogin } from "@/components/FormLogin/types";
+import { IFormLogin } from "@/components/Forms/LoginForm/types";
 import { IFormRegister } from "@/components/Forms/RegisterForm/types";
 import { fetchLogin } from "@/services/auth-services/fetchLogin";
 import { fetchRegister } from "@/services/auth-services/fetchRegister";
@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
+  token: string | null; // Agregado
   loading: boolean;
   errors: string[];
   login: (credentials: IFormLogin) => Promise<void>;
@@ -36,6 +37,7 @@ export const useAuth = (): AuthContextType => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null); // Estado para el token
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [userValidated, setUserValidated] = useState(false);
@@ -53,10 +55,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setErrors([]);
     try {
       const responseData = await fetchLogin(credentials);
-      const token = responseData?.access_token;
-      if (token) {
-        localStorage.setItem('token', token);
-        const userData = await fetchGetUser(token);
+      const accessToken = responseData?.access_token;
+      if (accessToken) {
+        localStorage.setItem('token', accessToken);
+        setToken(accessToken); // Actualiza el estado del token
+        const userData = await fetchGetUser(accessToken);
         setUser(userData);
         setUserValidated(true);
         router.push("/Dashboard");
@@ -75,9 +78,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setErrors([]);
     try {
-      const token = await fetchGoogleLogin(credential);
-      localStorage.setItem('token', token);
-      const userData = await fetchGetUser(token);
+      const accessToken = await fetchGoogleLogin(credential);
+      localStorage.setItem('token', accessToken);
+      setToken(accessToken); // Actualiza el estado del token
+      const userData = await fetchGetUser(accessToken);
       setUser(userData);
       setUserValidated(true);
       router.push("/Dashboard");
@@ -108,6 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setErrors([]);
     try {
       localStorage.removeItem("token");
+      setToken(null); // Limpia el estado del token
       setUser(null);
       setUserValidated(false);
       router.push("/Login");
@@ -121,14 +126,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
         setUserValidated(true);
+        setToken(null); // Asegura que el token sea null si no hay token
         return;
       }
       try {
-        const userData = await fetchGetUser(token);
+        const userData = await fetchGetUser(storedToken);
         setUser(userData);
+        setToken(storedToken); // Establece el token en el estado
         setUserValidated(true);
       } catch (error: any) {
         if (error.message === "Unauthorized") {
@@ -137,8 +144,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.error("Error al verificar el token:", error.message);
         }
         localStorage.removeItem("token");
+        setToken(null); // Limpia el estado del token
         setUser(null);
-        setUserValidated(true); // para mostrar la UI de login
+        setUserValidated(true);
         router.push("/Login");
       }
     };
@@ -150,6 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider value={{
       user,
       setUser,
+      token, // Agregado al contexto
       loading,
       errors,
       login,

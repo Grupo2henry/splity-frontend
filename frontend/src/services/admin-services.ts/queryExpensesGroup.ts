@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "./authContext/authContext";
+import { useAuth } from "@/context/AuthContext";
 
 export const useExpensesOfGroups = (
   groupId: string,
@@ -20,7 +20,7 @@ export const useExpensesOfGroups = (
       if (endDate) queryParams.append("endDate", endDate);
 
       const res = await fetch(
-        `http://localhost:4000/ExpensesOfGroup/${groupId}?${queryParams}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ExpensesOfGroup/${groupId}?${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

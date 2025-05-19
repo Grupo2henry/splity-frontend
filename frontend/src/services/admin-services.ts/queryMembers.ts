@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "./authContext/authContext";
+import { useAuth } from "@/context/AuthContext";
 // src/services/fetchUsersByEmail.ts
 export const useMembers = (groupId: string, page: number) => {
   const { token } = useAuth();

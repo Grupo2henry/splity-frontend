@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "./authContext/authContext";
 
 // Interfaz para los datos del grupo
 export interface GroupDetails {
@@ -13,9 +12,7 @@ export interface GroupDetails {
 }
 
 // Hook personalizado para obtener detalles de un grupo
-export const useGroupDetails = (groupId: string) => {
-  /**agregar token despues */
-  const { token } = useAuth();
+export const useGroupDetails = (groupId: string, token: string | null) => {
   return useQuery<GroupDetails, Error>({
     queryKey: ["detailsOfGroup", groupId],
     queryFn: async () => {
@@ -23,7 +20,7 @@ export const useGroupDetails = (groupId: string) => {
         throw new Error("No authentication token provided");
       }
       const res = await fetch(
-        `http://localhost:4000/DetailsOfGroup/${groupId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/DetailsOfGroup/${groupId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -4,7 +4,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/services/authContext/authContext";
+import { useAuth } from "@/context/AuthContext";
 import React from "react";
 import { useExpensesOfGroups } from "@/services/admin-services.ts/queryExpensesGroup";
 const useDebouncedValue = (value: string, delay: number) => {

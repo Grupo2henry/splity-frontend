@@ -8,18 +8,27 @@ import { useQuery } from "@tanstack/react-query";
 import Alert from "@/components/Boards/AdminUserDashboard/showAlert";
 import { User } from "@/services/handlerUserAdmin/userInterface";
 const DEFAULT_PROFILE_IMAGE = "/favicon.svg";
+<<<<<<< HEAD
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/users`;
 import { useAuth } from "../../../../context/AuthContext";
+=======
+>>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 async function fetchUser(userId: string, token: string | null) {
-  const res = await fetch(`${API_URL}/${userId}`, { headers: { Authorization: `Bearer ${token}` } });
+  console.log("el token es", token)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, { headers: { Authorization: `Bearer ${token}` } });
   if (!res.ok) { throw new Error("Error al obtener usuario"); }
   return res.json();
 }
 
 export default function UserProfile({ params }: { params: Promise<{ id: string }> }) {
+<<<<<<< HEAD
   const { user } = useAuth();
+=======
+  const {token} = useAuth()
+>>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
   const resolvedParams = React.use(params);
   const userId = resolvedParams.id;
   const router = useRouter();
@@ -67,17 +76,30 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
 
       <div className="grid grid-cols-2 gap-6 mb-6 w-full max-w-lg">
        <div className="relative w-24 h-24 rounded-full overflow-hidden ml-10 mt-5">
+  {user.profile_picture_url ? (
   <Image
-    src={user.profile_picture_url ?? DEFAULT_PROFILE_IMAGE}
+    src={user.profile_picture_url}
     alt="Imagen de perfil"
     fill
     className="object-cover"
   />
+) : <Image
+    src={DEFAULT_PROFILE_IMAGE}
+    alt="Imagen de perfil"
+    fill
+    className="object-cover"
+  />}
+  
 </div>
         <div className="flex flex-col gap-3">
           <button
             onClick={handlePhotoDelete}
-            className="px-4 py-2 bg-[#BE3C25] text-white rounded hover:bg-red-700"
+           disabled={!user.profile_picture_url}
+    className={`px-4 py-2 rounded text-white transition ${
+      user.profile_picture_url
+        ? "bg-[#BE3C25] hover:bg-red-700"
+        : "bg-gray-400 cursor-not-allowed"
+    }`}
           >
             Eliminar Foto
           </button>

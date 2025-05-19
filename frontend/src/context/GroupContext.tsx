@@ -94,7 +94,7 @@ export const GroupProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
       fetchMemberGroups();
       fetchAdminGroups();
     } else {

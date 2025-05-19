@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
+<<<<<<< HEAD
 
 // import { TokenProvider } from "@/components/TokenContext/token-context";
 import QueryClientWrapper from "@/components/Boards/AdminUserDashboard/QueryClientWrapper";
+=======
+import QueryClientWrapper from "@/components/AdminUserDashboard/QueryClientWrapper";
+>>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
 import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
@@ -31,6 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
         <QueryClientWrapper>
           <AuthProvider>
+<<<<<<< HEAD
             <MembershipProvider>
               <GroupProvider>
                 <ExpensesProvider>
@@ -43,6 +48,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 </ExpensesProvider>
               </GroupProvider>
             </MembershipProvider>
+=======
+            <GroupProvider>
+              <ExpensesProvider>
+                <MembershipProvider>
+                  <NavBar />
+                  <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+                    {children}
+                  </div>
+                </MembershipProvider>
+              </ExpensesProvider>
+            </GroupProvider>
+>>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
           </AuthProvider>
         </QueryClientWrapper>
       </body>
