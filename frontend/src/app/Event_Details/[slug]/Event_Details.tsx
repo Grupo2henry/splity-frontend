@@ -21,11 +21,11 @@ type LatLngLiteral = {
 export const Event_Details = () => {
   const [viewState, setViewState] = useState<"Gastos" | "Saldos" | "Comprobantes">("Gastos");
   const [selectedLocation, setSelectedLocation] = useState<LatLngLiteral | null>(null);
+  const [locationName, setLocationName] = useState<string | null>(null);
 
   const { slug } = useParams();
   const router = useRouter();
 
-  // 🧠 Memoizar el ID del grupo y validarlo
   const groupId = useMemo(() => {
     const id = Array.isArray(slug) ? slug[0] : slug;
     const num = Number(id);
@@ -39,12 +39,31 @@ export const Event_Details = () => {
     actualGroupMembershipErrors,
   } = useMembership();
 
+  console.log("longitude: ", actualGroupMembership?.group.longitude, "latitude: ", actualGroupMembership?.group.latitude)
+
   // 📦 Traer datos del grupo al montar
   useEffect(() => {
     if (groupId !== null) {
       getActualGroupUserMembership(groupId.toString());
     }
   }, [groupId]);
+
+  // 🗺️ Inicializar ubicación seleccionada
+  useEffect(() => {
+    if (
+      actualGroupMembership?.group.latitude &&
+      actualGroupMembership?.group.longitude
+    ) {
+      setSelectedLocation({
+        lat: actualGroupMembership.group.latitude,
+        lng: actualGroupMembership.group.longitude,
+      });
+    }
+
+    if (actualGroupMembership?.group.locationName) {
+      setLocationName(actualGroupMembership.group.locationName);
+    }
+  }, [actualGroupMembership]);
 
   // ❌ Manejar caso de grupo no encontrado
   useEffect(() => {
@@ -67,7 +86,6 @@ export const Event_Details = () => {
     actualGroupMembership,
   ]);
 
-  // 🧾 Estados de carga y error
   if (loadingActualGroupUserMembership) {
     return <Loader isLoading={true} message="Cargando detalles del evento..." />;
   }
@@ -94,6 +112,8 @@ export const Event_Details = () => {
       </div>
     );
   }
+
+  console.log(selectedLocation);
 
   return (
     <div className="flex flex-col w-full h-full items-center">
@@ -135,20 +155,27 @@ export const Event_Details = () => {
       {viewState === "Saldos" && actualGroupMembership?.group.id && <BalanceBoard />}
       {viewState === "Comprobantes"}
 
-        <div className="flex flex-col items-center gap-4 w-full px-4">
-          <p className="text-white text-sm">Seleccioná una ubicación para tu comprobante</p>
-          <GoogleMapSelector
-            initialLocation={selectedLocation}
-            onSelectLocation={setSelectedLocation}
-          />
+      {groupId !== null && <NavBar_Event_Details />}
+      <div className="flex flex-col items-center gap-4 w-full px-4">
+          <p className="text-white text-sm">Ubicación del comprobante</p>
+
+          <div className="w-full h-[300px] rounded-lg overflow-hidden pointer-events-none">
+            <GoogleMapSelector
+              initialLocation={selectedLocation}
+              onSelectLocation={() => {
+                // Esta función no debe hacer nada ya que el mapa no es modificable
+              }}
+            />
+          </div>
           {selectedLocation && (
             <div className="text-white text-xs text-center mt-2">
-              Ubicación seleccionada: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
+              Ubicación: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
+              {locationName && (
+                <div className="mt-1 italic">({locationName})</div>
+              )}
             </div>
           )}
         </div>
-
-      {groupId !== null && <NavBar_Event_Details />}
     </div>
   );
 };
