@@ -1,5 +1,5 @@
 import Image from "next/image";
-import FormRegister from "@/components/FormRegister/FormRegister";
+import FormRegister from "@/components/Forms/RegisterForm/RegisterForm";
 
 export const Register = () => {
   return (

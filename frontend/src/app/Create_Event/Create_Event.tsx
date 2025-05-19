@@ -1,10 +1,10 @@
-import Event_Form from "@/components/Event_Form/Event_Form";
+import EventForm from "@/components/Forms/EventForm/EventForm";
 
 export const Create_Event = () => {
     return (
         <div className="flex flex-col w-full h-full items-center">
             {/* <Image src="/logo-splity.png" alt="Logo" width={165} height={175}/> */}
-            <Event_Form />
+            <EventForm />
             {/* <NavBar /> */}
         </div>
     );
