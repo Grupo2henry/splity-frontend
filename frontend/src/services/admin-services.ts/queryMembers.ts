@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 // src/services/fetchUsersByEmail.ts
-export const useMembers = (groupId: string, page: number) => {
+export const useMembersAdmin = (groupId: string, page: number) => {
   const { token } = useAuth();
   if (!token) {
     throw new Error("No hay token disponible. El usuario no está autenticado.");

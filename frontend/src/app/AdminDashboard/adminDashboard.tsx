@@ -40,14 +40,18 @@ const AdminDashboard = () => {
           </button>
         </Link>
         {/* Botón Grupos */}
-        <button className="card">
+         <Link href={"AdminDashboard/GroupsAdmin"} className="card">
+        <button className="mx-auto">
           <h2 className="mx-auto my-auto text-white text-2xl font-semibold tracking-wide">Grupos</h2>
         </button>
+        </Link>
 
         {/* Botón Gastos */}
-        <button className="card">
+        <Link href={"AdminDashboard/ExpensesAdmin"} className="card">
+        <button className="mx-auto">
           <h2 className="mx-auto my-auto text-white text-2xl font-semibold tracking-wide">Gastos</h2>
         </button>
+        </Link>
       </div>
     );
   }
