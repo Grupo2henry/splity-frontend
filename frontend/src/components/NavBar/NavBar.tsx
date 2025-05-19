@@ -4,18 +4,20 @@ import styles from "./NavBar.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { useGroup } from "@/context/GroupContext";
-import CardProfile from "@/components/Card_Profile/Card_Profile";
+import { useMembership } from "@/context/MembershipContext";
+import CardProfile from "@/components/Cards/ProfileCard/ProfileCard";
 import { useState, useEffect, useRef } from "react";
+import ProfileBoard from "@/components/Boards/ProfileBoard/ProfileBoard"; // Importa Profile_Board
 
 export default function NavBar() {
   const { user, logout } = useAuth();
-  const {setActualGroup} = useGroup();
+  const { setActualGroupMembership } = useMembership();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
-    setActualGroup(null);
+    console.log("Se quito la membresia")
+    setActualGroupMembership(null);
     logout();
     setIsProfileMenuOpen(false);
   };
@@ -99,32 +101,28 @@ export default function NavBar() {
 
       {/* Sidebar flotante */}
       <div
-  ref={sidebarRef}
-  className={`fixed top-0 right-0 h-screen w-[400px] bg-gray-100 shadow-lg z-50 transition-transform duration-300 ease-in-out ${
-    isProfileMenuOpen ? "translate-x-0" : "translate-x-full"
-  }`}
->
-  {/* Botón cerrar (X) */}
-          <button
-            onClick={() => setIsProfileMenuOpen(false)}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold focus:outline-none"
-            aria-label="Cerrar menú de perfil"
-              >
-            &times;
-          </button>
+        ref={sidebarRef}
+        className={`fixed top-0 right-0 h-screen w-[400px] bg-gray-100 shadow-lg z-50 transition-transform duration-300 ease-in-out ${
+          isProfileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Botón cerrar (X) */}
+        <button
+          onClick={() => setIsProfileMenuOpen(false)}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold focus:outline-none"
+          aria-label="Cerrar menú de perfil"
+        >
+          &times;
+        </button>
 
-            <div className="p-6 mt-10"> {/* Empujamos el contenido hacia abajo para que no se tape con la "X" */}
-              <h2 className="text-lg font-semibold mb-4">
-                ¡Hola, {user?.name || user?.username}!
-              </h2>
-              <p className="text-sm text-gray-600 mb-2">{user?.email}</p>
-              <button
-                onClick={handleLogout}
-                className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded"
-              >
-            Cerrar sesión
-          </button>
+        <div className="p-6 mt-10">
+          {user && <ProfileBoard />} {/* Renderiza el ProfileBoard si el usuario está autenticado */}
         </div>
+        <button 
+          onClick={handleLogout} 
+          className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded">
+            Cerrar sesión
+        </button>
       </div>
     </>
   );

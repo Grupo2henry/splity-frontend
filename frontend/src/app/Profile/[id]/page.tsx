@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
-import ProfileBoard from '@/components/Profile_Board/Profile_Board';
+import ProfileBoard from '@/components/Boards/ProfileBoard/ProfileBoard';
 
 const ProfilePage = () => {
   const { id } = useParams<{ id: string }>();

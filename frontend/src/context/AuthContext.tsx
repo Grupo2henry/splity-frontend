@@ -2,18 +2,18 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { IUser } from "./interfaces/user.interface";
-import { IFormLogin } from "@/components/FormLogin/types";
-import { IFormRegister } from "@/components/FormRegister/types";
-import { fetchLogin } from "@/services/fetchLogin";
-import { fetchRegister } from "@/services/fetchRegister";
-import { fetchGetUser } from "@/services/fetchGetUser";
-import { fetchGoogleLogin } from "@/services/fetchGoogleLogin";
+import { User } from "./interfaces/user.interface";
+import { IFormLogin } from "@/components/Forms/LoginForm/types";
+import { IFormRegister } from "@/components/Forms/RegisterForm/types";
+import { fetchLogin } from "@/services/auth-services/fetchLogin";
+import { fetchRegister } from "@/services/auth-services/fetchRegister";
+import { fetchGetUser } from "@/services/auth-services/fetchGetUser";
+import { fetchGoogleLogin } from "@/services/auth-services/fetchGoogleLogin";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
-  user: IUser | null;
-  setUser: (user: IUser | null) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
   token: string | null; // Agregado
   loading: boolean;
   errors: string[];
@@ -36,7 +36,7 @@ export const useAuth = (): AuthContextType => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null); // Estado para el token
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -98,7 +98,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setErrors([]);
     try {
       await fetchRegister(credentials);
-      console.log("Registro exitoso");
       router.push("/Login");
     } catch (error: any) {
       console.error("Error en el registro:", error);

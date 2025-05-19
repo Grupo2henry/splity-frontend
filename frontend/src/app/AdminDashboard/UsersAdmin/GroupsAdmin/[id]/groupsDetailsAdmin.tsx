@@ -3,7 +3,7 @@
 "use client";
 import React, { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useGroupDetails } from "@/services/groupsDetailsHook";
+import { useGroupDetails } from "@/services/admin-services.ts/groupsDetailsHook";
 import { useRouter } from "next/navigation";
 import { handleGroupDeactivate, handleGroupActivate } from "@/services/handlerUserAdmin/handlerGroup";
 import Link from "next/link";

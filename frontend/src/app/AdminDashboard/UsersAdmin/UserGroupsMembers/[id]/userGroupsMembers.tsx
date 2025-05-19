@@ -1,7 +1,11 @@
 
 "use client";
+<<<<<<< HEAD
+import { useMembers } from "@/services/admin-services.ts/queryMembers";
+=======
 import { useAuth } from "@/context/AuthContext";
 import { useMembers } from "@/services/queryMembers";
+>>>>>>> 091cf95c4a98629d091a6fbc2ca22ddf6690cb89
 import Link from "next/link";
 import React, { useState } from "react";
 

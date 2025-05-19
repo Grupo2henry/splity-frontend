@@ -4,7 +4,7 @@
 // src\app\AdminDashboard\UsersAdmin
 "use client"
 import { useEffect, useState } from "react";
-import { useGroupsAdmin } from "@/services/queryGroupsUsers";
+import { useGroupsAdmin } from "@/services/admin-services.ts/queryGroupsUsers";
 import Link from "next/link";
 import React from "react";
 const useDebouncedValue = (value: string, delay: number) => {

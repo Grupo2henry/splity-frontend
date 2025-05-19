@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
-import QueryClientWrapper from "@/components/AdminUserDashboard/QueryClientWrapper";
+
+// import { TokenProvider } from "@/components/TokenContext/token-context";
+import QueryClientWrapper from "@/components/Boards/AdminUserDashboard/QueryClientWrapper";
 import { AuthProvider } from "@/context/AuthContext";
 import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
 import { MembershipProvider } from "@/context/MembershipContext";
+import { BalanceProvider } from "@/context/BalanceContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -28,16 +31,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
         <QueryClientWrapper>
           <AuthProvider>
-            <GroupProvider>
-              <ExpensesProvider>
-                <MembershipProvider>
-                  <NavBar />
-                  <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-                    {children}
-                  </div>
-                </MembershipProvider>
-              </ExpensesProvider>
-            </GroupProvider>
+            <MembershipProvider>
+              <GroupProvider>
+                <ExpensesProvider>
+                  <BalanceProvider>
+                    <NavBar />
+                      <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
+                        {children}
+                      </div>
+                  </BalanceProvider>  
+                </ExpensesProvider>
+              </GroupProvider>
+            </MembershipProvider>
           </AuthProvider>
         </QueryClientWrapper>
       </body>
