@@ -1,5 +1,5 @@
 .navbar {
-  background-color: rgba(255, 255, 255, 0.1); /* Transparent background */
+  background-color: rgba(130, 65, 65, 0.1); /* Transparent background */
   backdrop-filter: blur(10px); /* Adds a blur effect */
   padding: 1rem 2rem;
   display: flex;
@@ -16,21 +16,38 @@
   color: white;
 }
 
-.navbar ul {
+.navList {
   display: flex;
   gap: 1.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
-.navbar a {
+.navLink {
   color: white;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;
 }
 
-.navbar a:hover {
+.navLink:hover {
   color: #a5b4fc; /* Light indigo hover color */
+}
+
+.sidebarEnter {
+  transform: translateX(100%);
+}
+.sidebarEnterActive {
+  transform: translateX(0);
+  transition: transform 300ms ease-in-out;
+}
+.profileImage {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.profileImage:hover {
+  transform: scale(1.05);
 }

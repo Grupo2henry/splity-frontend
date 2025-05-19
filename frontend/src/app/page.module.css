@@ -1,34 +1,136 @@
 .container {
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+}
+
+.container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    /* background: linear-gradient(to bottom, #3b82f6, #6366f1); */
-    /* color: white; */
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem 1rem;
+  }
+  
+  .container::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    animation: pulse 15s infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.2); opacity: 0.1; }
+    100% { transform: scale(1); opacity: 0.3; }
   }
   
   .logo {
     position: relative;
-    margin-bottom: 2rem;
+    margin-bottom: 0rem;
+    margin-top: 0rem;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+    animation: logoAppear 1s ease-out;
+  }
+
+  @keyframes logoAppear {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo:hover {
+    transform: scale(1.05);
   }
   
-  .title {
-    position: absolute;
-    top: 5rem;
-    right: 1.25rem;
-    font-size: 0.875rem;
+  .welcomeText {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #7FFFD4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.8s ease-out;
   }
-  
+
+  .subtitle {
+    font-size: 1.4rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+    max-width: 600px;
+    line-height: 1.6;
+    animation: slideIn 0.8s ease-out 0.2s backwards;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 2rem 0;
+    max-width: 600px;
+    width: 100%;
+    animation: slideIn 0.8s ease-out 0.4s backwards;
+  }
+
+  .featureItem {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    background: rgba(127, 255, 212, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(127, 255, 212, 0.2);
+    backdrop-filter: blur(5px);
+  }
+
+  .featureItem span {
+    font-size: 1.5rem;
+    min-width: 2rem;
+    text-align: center;
+  }
+
+  .featureItem:hover {
+    background: rgba(127, 255, 212, 0.15);
+    transform: translateX(5px);
+    border-color: rgba(127, 255, 212, 0.3);
+    color: #7FFFD4;
+  }
+
+  .callToAction {
+    font-size: 1.3rem;
+    color: #7FFFD4;
+    margin: 1.5rem 0 2rem 0;
+    text-align: center;
+    animation: fadeIn 1s ease-out 0.6s backwards;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
   .buttonGroup {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    animation: fadeIn 0.8s ease-out 0.8s backwards;
+    justify-content: center;
   }
   
   .button {
     padding: 0.5rem 1.5rem;
-    background: white;
-    color: #3b82f6;
+    background: rgba(255, 223, 0, 0.15);
+    color: #FFD700;
     font-weight: 600;
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -40,18 +142,56 @@
     background: #c9daff;
     color: #1e3a8a;
   }
-
-  .welcomeText {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 1rem;
-    color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 223, 0, 0.2);
+    font-size: 1rem;
+    backdrop-filter: blur(5px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
   }
 
-  .subtitle {
-    font-size: 1.2rem;
-    text-align: center;
-    margin-top: 0rem;
-    color: white;
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .container {
+      padding: 1rem;
+    }
+
+    .welcomeText {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+    }
+
+    .featureItem {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+    }
+
+    .buttonGroup {
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+      align-items: center;
+    }
+
+    .button {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
   }

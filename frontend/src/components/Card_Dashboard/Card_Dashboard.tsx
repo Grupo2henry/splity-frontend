@@ -1,11 +1,10 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import fetchGetMyGroups from "@/services/fetchGetMyGroups";
-import { IGroup } from "./types";
-import { useCustomAlert } from "../CustomAlert/CustomAlert";
+import { Card_Group } from './../Card_Group/Card_Group'
+import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useGroup } from "@/context/GroupContext";
+import Loader from "@/components/Loader/Loader"; // Importa el Loader
 
 export const Card_Dashboard = () => {
   const [groups, setGroups] = useState<IGroup[]>([]);
@@ -77,22 +76,15 @@ export const Card_Dashboard = () => {
           <button className="bg-blue-500 text-white px-4 py-1 rounded" onClick={handleSend}>Buscar</button>
           <button className="bg-red-500 text-white px-4 py-1 rounded" onClick={() =>{setFlag(!flag); setInput("")}}><Image src="/eraser.svg" alt="Reset" width={30} height={30}/></button>
       </div>
-      <h3 className="text-lg font-semibold mb-4 text-white">Mis Grupos:</h3>
-      {groups?.map((group) => (
-        <Link key={group.id} href="/Event_Details">
-          <div className="flex w-full bg-[#61587C] p-2 rounded-lg mb-6">
-            <Image src={"./image1.svg"} alt="Image" width={77} height={76}/>
-            <div className="w-full flex justify-between">
-              <div className="flex flex-col justify-start items-start ml-2">
-                <h2 className="text-[#FFFFFF]">{group.name}</h2>
-                {group.cantidad !== undefined && (
-                  <p className="text-[#FFCD82]">{group.cantidad} amigos</p>
-                )}
-              </div>
-              <button>{'\u27A4'}</button>
-            </div>
-          </div>
-        </Link>
+      <h3 className="text-lg font-semibold mb-4 text-white">Grupos Creados por Mí:</h3>
+      {adminGroups?.map((group) => (
+        <Card_Group
+          key={group.id}
+          group={group}
+          subtitleText="miembros"
+          bgColor="bg-[#388E3C]"
+          subtitleColor="text-[#A5D6A7]"
+        />
       ))}
 
       <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Grupos Creados por Mí:</h3>
@@ -111,6 +103,18 @@ export const Card_Dashboard = () => {
                   </div>
               </div>
           </Link>
+      ))}
+    </div>
+  );
+      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
+      {memberGroups.map((group) => (
+        <Card_Group
+          key={group.id}
+          group={group}
+          subtitleText="amigos"
+          bgColor="bg-[#61587C]"
+          subtitleColor="text-[#FFCD82]"
+        />
       ))}
     </div>
   );
