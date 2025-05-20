@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import fetchExpenses from '@/services/expenses-services/fetchExpenses';
 import CustomAlert, { useCustomAlert } from '@/components/CustomAlert/CustomAlert';
+import styles from './ReceiptsBoard.module.css';
 
 interface Expense {
   id: string;
@@ -23,7 +24,7 @@ interface Props {
   groupId: string;
 }
 
-const Receipts_Board = ({ groupId }: Props) => {
+const ReceiptsBoard = ({ groupId }: Props) => {
   const { message, showAlert, onClose } = useCustomAlert();
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -33,6 +34,7 @@ const Receipts_Board = ({ groupId }: Props) => {
       const fetchReceipts = async () => {
         try {
           const result = await fetchExpenses(Number(groupId));
+          console.log('Fetched expenses:', result);
           if (!result) {
             showAlert('No se pudieron obtener los comprobantes.');
           } else {
@@ -51,55 +53,61 @@ const Receipts_Board = ({ groupId }: Props) => {
   }, [groupId]);
 
   if (loading) {
-    return <div className="text-white text-center mt-10">Cargando comprobantes...</div>;
+    return <div className={styles.loading}>Cargando comprobantes...</div>;
   }
 
   return (
-    <div className="flex flex-col items-center p-6 bg-[#61587C] rounded-lg text-white">
-  {/*     <h1 className="text-[24px] mb-6">Comprobantes del Grupo</h1> */}
-
-      <div className="w-full max-w-6xl">
+    <div className={styles.container}>
+      <div className={styles.content}>
         {expenses.length > 0 ? (
-          <div className="flex flex-col gap-4 w-full">
-            {expenses.map((expense) => (
-              <div key={expense.id} className="bg-[#4B4362] rounded-lg p-4 shadow-md max-w-full w-full">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base font-semibold truncate" title={expense.description}>
-                    {expense.description}
-                  </h2>
-                  <span className="text-xl font-bold">AR$ {expense.amount}</span>
-                </div>
-                {expense.imgUrl ? (
-                  <a
-                    href={expense.imgUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full mb-4"
-                  >
-                    <div className="relative w-full h-40">
+          <div className={styles.receiptsList}>
+            {expenses.map((expense) => {
+              console.log('Rendering expense:', expense.id, 'with imgUrl:', expense.imgUrl);
+              return (
+                <div key={expense.id} className={styles.receiptCard}>
+                  <div className={styles.receiptHeader}>
+                    <h2 className={styles.receiptTitle} title={expense.description}>
+                      {expense.description}
+                    </h2>
+                    <span className={styles.receiptAmount}>AR$ {expense.amount}</span>
+                  </div>
+                  {expense.imgUrl ? (
+                    <a
+                      href={expense.imgUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.imageContainer}
+                    >
                       <Image
                         src={expense.imgUrl}
                         alt={expense.description}
                         width={400}
-                        height={160}
-                        className="rounded-lg object-cover w-full h-full"
+                        height={200}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className={styles.receiptImage}
+                        onError={(e) => {
+                          console.error('Image failed to load:', expense.imgUrl);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                        onLoad={() => console.log('Image loaded successfully:', expense.imgUrl)}
                       />
+                    </a>
+                  ) : (
+                    <div className={styles.noImage}>
+                      <p className={styles.noImageText}>No hay imagen disponible</p>
                     </div>
-                  </a>
-                ) : (
-                  <div className="flex items-center justify-center h-40 mb-4 bg-[#61587C] rounded-lg">
-                    <p className="text-gray-300 text-center text-sm">No hay imagen disponible</p>
+                  )}
+                  <div className={styles.receiptFooter}>
+                    <span>Pagado por: {expense.paid_by?.name || 'Desconocido'}</span>
+                    <span>{new Date(expense.date).toLocaleDateString('es-ES')}</span>
                   </div>
-                )}
-                <div className="flex justify-between text-sm text-gray-300">
-                  <span>Pagado por: {expense.paid_by?.name || 'Desconocido'}</span>
-                  <span>{new Date(expense.date).toLocaleDateString('es-ES')}</span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
-          <div className="text-center p-4 bg-[#4B4362] rounded-lg">
+          <div className={styles.noReceipts}>
             <p>No hay comprobantes registrados en este grupo.</p>
           </div>
         )}
@@ -110,4 +118,4 @@ const Receipts_Board = ({ groupId }: Props) => {
   );
 };
 
-export default Receipts_Board;
+export default ReceiptsBoard;
