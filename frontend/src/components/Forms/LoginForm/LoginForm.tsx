@@ -33,7 +33,7 @@ export const LoginForm = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
         <h1 className="text-[24px] text-center text-[#FFFFFF] mb-10">Ingresa para continuar</h1>
         <div className="flex flex-col w-full gap-2 mb-2 rounded-lg bg-[#61587C] p-2">
-          <input {...register("email", validation.email)} type="text" placeholder="Correo Electrónica" className="custom-input" />
+          <input {...register("email", validation.email)} type="text" placeholder="Correo Electrónico" className="custom-input" />
           {formErrors.email && <p className="text-amber-50 text-[0.75rem]">{formErrors.email.message}</p>}
           <div className='relative'>
             <input {...register('password', validation.password)} type={passwordVisible} placeholder='Contraseña' className='custom-input' />
