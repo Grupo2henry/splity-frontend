@@ -130,7 +130,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
     } else {
       await createGroup(groupDataToSend);
       if (!groupErrors.length) {
-        router.push('/');
+        router.push('/Dashboard');
       }
     }
   };
