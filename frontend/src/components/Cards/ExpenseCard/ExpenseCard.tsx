@@ -6,6 +6,7 @@ import { Expense } from "@/context/interfaces/expense.interface";
 import Link from 'next/link';
 import { useExpenses } from "@/context/ExpensesContext"; // Importa el contexto
 import { useMembership } from "@/context/MembershipContext"; // Importa el contexto de membresía
+import styles from "./ExpenseCard.module.css";
 
 interface ListingExpenseProps {
   expense: Expense;
@@ -26,25 +27,20 @@ export const ExpenseCard = ({ expense }: ListingExpenseProps) => {
   };
 
   return (
-    <div className="flex flex-col w-full px-2 bg-[#d9d9d9] rounded-lg" >
-      <div className="flex flex-row justify-between items-center">
-        <Image src="/image7.svg" alt="Logo" width={25} height={25} />
-        <Link
-          href={`/Update_Spent/${expense.id}`}
-          className="flex flex-col w-full"
-        >
-          <div className="flex w-full gap-2">
-            <div className="flex flex-col w-full ml-2">
-              <p className="font-bold">{expense.description}</p>
-              <p className="text-sm">Pagado por {expense.paid_by?.name}</p>
-            </div>
-            <p className="font-bold text-md">AR${expense.amount}</p>
+    <div className={styles.expenseCard}>
+      <div className={styles.cardContent}>
+        <Link href={`/Update_Spent/${expense.id}`} className={styles.expenseInfo}>
+          <Image src="/image7.svg" alt="Logo" width={25} height={25} />
+          <div className={styles.textContainer}>
+            <p className={styles.description}>{expense.description}</p>
+            <p className={styles.paidBy}>Pagado por {expense.paid_by?.name}</p>
           </div>
+          <p className={styles.amount}>AR${expense.amount}</p>
         </Link>
-        {/* Botón de eliminar con onClick que llama a la función del contexto */}
         <button
-          className="text-red-500 hover:text-red-700 focus:outline-none"
+          className={styles.deleteButton}
           onClick={handleDeleteClick}
+          aria-label="Eliminar gasto"
         >
           Eliminar
         </button>

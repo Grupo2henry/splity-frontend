@@ -7,16 +7,19 @@ import { useState } from "react";
 import CustomAlert, { useCustomAlert } from "../../CustomAlert/CustomAlert";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { GoogleLoginButton } from '@/components/Buttons/GoogleLoginButton/GoogleLoginButton';
+import { EyeIcon } from '@/components/Icons/EyeIcon';
+import styles from "./LoginForm.module.css";
 
 export const LoginForm = () => {
   const { login, loading, errors } = useAuth();
   const { message, showAlert, onClose } = useCustomAlert();
-  const [passwordVisible, setPasswordVisible] = useState("password");
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { register, handleSubmit, formState: { errors: formErrors } } = useForm<IFormLogin>({ mode: "onBlur" });
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(passwordVisible === "password" ? "text" : "password");
+    setPasswordVisible(!passwordVisible);
   };
 
   const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
@@ -30,25 +33,68 @@ export const LoginForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-        <h1 className="text-[24px] text-center text-[#FFFFFF] mb-10">Ingresa para continuar</h1>
-        <div className="flex flex-col w-full gap-2 mb-2 rounded-lg bg-[#61587C] p-2">
-          <input {...register("email", validation.email)} type="text" placeholder="Correo Electrónico" className="custom-input" />
-          {formErrors.email && <p className="text-amber-50 text-[0.75rem]">{formErrors.email.message}</p>}
-          <div className='relative'>
-            <input {...register('password', validation.password)} type={passwordVisible} placeholder='Contraseña' className='custom-input' />
-            <button type='button' className='absolute top-2 right-2' onClick={togglePasswordVisibility}>{passwordVisible === "password" ? "🔓" : "🔒"}</button>
+      <div className={styles.pageContainer}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
+          <h1 className={styles.title}>Ingresa para continuar</h1>
+          
+          <div className={styles.inputGroup}>
+            <div className={styles.inputWrapper}>
+              <input
+                {...register("email", validation.email)}
+                type="text"
+                placeholder="Correo Electrónico"
+                className={styles.input}
+              />
+              {formErrors.email && (
+                <p className={styles.errorMessage}>{formErrors.email.message}</p>
+              )}
+            </div>
+
+            <div className={styles.inputWrapper}>
+              <input
+                {...register("password", validation.password)}
+                type={passwordVisible ? "text" : "password"}
+                placeholder="Contraseña"
+                className={styles.input}
+              />
+              <button
+                type="button"
+                className={styles.toggleButton}
+                onClick={togglePasswordVisibility}
+                aria-label={passwordVisible ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                <EyeIcon visible={passwordVisible} />
+              </button>
+              {formErrors.password && (
+                <p className={styles.errorMessage}>{formErrors.password.message}</p>
+              )}
+            </div>
           </div>
-          {formErrors.password && <p className="text-amber-50 text-[0.75rem]">{formErrors.password.message}</p>}
-        </div>
-        <h2 className="text-right text-[#FAFF00] mb-4">¿Olvidaste tu contraseña?</h2>
-        <div className="flex flex-col items-center justify-center">
-          <button type="submit" className="btn-yellow text-[24px] mt-4" disabled={loading}>
+
+          <Link href="/forgot-password" className={styles.forgotPassword}>
+            ¿Olvidaste tu contraseña?
+          </Link>
+
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={loading}
+          >
             {loading ? "Ingresando..." : "Ingresar"}
           </button>
-          <h2 className="text-[#FAFF00] mt-6">¿No tienes una cuenta? <Link href="/Register" className="text-[#FAFF00] font-bold">Registrarse</Link></h2>
-        </div>
-      </form>
+
+          <div className={styles.divider}>o</div>
+
+          <div className={styles.googleButtonWrapper}>
+            <GoogleLoginButton />
+          </div>
+
+          <div className={styles.registerLink}>
+            ¿No tienes una cuenta?{" "}
+            <Link href="/Register">Registrarse</Link>
+          </div>
+        </form>
+      </div>
       <CustomAlert message={message} onClose={onClose} />
     </>
   );

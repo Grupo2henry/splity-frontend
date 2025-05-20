@@ -15,6 +15,7 @@ import data from '@emoji-mart/data';
 import dynamic from "next/dynamic";
 import { LatLngLiteral } from "leaflet";
 import { useRouter } from "next/navigation";
+import styles from "./EventForm.module.css";
 
 const MapSelector = dynamic(() => import("../../MapSelector/GoogleMapSelector"), { ssr: false });
 
@@ -145,27 +146,50 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full gap-4">
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Titulo del evento</label>
-        <div className="flex flex-row rounded-lg bg-[#61587C] gap-2 p-2">
-          <Image src="/image1.svg" alt="Logo" width={77} height={77} />
-          <div className="flex flex-col w-full gap-2">
-            <input {...register("name", { required: "Este campo es obligatorio" })} type="text" placeholder="Cena, Salida, Viaje, etc..." className="custom-input h-10" />
-            {errors.name && <p className="text-amber-50 text-[0.75rem]">{errors.name.message}</p>}
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
+      <h1 className={styles.title}>{isUpdate ? "Actualizar Evento" : "Crear Nuevo Evento"}</h1>
+      
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Titulo del evento</label>
+        <div className={styles.inputWrapper}>
+          <div className={styles.eventIcon}>
+            <Image src="/image1.svg" alt="Logo" width={77} height={77} />
+          </div>
+          <div className="flex flex-col w-full">
+            <input
+              {...register("name", { required: "Este campo es obligatorio" })}
+              type="text"
+              placeholder="Cena, Salida, Viaje, etc..."
+              className={styles.input}
+            />
+            {errors.name && (
+              <p className={styles.errorMessage}>{errors.name.message}</p>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Emoji del evento</label>
-        <div className="relative rounded-lg bg-[#61587C] p-2">
-          <input {...register("emoji")} type="text" value={emoji} placeholder="Selecciona un emoji" className="custom-input h-10" readOnly onClick={toggleEmojiPicker} />
-          <button type="button" onClick={toggleEmojiPicker} className="absolute top-2 right-2 text-white">
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Emoji del evento</label>
+        <div className={styles.inputWrapper} style={{ position: 'relative' }}>
+          <input
+            {...register("emoji")}
+            type="text"
+            value={emoji}
+            placeholder="Selecciona un emoji"
+            className={styles.input}
+            readOnly
+            onClick={toggleEmojiPicker}
+          />
+          <button
+            type="button"
+            className={styles.emojiButton}
+            onClick={toggleEmojiPicker}
+          >
             {emoji || "😊"}
           </button>
           {showEmojiPicker && (
-            <div className="absolute top-full left-0 z-10 bg-white rounded shadow-md">
+            <div className={styles.emojiPickerWrapper}>
               <Picker
                 data={data}
                 onEmojiSelect={handleEmojiSelect}
@@ -176,79 +200,88 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
         </div>
       </div>
 
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Participantes</label>
-        <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-          <input type="text" defaultValue={user?.name} className="custom-input" readOnly />
-          {selectedParticipants.filter(p => p.id !== user?.id).map((participant, index) => (
-            <div key={participant.id} className="flex flex-row items-center gap-2">
-              <input
-                type="text"
-                className="custom-input"
-                readOnly
-                value={participant.name} // Mostrar el nombre en el input
-              />
-              <button
-                type="button"
-                onClick={() => handleRemoveParticipant(index)}
-                className="p-1 rounded-full bg-red-500 text-white text-xs focus:outline-none"
-              >
-                X
-              </button>
-            </div>
-          ))}
-          <input
-            type="text"
-            value={emailSearch}
-            onChange={(e) => setEmailSearch(e.target.value)}
-            placeholder="Buscar por email..."
-            className="custom-input"
-          />
-          {emailSuggestions.length > 0 && (
-            <ul className="bg-white rounded shadow text-black max-h-40 overflow-y-auto">
-              {emailSuggestions.map((suggestedUser) => (
-                <li
-                  key={suggestedUser.id}
-                  onClick={() => handleSelectEmail(suggestedUser)}
-                  className="px-3 py-1 hover:bg-gray-200 cursor-pointer"
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Participantes</label>
+        <div className={styles.inputWrapper}>
+          <div className={styles.participantsList}>
+            <input
+              type="text"
+              defaultValue={user?.name}
+              className={styles.input}
+              readOnly
+            />
+            {selectedParticipants.filter(p => p.id !== user?.id).map((participant, index) => (
+              <div key={participant.id} className={styles.participantItem}>
+                <input
+                  type="text"
+                  className={styles.input}
+                  readOnly
+                  value={participant.name}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveParticipant(index)}
+                  className={styles.removeButton}
                 >
-                  {suggestedUser.name} ({suggestedUser.email})
-                </li>
-              ))}
-            </ul>
-          )}
+                  ×
+                </button>
+              </div>
+            ))}
+            <input
+              type="text"
+              value={emailSearch}
+              onChange={(e) => setEmailSearch(e.target.value)}
+              placeholder="Buscar por email..."
+              className={styles.input}
+            />
+            {emailSuggestions.length > 0 && (
+              <ul className={styles.suggestionsList}>
+                {emailSuggestions.map((suggestedUser) => (
+                  <li
+                    key={suggestedUser.id}
+                    onClick={() => handleSelectEmail(suggestedUser)}
+                    className={styles.suggestionItem}
+                  >
+                    {suggestedUser.name} ({suggestedUser.email})
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
 
       {(groupErrors.length > 0 || updateGroupErrors.length > 0) && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4">
+        <div className={styles.errorContainer}>
           {(groupErrors.length > 0 ? groupErrors : updateGroupErrors).map((error, index) => (
-            <p key={index} className="text-sm">
-              {error}
-            </p>
+            <p key={index}>{error}</p>
           ))}
         </div>
       )}
 
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Ubicación del evento</label>
+      <div className={styles.inputGroup}>
+        <label className={styles.label}>Ubicación del evento</label>
         <input
           type="text"
           value={locationName}
           onChange={(e) => setLocationName(e.target.value)}
           placeholder="Nombre de la ubicación"
-          className="custom-input"
+          className={styles.input}
         />
-
-        <div className="w-full h-[300px] rounded-lg overflow-hidden">
+        <div className={styles.mapContainer}>
           <MapSelector onSelectLocation={setLocation} initialLocation={location} />
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center">
-        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={updatingGroup}>
-          {isUpdate ? (updatingGroup ? "Actualizando Evento..." : "Actualizar Evento") : "Crear Evento"}
-        </button>
-      </div>
+
+      <button
+        type="submit"
+        className={styles.submitButton}
+        disabled={updatingGroup}
+      >
+        {isUpdate
+          ? (updatingGroup ? "Actualizando Evento..." : "Actualizar Evento")
+          : "Crear Evento"}
+      </button>
     </form>
   );
 };
