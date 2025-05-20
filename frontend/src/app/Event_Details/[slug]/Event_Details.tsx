@@ -10,6 +10,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useMembership } from "@/context/MembershipContext";
 import Loader from "@/components/Loader/Loader";
 import BalanceBoard from "@/components/Boards/BalanceBoard/BalanceBoard";
+import ReceiptsBoard from "@/components/Boards/ReceiptsBoard/ReceiptsBoard";
 import GoogleMapSelector from "@/components/MapSelector/GoogleMapSelector";
 
 // 📍 Tipo para coordenadas
@@ -153,11 +154,13 @@ export const Event_Details = () => {
 
       {viewState === "Gastos" && <ExpensesBoard />}
       {viewState === "Saldos" && actualGroupMembership?.group.id && <BalanceBoard />}
-      {viewState === "Comprobantes"}
+      {viewState === "Comprobantes" && actualGroupMembership?.group.id && (
+        <ReceiptsBoard groupId={actualGroupMembership.group.id.toString()} />
+      )}
 
       {groupId !== null && <NavBar_Event_Details />}
       <div className="flex flex-col items-center gap-4 w-full px-4">
-          <p className="text-white text-sm">Ubicación del comprobante</p>
+          <p className="text-white text-sm mt-5">Ubicación del Grupo</p>
 
           <div className="w-full h-[300px] rounded-lg overflow-hidden pointer-events-none">
             <GoogleMapSelector
