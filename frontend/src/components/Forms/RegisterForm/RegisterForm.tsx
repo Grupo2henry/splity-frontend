@@ -55,7 +55,7 @@ export const RegisterForm = () => {
     <>
       <div className={styles.pageContainer}>
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
-          <h1 className={styles.title}>Crea tu cuenta</h1>
+          <h1 className={styles.title}>Registrarse</h1>
           
           <div className={styles.inputGroup}>
             <div className={styles.inputWrapper}>

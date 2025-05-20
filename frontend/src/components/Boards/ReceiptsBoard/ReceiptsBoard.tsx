@@ -34,6 +34,7 @@ const ReceiptsBoard = ({ groupId }: Props) => {
       const fetchReceipts = async () => {
         try {
           const result = await fetchExpenses(Number(groupId));
+          console.log('Fetched expenses:', result);
           if (!result) {
             showAlert('No se pudieron obtener los comprobantes.');
           } else {
@@ -60,39 +61,50 @@ const ReceiptsBoard = ({ groupId }: Props) => {
       <div className={styles.content}>
         {expenses.length > 0 ? (
           <div className={styles.receiptsList}>
-            {expenses.map((expense) => (
-              <div key={expense.id} className={styles.receiptCard}>
-                <div className={styles.receiptHeader}>
-                  <h2 className={styles.receiptTitle} title={expense.description}>
-                    {expense.description}
-                  </h2>
-                  <span className={styles.receiptAmount}>AR$ {expense.amount}</span>
-                </div>
-                {expense.imgUrl ? (
-                  <a
-                    href={expense.imgUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.imageContainer}
-                  >
-                    <Image
-                      src={expense.imgUrl}
-                      alt={expense.description}
-                      fill
-                      className="object-cover"
-                    />
-                  </a>
-                ) : (
-                  <div className={styles.noImage}>
-                    <p className={styles.noImageText}>No hay imagen disponible</p>
+            {expenses.map((expense) => {
+              console.log('Rendering expense:', expense.id, 'with imgUrl:', expense.imgUrl);
+              return (
+                <div key={expense.id} className={styles.receiptCard}>
+                  <div className={styles.receiptHeader}>
+                    <h2 className={styles.receiptTitle} title={expense.description}>
+                      {expense.description}
+                    </h2>
+                    <span className={styles.receiptAmount}>AR$ {expense.amount}</span>
                   </div>
-                )}
-                <div className={styles.receiptFooter}>
-                  <span>Pagado por: {expense.paid_by?.name || 'Desconocido'}</span>
-                  <span>{new Date(expense.date).toLocaleDateString('es-ES')}</span>
+                  {expense.imgUrl ? (
+                    <a
+                      href={expense.imgUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.imageContainer}
+                    >
+                      <Image
+                        src={expense.imgUrl}
+                        alt={expense.description}
+                        width={400}
+                        height={200}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className={styles.receiptImage}
+                        onError={(e) => {
+                          console.error('Image failed to load:', expense.imgUrl);
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                        onLoad={() => console.log('Image loaded successfully:', expense.imgUrl)}
+                      />
+                    </a>
+                  ) : (
+                    <div className={styles.noImage}>
+                      <p className={styles.noImageText}>No hay imagen disponible</p>
+                    </div>
+                  )}
+                  <div className={styles.receiptFooter}>
+                    <span>Pagado por: {expense.paid_by?.name || 'Desconocido'}</span>
+                    <span>{new Date(expense.date).toLocaleDateString('es-ES')}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className={styles.noReceipts}>

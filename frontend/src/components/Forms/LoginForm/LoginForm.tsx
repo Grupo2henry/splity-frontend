@@ -35,7 +35,7 @@ export const LoginForm = () => {
     <>
       <div className={styles.pageContainer}>
         <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
-          <h1 className={styles.title}>Ingresa para continuar</h1>
+          <h1 className={styles.title}>Iniciar Sesion</h1>
           
           <div className={styles.inputGroup}>
             <div className={styles.inputWrapper}>

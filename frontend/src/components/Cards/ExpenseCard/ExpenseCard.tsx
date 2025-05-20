@@ -30,7 +30,7 @@ export const ExpenseCard = ({ expense }: ListingExpenseProps) => {
     <div className={styles.expenseCard}>
       <div className={styles.cardContent}>
         <Link href={`/Update_Spent/${expense.id}`} className={styles.expenseInfo}>
-          <Image src="/image7.svg" alt="Logo" width={25} height={25} />
+          <Image src="/image7.svg" alt="Logo" width={24} height={24} />
           <div className={styles.textContainer}>
             <p className={styles.description}>{expense.description}</p>
             <p className={styles.paidBy}>Pagado por {expense.paid_by?.name}</p>

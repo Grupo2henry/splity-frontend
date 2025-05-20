@@ -14,6 +14,7 @@ export const ExpensesForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -57,7 +58,7 @@ export const ExpensesForm = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found');
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses/${expenseId}/upload`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses/${expenseId}/image`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -102,6 +103,8 @@ export const ExpensesForm = () => {
   );
 
   useEffect(() => {
+    if (isInitialized) return;
+
     const loadExpenseData = async () => {
       if (isUpdatePage && expenseId) {
         const expenseData = await memoizedGetExpenseById(expenseId);
@@ -123,38 +126,34 @@ export const ExpensesForm = () => {
           imgUrl: "",
         });
       }
+      setIsInitialized(true);
     };
 
     loadExpenseData();
-  }, [expenseId, isUpdatePage, memoizedGetExpenseById, reset]);
+  }, [isUpdatePage, expenseId, memoizedGetExpenseById, reset]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     if (!actualGroupMembership?.group.id) return;
     
     try {
+      let currentExpenseId: string;
+      
       if (isUpdatePage && expenseId) {
-        // Handle update case
-        if (selectedFile) {
-          // If there's a new image, upload it first
-          const imageUrl = await uploadImage(expenseId);
-          if (imageUrl) {
-            data.imgUrl = imageUrl;
-          }
-        }
+        // Always update the expense data first
         await updateExpense(data, expenseId, actualGroupMembership.group.id.toString());
+        currentExpenseId = expenseId;
       } else {
-        // Handle create case
+        // Always create the expense first
         const createdExpense = await createExpense(data, actualGroupMembership.group.id.toString());
-        if (selectedFile && createdExpense?.id) {
-          const imageUrl = await uploadImage(createdExpense.id.toString());
-          if (imageUrl) {
-            await updateExpense(
-              { ...data, imgUrl: imageUrl },
-              createdExpense.id.toString(),
-              actualGroupMembership.group.id.toString()
-            );
-          }
+        if (!createdExpense?.id) {
+          throw new Error('Failed to create expense');
         }
+        currentExpenseId = createdExpense.id.toString();
+      }
+
+      // After expense is created/updated, handle image upload if there is one
+      if (selectedFile) {
+        await uploadImage(currentExpenseId);
       }
     } catch (error) {
       console.error('Error handling expense:', error);
@@ -275,7 +274,7 @@ export const ExpensesForm = () => {
       <button
         type="submit"
         className={styles.submitButton}
-        disabled={loadingParticipants || loadingExpenseContext || isUploading}
+        disabled={(loadingParticipants || loadingExpenseContext || isUploading) && !selectedFile}
       >
         {isUpdatePage ? "Guardar Cambios" : "Añadir Gasto"}
       </button>
