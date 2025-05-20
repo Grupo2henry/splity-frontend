@@ -3,13 +3,18 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useExpenses } from "@/context/ExpensesContext";
 import { useMembership } from "@/context/MembershipContext";
 import { IFormGasto } from "./types";
 import { useParams, usePathname } from "next/navigation";
 
 export const ExpensesForm = () => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     register,
     handleSubmit,
@@ -41,10 +46,53 @@ export const ExpensesForm = () => {
   const isUpdatePage = pathname.includes("Update_Spent");
   const expenseId = isUpdatePage && typeof slug === "string" ? slug : undefined;
 
-  // ✅ setValue solo una vez
-  useEffect(() => {
-    setValue("imgUrl", "/image1.svg");
-  }, [setValue]);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setUploadError(null);
+    }
+  };
+
+  const uploadImage = async (expenseId: string) => {
+    if (!selectedFile) return;
+    
+    setIsUploading(true);
+    setUploadError(null);
+    
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("No hay token de autenticación.");
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses/${expenseId}/image`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // Don't set Content-Type header - browser will set it automatically with boundary for multipart/form-data
+        },
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.message || 'Error al subir la imagen');
+      }
+      
+      const data = await response.json();
+      return data.imageUrl;
+    } catch (error) {
+      setUploadError('Error al subir la imagen. Por favor, intente nuevamente.');
+      console.error('Error al subir imagen:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // ✅ useCallback para evitar cambios de referencia
   const memoizedGetExpenseById = useCallback(getExpenseById, []);
@@ -60,7 +108,7 @@ export const ExpensesForm = () => {
             amount: expenseData.amount,
             paid_by: expenseData.paid_by?.id,
             date: expenseData.date.substring(0, 10),
-            imgUrl: "/image1.svg",
+            imgUrl: expenseData.imgUrl || "",
           });
         }
       } else {
@@ -69,7 +117,7 @@ export const ExpensesForm = () => {
           amount: undefined,
           paid_by: "",
           date: "",
-          imgUrl: "/image1.svg",
+          imgUrl: "",
         });
       }
     };
@@ -79,10 +127,28 @@ export const ExpensesForm = () => {
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     if (actualGroupMembership?.group.id) {
-      if (isUpdatePage && expenseId) {
-        await updateExpense(data, expenseId, actualGroupMembership.group.id.toString());
-      } else {
-        await createExpense(data, actualGroupMembership.group.id.toString());
+      try {
+        let createdExpense;
+        if (isUpdatePage && expenseId) {
+          createdExpense = await updateExpense(data, expenseId, actualGroupMembership.group.id.toString());
+        } else {
+          createdExpense = await createExpense(data, actualGroupMembership.group.id.toString());
+        }
+
+        // If we have a file to upload and the expense was created/updated successfully
+        if (selectedFile && createdExpense?.id) {
+          const imageUrl = await uploadImage(createdExpense.id.toString());
+          if (imageUrl) {
+            // Update the expense with the new image URL
+            await updateExpense(
+              { ...data, imgUrl: imageUrl },
+              createdExpense.id.toString(),
+              actualGroupMembership.group.id.toString()
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Error handling expense:', error);
       }
     }
   };
@@ -93,7 +159,26 @@ export const ExpensesForm = () => {
       <div className="flex flex-col w-full gap-2">
         <label className="text-[16px] text-start text-[#FFFFFF]">Título del gasto</label>
         <div className="flex flex-row rounded-lg bg-[#61587C] gap-2 p-2">
-          <Image src="/image1.svg" alt="Logo" width={77} height={77} />
+          <div className="relative w-[77px] h-[77px] bg-[#4A4458] rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-[#5A5468] transition-colors"
+               onClick={() => fileInputRef.current?.click()}>
+            {selectedFile ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-[#FFFFFF] text-sm text-center px-1">Imagen seleccionada</span>
+              </div>
+            ) : (
+              <>
+                <Image src="/image7.svg" alt="Subir" width={25} height={25} />
+                <span className="text-[#FFFFFF] text-[10px] text-center mt-1">Click para agregar una imagen</span>
+              </>
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+            />
+          </div>
           <div className="flex flex-col w-full gap-2">
             <input
               {...register("description", { required: "Este campo es obligatorio" })}
@@ -154,17 +239,22 @@ export const ExpensesForm = () => {
       </div>
 
       {/* Errores del contexto */}
-      {expenseErrors.length > 0 && (
+      {(expenseErrors.length > 0 || uploadError) && (
         <div className="bg-red-500 text-white p-3 rounded-md text-sm">
           {expenseErrors.map((err, idx) => (
             <p key={idx}>{err}</p>
           ))}
+          {uploadError && <p>{uploadError}</p>}
         </div>
       )}
 
       {/* Botón */}
       <div className="flex flex-col items-center justify-center">
-        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={loadingParticipants || loadingExpenseContext}>
+        <button 
+          type="submit" 
+          className="btn-yellow text-[16px] mt-8" 
+          disabled={loadingParticipants || loadingExpenseContext || isUploading}
+        >
           {isUpdatePage ? "Guardar Cambios" : "Añadir Gasto"}
         </button>
       </div>

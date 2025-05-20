@@ -18,10 +18,10 @@ interface ExpensesContextType {
   expenseErrors: string[];
   loadingExpenses: boolean;
   setLoadingExpenses: (loading: boolean) => void;
-  createExpense: (expenseData: IFormGasto, groupId: string) => Promise<void>;
+  createExpense: (expenseData: IFormGasto, groupId: string) => Promise<Expense>;
   getExpensesByGroupId: (groupId: string) => Promise<void>;
   getExpenseById: (expenseId: string) => Promise<Expense | null>;
-  updateExpense: (expenseData: IFormGasto, expenseId: string, groupId: string) => Promise<void>;
+  updateExpense: (expenseData: IFormGasto, expenseId: string, groupId: string) => Promise<Expense>;
   deactivateExpense: (expenseId: string, groupId: string) => Promise<void>; // Nuevo método
 }
 
@@ -57,7 +57,7 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [actualGroupMembership]);
 
-  const createExpense = async (expenseData: IFormGasto, groupId: string): Promise<void> => {
+  const createExpense = async (expenseData: IFormGasto, groupId: string): Promise<Expense> => {
     setLoadingExpenses(true);
     setExpenseErrors([]);
     const token = localStorage.getItem('token');
@@ -65,17 +65,16 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
       if (!token) {
         throw new Error("No hay token de autenticación.");
       }
-      await fetchCreateExpense(expenseData, Number(groupId), token);
+      const createdExpense = await fetchCreateExpense(expenseData, Number(groupId), token);
       await getExpensesByGroupId(groupId);
       if (actualGroupMembership?.group.id) {
         router.push(`/Event_Details/${actualGroupMembership.group.id.toString()}`);
-      } else {
-        console.warn("No se pudo redirigir a los detalles del evento porque actualGroup.slug es undefined.");
-        // Puedes agregar una redirección por defecto aquí si es necesario
       }
+      return createdExpense;
     } catch (error: any) {
       console.error("Error al crear el gasto:", error);
       setExpenseErrors([error.message || "Error al crear el gasto."]);
+      throw error;
     } finally {
       setLoadingExpenses(false);
     }
@@ -119,7 +118,7 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateExpense = async (expenseData: IFormGasto, expenseId: string, groupId: string): Promise<void> => {
+  const updateExpense = async (expenseData: IFormGasto, expenseId: string, groupId: string): Promise<Expense> => {
     setLoadingExpenses(true);
     setExpenseErrors([]);
     const token = localStorage.getItem('token');
@@ -127,17 +126,16 @@ export const ExpensesProvider = ({ children }: { children: ReactNode }) => {
       if (!token) {
         throw new Error("No hay token de autenticación.");
       }
-      await fetchUpdateExpense(expenseData, Number(expenseId), token);
-      await getExpensesByGroupId(groupId); // Recargar los gastos después de la actualización
+      const updatedExpense = await fetchUpdateExpense(expenseData, Number(expenseId), token);
+      await getExpensesByGroupId(groupId);
       if (actualGroupMembership?.group.id) {
         router.push(`/Event_Details/${actualGroupMembership.group.id.toString()}`);
-      } else {
-        console.warn("No se pudo redirigir a los detalles del evento porque actualGroup.slug es undefined.");
-        // Puedes agregar una redirección por defecto aquí si es necesario
       }
+      return updatedExpense;
     } catch (error: any) {
       console.error("Error al actualizar el gasto:", error);
       setExpenseErrors([error.message || "Error al actualizar el gasto."]);
+      throw error;
     } finally {
       setLoadingExpenses(false);
     }
