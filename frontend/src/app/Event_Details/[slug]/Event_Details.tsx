@@ -160,7 +160,7 @@ export const Event_Details = () => {
 
       {groupId !== null && <NavBar_Event_Details />}
       <div className="flex flex-col items-center gap-4 w-full px-4">
-          <p className="text-white text-sm">Ubicación del comprobante</p>
+          <p className="text-white text-sm mt-5">Ubicación del Grupo</p>
 
           <div className="w-full h-[300px] rounded-lg overflow-hidden pointer-events-none">
             <GoogleMapSelector

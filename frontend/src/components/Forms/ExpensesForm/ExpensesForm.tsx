@@ -167,8 +167,8 @@ export const ExpensesForm = () => {
               </div>
             ) : (
               <>
-                <Image src="/image7.svg" alt="Subir" width={25} height={25} />
-                <span className="text-[#FFFFFF] text-[10px] text-center mt-1">Click para agregar una imagen</span>
+                <span className="text-[#FFFFFF] text-2xl">$</span>
+                <span className="text-[#FFFFFF] text-[10px] text-center mt-1">Click para agregar comprobante</span>
               </>
             )}
             <input
