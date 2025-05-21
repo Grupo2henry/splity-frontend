@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import Image from "next/image";
 import { NavBar_Event_Details } from "@/components/NavBar/NavBar_Event_Details/NaBar_Event_Details";
 import ExpensesBoard from "@/components/Boards/ExpensesBoard/ExpensesBoard";
 import { useParams, useRouter } from "next/navigation";
@@ -11,7 +10,7 @@ import { useMembership } from "@/context/MembershipContext";
 import Loader from "@/components/Loader/Loader";
 import BalanceBoard from "@/components/Boards/BalanceBoard/BalanceBoard";
 import ReceiptsBoard from "@/components/Boards/ReceiptsBoard/ReceiptsBoard";
-import GoogleMapSelector from "@/components/MapSelector/GoogleMapSelector";
+import GoogleMapViewer from "@/components/MapSelector/GoogleMapViewer";
 import styles from "./Event_Details.module.css";
 
 // 📍 Tipo para coordenadas
@@ -157,23 +156,24 @@ export const Event_Details = () => {
       )}
 
       {groupId !== null && <NavBar_Event_Details />}
-      
-      <div className={styles.mapSection}>
-        <h2 className={styles.mapTitle}>Ubicación del Grupo</h2>
-        <div className={styles.mapContainer}>
-          <GoogleMapSelector
-            initialLocation={selectedLocation}
-            onSelectLocation={() => {}}
-          />
-        </div>
-        {selectedLocation && (
-          <div className={styles.locationInfo}>
-            Ubicación: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
-            {locationName && (
-              <div className={styles.locationName}>({locationName})</div>
+      <div className="flex flex-col items-center gap-4 w-full px-4">
+    <p className="text-white text-sm mt-5">Ubicación del Grupo</p>
+    <div className="w-full h-[300px] rounded-lg overflow-hidden">
+      {/* Usar el nuevo componente GoogleMapViewer */}
+      <GoogleMapViewer
+        location={selectedLocation}
+        locationName={locationName}
+        zoom={12} // Puedes ajustar el zoom para la visualización
+      />
+    </div>
+    {selectedLocation && (
+      <div className="text-white text-xs text-center mt-2">
+        Ubicación: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
+        {locationName && (
+            <div className="mt-1 italic">({locationName})</div>
             )}
           </div>
-        )}
+         )}
       </div>
     </div>
   );
