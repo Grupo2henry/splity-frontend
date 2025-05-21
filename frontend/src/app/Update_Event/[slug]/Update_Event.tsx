@@ -12,7 +12,7 @@ const UpdateEventPage = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4 text-white">Actualizar Evento</h2>
+      {/* <h2 className="text-xl font-bold mb-4 text-white">Actualizar Evento</h2> */}
       {eventSlug && <EventForm slug={eventSlug} />}
       {!eventSlug && <div>Error: ID del evento no encontrado.</div>}
     </div>

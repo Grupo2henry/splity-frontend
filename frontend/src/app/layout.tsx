@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar/NavBar";
+//import dynamic from 'next/dynamic';
+import { ChatBotWrapper } from "@/components/ChatBot/ChatBotWrapper";
 
 // import { TokenProvider } from "@/components/TokenContext/token-context";
 import QueryClientWrapper from "@/components/Boards/AdminUserDashboard/QueryClientWrapper";
@@ -27,8 +29,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="flex justify-center">
-      <body className={`${roboto.variable} antialiased bg-gradient-to-b from-blue-500 to-indigo-600 text-gray-700`}>
+    <html lang="en">
+      <body className={`${roboto.variable} antialiased bg-[#0d101b]`}>
         <QueryClientWrapper>
           <AuthProvider>
             <MembershipProvider>
@@ -36,9 +38,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <ExpensesProvider>
                   <BalanceProvider>
                     <NavBar />
-                      <div className="main-container min-h-screen w-full max-w-7xl mx-auto px-4">
-                        {children}
-                      </div>
+                    <div className="main-container">
+                      {children}
+                    </div>
+                    <ChatBotWrapper />
                   </BalanceProvider>  
                 </ExpensesProvider>
               </GroupProvider>

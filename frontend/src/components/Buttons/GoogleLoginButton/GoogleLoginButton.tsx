@@ -3,35 +3,23 @@
 
 import { GoogleLogin } from "@react-oauth/google";
 
-import { fetchGoogleLogin } from "@/services/auth-services/fetchGoogleLogin";
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import CustomAlert from "../../CustomAlert/CustomAlert";
-import { useRouter } from "next/navigation";
 
 export const GoogleLoginButton: React.FC = () => {
   const { googleLogin, errors } = useAuth();
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const router = useRouter();
 
   const handleSuccess = async (response: any) => {
     console.log("Respuesta de Google:", response);
 
     try {
-      const token = await fetchGoogleLogin(response.credential);
-
-      if (token) {
-        console.log("Token recibido:", token);
-        localStorage.setItem("authToken", token);
-        await googleLogin(response.credential);
-        router.push("/Dashboard");
-      } else {
-        console.warn("No se encontró token en la respuesta");
-        setShowErrorModal(true);
-      }
-    } catch (error) {
-      console.error("Error en la autenticación:", error);
+      // Directamente llama a googleLogin del contexto, que ya maneja la lógica de fetch y redirección
       await googleLogin(response.credential);
+    } catch (error) {
+      console.error("Error en la autenticación con Google:", error);
+      // El error ya es manejado por el AuthContext y se almacena en el estado `errors`
       if (errors.length > 0) {
         setShowErrorModal(true);
       }
@@ -47,8 +35,8 @@ export const GoogleLoginButton: React.FC = () => {
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={() => {
-          console.log("Fallo en el login");
-          setShowErrorModal(true);
+          console.log("Fallo en el login de Google");
+          setShowErrorModal(true); // Mostrar modal de error si falla el login inicial de Google
         }}
       />
       {showErrorModal && (

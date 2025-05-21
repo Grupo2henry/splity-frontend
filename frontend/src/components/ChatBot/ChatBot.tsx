@@ -128,17 +128,39 @@ const ChatBot = () => {
   };
 
   return (
-    <div className="p-4 h-[350px] flex flex-col">
-      <div className="flex-1 overflow-y-auto space-y-2 mb-2">
+    <div className="w-[350px] h-[500px] flex flex-col bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center gap-3 p-4 border-b border-gray-700 bg-gray-800">
+        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+          <span className="text-xl">🤖</span>
+        </div>
+        <div>
+          <h3 className="text-white font-semibold">Asistente Splity</h3>
+          <p className="text-gray-400 text-xs">Siempre disponible para ayudarte</p>
+        </div>
+      </div>
+
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, i) => (
-          <div key={i} className="flex flex-col">
-            <div className={`p-2 rounded-lg max-w-[75%] ${msg.sender === "user" ? "bg-blue-500 text-white self-end" : "bg-gray-200 self-start"}`}>
+          <div key={i} className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}>
+            <div
+              className={`p-3 rounded-2xl max-w-[80%] ${
+                msg.sender === "user"
+                  ? "bg-blue-600 text-white rounded-br-sm"
+                  : "bg-gray-700 text-gray-100 rounded-bl-sm"
+              }`}
+            >
               {msg.text}
             </div>
-            {msg.sender === "bot" && msg.options && (
-              <div className="flex flex-wrap gap-2 mt-1">
+            {msg.options && (
+              <div className="flex flex-wrap gap-2 mt-3">
                 {msg.options.map((opt, j) => (
-                  <button key={j} onClick={() => handleOptionClick(opt)} className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded hover:bg-blue-200">                 
+                  <button
+                    key={j}
+                    onClick={() => handleOptionClick(opt)}
+                    className="bg-gray-700 text-gray-200 text-sm px-4 py-2 rounded-full hover:bg-gray-600 transition-colors duration-200 border border-gray-600"
+                  >
                     {opt}
                   </button>
                 ))}
@@ -148,16 +170,32 @@ const ChatBot = () => {
         ))}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Input Area */}
       {step === 0 && (
-        <div className="flex gap-2">
-          <input className="flex-1 border rounded px-2" 
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Escribí tu nombre"/>
-          <button className="bg-blue-500 text-white px-4 py-1 rounded" onClick={handleSend}>
-            Enviar
-          </button>
+        <div className="p-4 border-t border-gray-700 bg-gray-800">
+          <div className="flex gap-2">
+            <input
+              className="flex-1 bg-gray-700 text-white border border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              placeholder="Escribí tu nombre..."
+            />
+            <button
+              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center"
+              onClick={handleSend}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
     </div>

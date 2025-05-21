@@ -1,14 +1,20 @@
+"use client";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/context/AuthContext";
 // src/services/fetchUsersByEmail.ts
-export const useMembers = (groupId: string, page: number) => {
-  const { token } = useAuth();
-  if (!token) {
-    throw new Error("No hay token disponible. El usuario no está autenticado.");
-  }
+
+export const useMembersAdmin = (
+  groupId: string,
+  page: number,
+  token: string | null
+) => {
   return useQuery({
     queryKey: ["members", groupId, page],
     queryFn: async () => {
+      if (!token) {
+        throw new Error(
+          "No hay token disponible. El usuario no está autenticado."
+        );
+      }
       const queryParams = new URLSearchParams();
       queryParams.append("page", page.toString());
       queryParams.append("limit", "6");
@@ -25,5 +31,6 @@ export const useMembers = (groupId: string, page: number) => {
       return res.json();
     },
     placeholderData: (previousData) => previousData,
+    staleTime: 5 * 60 * 1000, // Cache por 5 minutos
   });
 };

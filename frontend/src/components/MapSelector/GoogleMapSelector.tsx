@@ -1,138 +1,113 @@
+// src/components/MapSelector/GoogleMapSelector.tsx
 "use client";
 
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-  StandaloneSearchBox,
-} from "@react-google-maps/api";
-import { useCallback, useRef, useState } from "react";
-
-interface LatLngLiteral {
-  lat: number;
-  lng: number;
-}
+import React, { useEffect, useRef, useState } from "react";
+import { Wrapper, Status } from "@googlemaps/react-wrapper";
+import { LatLngLiteral } from "leaflet"; // Asegúrate de que LatLngLiteral esté importado correctamente si lo usas de 'leaflet'
 
 interface GoogleMapSelectorProps {
-  initialLocation?: LatLngLiteral | null;
-  onSelectLocation: (location: LatLngLiteral, locationName: string | null) => void;
-  markerTitle?: string; // Prop para personalizar el título del marcador
+  location: LatLngLiteral | null;
+  setLocation: (location: LatLngLiteral) => void;
+  setLocationName: (name: string) => void;
 }
 
-const containerStyle = {
-  width: "100%",
-  height: "300px",
+const renderStatus = (status: Status) => {
+  if (status === Status.FAILURE) return <p>Fallo al cargar los mapas</p>;
+  return <p>Cargando mapa...</p>;
 };
 
-const libraries = ["places"] as ("places")[];
-
 const GoogleMapSelector: React.FC<GoogleMapSelectorProps> = ({
-  initialLocation,
-  onSelectLocation,
-  markerTitle = "Ubicación Seleccionada",
+  location,
+  setLocation,
+  setLocationName,
 }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries,
-  });
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  const [markerPosition, setMarkerPosition] = useState<LatLngLiteral | null>(
-    initialLocation || null
-  );
-  const [mapCenter, setMapCenter] = useState<LatLngLiteral>(
-    initialLocation || { lat: -34.6037, lng: -58.3816 }
-  );
-  const [geocodeError, setGeocodeError] = useState<string | null>(null);
-
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
-  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
-
-  const reverseGeocode = useCallback((location: LatLngLiteral) => {
-    if (!geocoderRef.current) {
-      geocoderRef.current = new window.google.maps.Geocoder();
-    }
-    setGeocodeError(null); // Resetear el error antes de la geocodificación
-    geocoderRef.current.geocode({ location }, (results, status) => {
-      if (status === "OK" && results && results[0]) {
-        onSelectLocation(location, results[0].formatted_address);
-      } else {
-        console.error("Error en la geocodificación:", status);
-        setGeocodeError(`Error al obtener la dirección (${status}). Por favor, inténtalo de nuevo.`);
-        onSelectLocation(location, null);
-      }
-    });
-  }, [onSelectLocation]);
-
-  const onMapClick = useCallback((e: google.maps.MapMouseEvent) => {
-    if (e.latLng) {
-      const newLocation = {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
-      };
-      setMarkerPosition(newLocation);
-      setMapCenter(newLocation);
-      reverseGeocode(newLocation);
-    }
-  }, [reverseGeocode]);
-
-  const onLoadMap = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-  }, []);
-
-  const onLoadSearchBox = useCallback((searchBox: google.maps.places.SearchBox) => {
-    searchBoxRef.current = searchBox;
-  }, []);
-
-  const onPlacesChanged = useCallback(() => {
-    const places = searchBoxRef.current?.getPlaces?.();
-    if (places && places.length > 0) {
-      const place = places[0];
-      if (place.geometry?.location) {
-        const newLocation = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        };
-        setMarkerPosition(newLocation);
-        setMapCenter(newLocation);
-        reverseGeocode(newLocation);
-      }
-    }
-  }, [reverseGeocode]);
-
-  if (loadError) return <div>Error al cargar el mapa</div>;
-  if (!isLoaded) return <div>Cargando mapa...</div>;
+  if (!apiKey) {
+    console.error("Falta NEXT_PUBLIC_GOOGLE_MAPS_API_KEY");
+    return <p>Error: falta API Key</p>;
+  }
 
   return (
-    <div className="space-y-2">
-      <StandaloneSearchBox
-        onLoad={onLoadSearchBox}
-        onPlacesChanged={onPlacesChanged}
-      >
-        <input
-          type="text"
-          placeholder="Buscar ubicación..."
-          className="w-full border border-gray-300 rounded-md p-2 text-sm"
-        />
-      </StandaloneSearchBox>
-
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={mapCenter}
-        zoom={10}
-        onClick={onMapClick}
-        onLoad={onLoadMap}
-      >
-        {markerPosition && <Marker position={markerPosition} title={markerTitle} />}
-      </GoogleMap>
-
-      {geocodeError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative">
-          {geocodeError}
-        </div>
-      )}
-    </div>
+    <Wrapper apiKey={apiKey} render={renderStatus} libraries={["places"]}>
+      <MapComponent
+        location={location}
+        setLocation={setLocation}
+        setLocationName={setLocationName}
+      />
+    </Wrapper>
   );
 };
 
 export default GoogleMapSelector;
+
+const MapComponent: React.FC<GoogleMapSelectorProps> = ({
+  location,
+  setLocation,
+  setLocationName,
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
+  const geocoder = useRef<google.maps.Geocoder | null>(null);
+
+  useEffect(() => {
+    // Si el mapa no ha sido inicializado y tenemos la referencia al div
+    if (ref.current && !map) {
+      // Usar la ubicación pasada por props, o la de CABA por defecto si no hay
+      const initialPosition = location || { lat: -34.61, lng: -58.38 }; // CABA por defecto
+
+      const newMap = new google.maps.Map(ref.current, {
+        center: initialPosition, // Centrar el mapa en la ubicación inicial
+        zoom: 13,
+      });
+      setMap(newMap);
+
+      markerRef.current = new google.maps.Marker({
+        position: initialPosition, // Posicionar el marcador en la ubicación inicial
+        map: newMap,
+      });
+      geocoder.current = new google.maps.Geocoder();
+
+      // Añadir el listener para el clic en el mapa
+      newMap.addListener("click", (e: google.maps.MapMouseEvent) => {
+        if (e.latLng && markerRef.current) {
+          const newPosition = {
+            lat: e.latLng.lat(),
+            lng: e.latLng.lng(),
+          };
+          markerRef.current.setPosition(newPosition);
+          setLocation(newPosition);
+
+          if (geocoder.current) {
+            geocoder.current.geocode({ location: newPosition }, (results, status) => {
+              if (status === "OK" && results && results[0]) {
+                setLocationName(results[0].formatted_address || "");
+              } else {
+                console.error("Geocoder falló debido a: " + status);
+              }
+            });
+          }
+        }
+      });
+    }
+
+    // Este bloque se ejecutará cada vez que 'location' cambie
+    // (después de la inicialización o por un cambio externo)
+    if (map && location && markerRef.current) {
+      map.setCenter(location);
+      markerRef.current.setPosition(location);
+
+      // Opcional: Si quieres actualizar el locationName cuando 'location' cambie externamente
+      if (geocoder.current) {
+        geocoder.current.geocode({ location: location }, (results, status) => {
+          if (status === "OK" && results && results[0]) {
+            setLocationName(results[0].formatted_address || "");
+          }
+        });
+      }
+    }
+  }, [map, location, setLocation, setLocationName]); // Dependencias: map, location, setLocation, setLocationName
+
+  return <div ref={ref} style={{ height: "300px", width: "100%" }} />;
+};

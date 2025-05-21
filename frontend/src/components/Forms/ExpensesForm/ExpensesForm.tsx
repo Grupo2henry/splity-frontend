@@ -2,19 +2,26 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import Image from "next/image";
-import { useEffect, useCallback } from "react";
+//import Image from "next/image";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useExpenses } from "@/context/ExpensesContext";
 import { useMembership } from "@/context/MembershipContext";
 import { IFormGasto } from "./types";
 import { useParams, usePathname } from "next/navigation";
+import styles from "./ExpensesForm.module.css";
 
 export const ExpensesForm = () => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
+    //setValue,
     reset,
   } = useForm<IFormGasto>({ mode: "onBlur" });
 
@@ -33,24 +40,71 @@ export const ExpensesForm = () => {
     actualGroupMembership,
   } = useMembership();
 
-  console.log("Participantes: ", participants)
-  console.log("Membresia: ", actualGroupMembership);
   const { slug } = useParams();
   const pathname = usePathname();
 
   const isUpdatePage = pathname.includes("Update_Spent");
   const expenseId = isUpdatePage && typeof slug === "string" ? slug : undefined;
 
-  // ✅ setValue solo una vez
-  useEffect(() => {
-    setValue("imgUrl", "/image1.svg");
-  }, [setValue]);
+  const uploadImage = async (expenseId: string): Promise<string | null> => {
+    if (!selectedFile) return null;
+    setIsUploading(true);
+    setUploadError(null);
 
-  // ✅ useCallback para evitar cambios de referencia
-  const memoizedGetExpenseById = useCallback(getExpenseById, []);
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
 
-  // ✅ Carga datos si es edición
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No authentication token found');
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses/${expenseId}/image`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error uploading image');
+      }
+
+      const data = await response.json();
+      return data.imageUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setUploadError(error instanceof Error ? error.message : 'Error uploading image');
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setUploadError(null);
+    }
+  };
+
+  const memoizedGetExpenseById = useCallback(
+    async (id: string) => {
+      try {
+        return await getExpenseById(id);
+      } catch (error) {
+        console.error("Error al obtener el gasto:", error);
+        return null;
+      }
+    },
+    [getExpenseById]
+  );
+
   useEffect(() => {
+    if (isInitialized) return;
+
     const loadExpenseData = async () => {
       if (isUpdatePage && expenseId) {
         const expenseData = await memoizedGetExpenseById(expenseId);
@@ -60,7 +114,7 @@ export const ExpensesForm = () => {
             amount: expenseData.amount,
             paid_by: expenseData.paid_by?.id,
             date: expenseData.date.substring(0, 10),
-            imgUrl: "/image1.svg",
+            imgUrl: expenseData.imgUrl || "",
           });
         }
       } else {
@@ -69,63 +123,111 @@ export const ExpensesForm = () => {
           amount: undefined,
           paid_by: "",
           date: "",
-          imgUrl: "/image1.svg",
+          imgUrl: "",
         });
       }
+      setIsInitialized(true);
     };
 
     loadExpenseData();
-  }, [expenseId, isUpdatePage, memoizedGetExpenseById, reset]);
+  }, [isUpdatePage, expenseId, memoizedGetExpenseById, reset]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
-    if (actualGroupMembership?.group.id) {
+    if (!actualGroupMembership?.group.id) return;
+    
+    try {
+      let currentExpenseId: string;
+      
       if (isUpdatePage && expenseId) {
+        // Always update the expense data first
         await updateExpense(data, expenseId, actualGroupMembership.group.id.toString());
+        currentExpenseId = expenseId;
       } else {
-        await createExpense(data, actualGroupMembership.group.id.toString());
+        // Always create the expense first
+        const createdExpense = await createExpense(data, actualGroupMembership.group.id.toString());
+        if (!createdExpense?.id) {
+          throw new Error('Failed to create expense');
+        }
+        currentExpenseId = createdExpense.id.toString();
       }
+
+      // After expense is created/updated, handle image upload if there is one
+      if (selectedFile) {
+        await uploadImage(currentExpenseId);
+      }
+    } catch (error) {
+      console.error('Error handling expense:', error);
+      setUploadError(error instanceof Error ? error.message : 'Error processing expense');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full gap-4">
-      {/* Título del gasto */}
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Título del gasto</label>
-        <div className="flex flex-row rounded-lg bg-[#61587C] gap-2 p-2">
-          <Image src="/image1.svg" alt="Logo" width={77} height={77} />
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Título del gasto</label>
+        <div className={styles.inputContainer}>
+          <div
+            className={styles.uploadBox}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {selectedFile ? (
+              <div className={styles.uploadText}>
+                Imagen seleccionada
+              </div>
+            ) : (
+              <>
+                <span className={styles.uploadIcon}>$</span>
+                <span className={styles.uploadText}>
+                  Click para agregar comprobante
+                </span>
+              </>
+            )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+            />
+          </div>
           <div className="flex flex-col w-full gap-2">
             <input
               {...register("description", { required: "Este campo es obligatorio" })}
               type="text"
               placeholder="Ej: Almuerzo, Taxi, Regalo..."
-              className="custom-input h-10"
+              className={styles.input}
             />
-            {errors.description && <p className="text-amber-50 text-[0.75rem]">{errors.description.message}</p>}
+            {errors.description && (
+              <p className={styles.error}>{errors.description.message}</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Importe */}
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Importe</label>
-        <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Importe</label>
+        <div className={styles.inputContainer}>
           <input
             {...register("amount", { required: "Este campo es obligatorio", valueAsNumber: true })}
             type="number"
             step="0.01"
             placeholder="Ej: 150.00"
-            className="custom-input"
+            className={styles.input}
           />
-          {errors.amount && <p className="text-amber-50 text-[0.75rem]">{errors.amount.message}</p>}
         </div>
+        {errors.amount && (
+          <p className={styles.error}>{errors.amount.message}</p>
+        )}
       </div>
 
-      {/* Pagado por */}
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">¿Quién lo pagó?</label>
-        <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
-          <select {...register("paid_by")} className="custom-input" disabled={loadingParticipants || loadingExpenseContext}>
+      <div className={styles.formGroup}>
+        <label className={styles.label}>¿Quién lo pagó?</label>
+        <div className={styles.inputContainer}>
+          <select
+            {...register("paid_by")}
+            className={styles.select}
+            disabled={loadingParticipants || loadingExpenseContext}
+          >
             <option value="">-- Selecciona un participante --</option>
             {participants &&
               participants.map((participant) => (
@@ -134,40 +236,48 @@ export const ExpensesForm = () => {
                 </option>
               ))}
           </select>
-          {errors.paid_by && <p className="text-amber-50 text-[0.75rem]">{errors.paid_by.message}</p>}
-          {loadingParticipants && <p className="text-gray-400 text-sm">Cargando participantes...</p>}
-          {participantsErrors.length > 0 && <p className="text-red-500 text-sm">{participantsErrors[0]}</p>}
         </div>
+        {errors.paid_by && (
+          <p className={styles.error}>{errors.paid_by.message}</p>
+        )}
+        {loadingParticipants && (
+          <p className={styles.error}>Cargando participantes...</p>
+        )}
+        {participantsErrors.length > 0 && (
+          <p className={styles.error}>{participantsErrors[0]}</p>
+        )}
       </div>
 
-      {/* Fecha */}
-      <div className="flex flex-col w-full gap-2">
-        <label className="text-[16px] text-start text-[#FFFFFF]">Fecha del gasto</label>
-        <div className="flex flex-col rounded-lg bg-[#61587C] gap-2 p-2">
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Fecha del gasto</label>
+        <div className={styles.inputContainer}>
           <input
             {...register("date", { required: "Este campo es obligatorio" })}
             type="date"
-            className="custom-input"
+            className={styles.input}
           />
-          {errors.date && <p className="text-amber-50 text-[0.75rem]">{errors.date.message}</p>}
         </div>
+        {errors.date && (
+          <p className={styles.error}>{errors.date.message}</p>
+        )}
       </div>
 
-      {/* Errores del contexto */}
-      {expenseErrors.length > 0 && (
-        <div className="bg-red-500 text-white p-3 rounded-md text-sm">
+      {(expenseErrors.length > 0 || uploadError) && (
+        <div className={styles.errorContainer}>
           {expenseErrors.map((err, idx) => (
             <p key={idx}>{err}</p>
           ))}
+          {uploadError && <p>{uploadError}</p>}
         </div>
       )}
 
-      {/* Botón */}
-      <div className="flex flex-col items-center justify-center">
-        <button type="submit" className="btn-yellow text-[16px] mt-8" disabled={loadingParticipants || loadingExpenseContext}>
-          {isUpdatePage ? "Guardar Cambios" : "Añadir Gasto"}
-        </button>
-      </div>
+      <button
+        type="submit"
+        className={styles.submitButton}
+        disabled={(loadingParticipants || loadingExpenseContext || isUploading) && !selectedFile}
+      >
+        {isUpdatePage ? "Guardar Cambios" : "Añadir Gasto"}
+      </button>
     </form>
   );
 };
