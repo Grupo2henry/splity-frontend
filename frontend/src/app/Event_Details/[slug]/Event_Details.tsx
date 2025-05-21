@@ -11,7 +11,7 @@ import { useMembership } from "@/context/MembershipContext";
 import Loader from "@/components/Loader/Loader";
 import BalanceBoard from "@/components/Boards/BalanceBoard/BalanceBoard";
 import ReceiptsBoard from "@/components/Boards/ReceiptsBoard/ReceiptsBoard";
-import GoogleMapSelector from "@/components/MapSelector/GoogleMapSelector";
+import GoogleMapViewer from "@/components/MapSelector/GoogleMapViewer";
 
 // 📍 Tipo para coordenadas
 type LatLngLiteral = {
@@ -160,25 +160,24 @@ export const Event_Details = () => {
 
       {groupId !== null && <NavBar_Event_Details />}
       <div className="flex flex-col items-center gap-4 w-full px-4">
-          <p className="text-white text-sm mt-5">Ubicación del Grupo</p>
-
-          <div className="w-full h-[300px] rounded-lg overflow-hidden pointer-events-none">
-            <GoogleMapSelector
-              initialLocation={selectedLocation}
-              onSelectLocation={() => {
-                // Esta función no debe hacer nada ya que el mapa no es modificable
-              }}
-            />
+    <p className="text-white text-sm mt-5">Ubicación del Grupo</p>
+    <div className="w-full h-[300px] rounded-lg overflow-hidden">
+      {/* Usar el nuevo componente GoogleMapViewer */}
+      <GoogleMapViewer
+        location={selectedLocation}
+        locationName={locationName}
+        zoom={12} // Puedes ajustar el zoom para la visualización
+      />
+    </div>
+    {selectedLocation && (
+      <div className="text-white text-xs text-center mt-2">
+        Ubicación: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
+        {locationName && (
+            <div className="mt-1 italic">({locationName})</div>
+            )}
           </div>
-          {selectedLocation && (
-            <div className="text-white text-xs text-center mt-2">
-              Ubicación: {selectedLocation.lat.toFixed(5)}, {selectedLocation.lng.toFixed(5)}
-              {locationName && (
-                <div className="mt-1 italic">({locationName})</div>
-              )}
-            </div>
-          )}
-        </div>
+         )}
+      </div>
     </div>
   );
 };
