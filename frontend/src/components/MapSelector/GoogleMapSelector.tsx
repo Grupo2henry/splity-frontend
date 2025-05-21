@@ -21,7 +21,7 @@ const GoogleMapSelector: React.FC<GoogleMapSelectorProps> = ({
   setLocation,
   setLocationName,
 }) => {
-  const apiKey = process.env.NEXT_PUBLIC_Maps_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_MAPS_API_KEY;
 
   if (!apiKey) {
     console.error("Falta NEXT_PUBLIC_Maps_API_KEY");
