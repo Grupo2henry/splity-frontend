@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { useGroupsGeneral } from "@/services/admin-services.ts/queryGroupGeneral";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -34,11 +35,18 @@ export default function GroupsGeneralAdmin() {
     debouncedEndDate,
     active
   );
-
+  console.log(data)
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setPage(1);
   };
+  const handleResetFilters = () => {
+  setSearch("");
+  setStartDate("");
+  setEndDate("");
+  setActive("");
+  setPage(1);
+};
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -68,15 +76,23 @@ export default function GroupsGeneralAdmin() {
     setActive(e.target.value);
     setPage(1);
   };
-
-  if (isLoading) return <p className="text-center">Cargando...</p>;
+const router = useRouter();
+  if (isLoading) {
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen pt-">
+      <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
+      <p>Cargando...</p>
+    </div>
+  );
+}
+console.log("llega", data)
   if (error) return <p className="text-red-500 text-center">Error: {error.message}</p>;
   if (!data) return <p className="text-center">No se encontraron datos</p>;
 
   return (
     <div className="flex flex-col w-full items-center mx-auto m-10 min-h-min">
       <h1 className="text-2xl text-white font-bold mb-4">Grupos</h1>
-      <div className="flex flex-col gap-4 w-90 mb-4 mx-auto">
+      <div className="grid grid-cols-2 gap-4 w-full mb-4">
         <input
           type="text"
           placeholder="Busca por nombre"
@@ -84,6 +100,15 @@ export default function GroupsGeneralAdmin() {
           onChange={handleSearchChange}
           className="border custom-input !w-full rounded-lg"
         />
+        <select
+          value={active}
+          onChange={handleActiveChange}
+          className="border custom-input !w-full rounded-lg"
+        >
+          <option value="true">Grupos Activos</option>
+          <option value="false">Grupos Inactivos</option>
+          <option value="">Todos</option>
+        </select>
         <div className="flex gap-4">
           <input
             type="date"
@@ -100,15 +125,7 @@ export default function GroupsGeneralAdmin() {
             className="border custom-input !w-1/2 rounded-lg"
           />
         </div>
-        <select
-          value={active}
-          onChange={handleActiveChange}
-          className="border custom-input !w-full rounded-lg"
-        >
-          <option value="true">Activos</option>
-          <option value="false">Inactivos</option>
-          <option value="">Todos</option>
-        </select>
+        
       </div>
       <ul className="mb-4 w-full my-0">
         {data.data.length > 0 ? (
@@ -118,7 +135,7 @@ export default function GroupsGeneralAdmin() {
                 href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${group.id}`}
                 className="text-[#F59E0B] hover:underline"
               >
-                {group.name} {group.active ? "(Activo)" : "(Inactivo)"}
+                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"} -Fecha de creación: {new Date(group.created_at).toLocaleDateString()}
               </Link>
             </li>
           ))
@@ -126,22 +143,38 @@ export default function GroupsGeneralAdmin() {
           <p className="text-center">No se encontraron grupos</p>
         )}
       </ul>
-      <div className="flex gap-12">
-        <button
+       <div className="flex gap-12">
+         <button
+          onClick={router.back}
+          className="px-3 py-1 bg-green-900 text-white rounded"
+          >
+              Volver
+          </button>
+          <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-3 py-1 bg-gray-200 rounded"
-        >
-          Anterior
-        </button>
-        <span>Página {data.page} de {data.lastPage}</span>
-        <button
+          className="px-3 py-1 bg-gray-600 rounded"
+          >
+           Anterior
+          </button>
+
+           <span>Página {data.page} de {data.lastPage}</span>
+
+          <button
           onClick={() => setPage((prev) => (prev < data.lastPage ? prev + 1 : prev))}
           disabled={page === data.lastPage}
-          className="px-3 py-1 bg-gray-200 rounded"
-        >
-          Siguiente
-        </button>
+          className="px-3 py-1 bg-gray-600 rounded"
+          >
+            Siguiente
+          </button>
+
+          <button
+          onClick={handleResetFilters}
+          className="px-3 py-1 bg-blue-700 text-white rounded"
+          >
+           Resetear Filtros
+         </button>
+
       </div>
     </div>
   );
