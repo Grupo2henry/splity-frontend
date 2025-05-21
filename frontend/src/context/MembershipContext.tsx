@@ -51,7 +51,7 @@ export const MembershipProvider = ({ children }: { children: ReactNode }) => {
     console.log("Estoy en useEffect de MembershipContext");
     console.log(actualGroupMembership)
     console.log(isAddSpentRoute);
-    if (!isEventDetailsRoute && !isAddSpentRoute && !isUpdateEventRoute && !isUpdateExpenseRoute) {
+    if (!isEventDetailsRoute && !isAddSpentRoute && !isUpdateEventRoute && !isUpdateExpenseRoute ) {
       console.log(isEventDetailsRoute, isAddSpentRoute, isUpdateEventRoute, isUpdateExpenseRoute)
       console.log("Se borro membresía");
       setActualGroupMembership(null);
