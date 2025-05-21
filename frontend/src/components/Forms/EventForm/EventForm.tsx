@@ -17,6 +17,7 @@ import { LatLngLiteral } from "leaflet";
 import { useRouter } from "next/navigation";
 import styles from "./EventForm.module.css";
 
+// Importación dinámica del MapSelector
 const MapSelector = dynamic(() => import("../../MapSelector/GoogleMapSelector"), { ssr: false });
 
 interface EventFormProps {
@@ -42,13 +43,21 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   useEffect(() => {
     if (slug && actualGroupMembership?.group) {
       setIsUpdate(true);
-      const { name, emoji: groupEmoji, latitude, longitude } = actualGroupMembership.group;
+      const { name, emoji: groupEmoji, latitude, longitude, locationName: groupLocationName } = actualGroupMembership.group;
 
       reset({ name, emoji: groupEmoji || "", participants: [] });
       setEmoji(groupEmoji || "");
       setValue("emoji", groupEmoji || "");
-      setLocation(latitude && longitude ? { lat: latitude, lng: longitude } : null);
-      setLocationName(name);
+
+      // Asegurarse de que `location` se establezca correctamente para el mapa
+      if (latitude !== undefined && longitude !== undefined && latitude !== null && longitude !== null) {
+        setLocation({ lat: latitude, lng: longitude });
+      } else {
+        setLocation(null); // Asegúrate de que sea null si no hay coordenadas
+      }
+      // También se debe establecer el nombre de la ubicación para el input
+      setLocationName(groupLocationName || name);
+
 
       const initialParticipants = participants
         .filter(member => member.user.id !== user?.id)
@@ -82,7 +91,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       if (emailSearch.length >= 2) {
         try {
           const results: User[] = await fetchUsersByEmail(emailSearch);
-          const filteredResults = results.filter((u: User) => 
+          const filteredResults = results.filter((u: User) =>
             u.id !== user?.id && !selectedParticipants.some(p => p.id === u.id)
           );
           setEmailSuggestions(filteredResults.slice(0, 5));
@@ -117,7 +126,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       name: data.name,
       emoji,
       participants: participantsToSend,
-      locationName: locationName || data.name,
+      locationName: locationName || data.name, // Usar locationName del estado
       latitude: location?.lat,
       longitude: location?.lng,
     };
@@ -148,7 +157,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
       <h1 className={styles.title}>{isUpdate ? "Actualizar Evento" : "Crear Nuevo Evento"}</h1>
-      
+
       <div className={styles.inputGroup}>
         <label className={styles.label}>Titulo del evento</label>
         <div className={styles.inputWrapper}>
@@ -269,7 +278,12 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
           className={styles.input}
         />
         <div className={styles.mapContainer}>
-          <MapSelector onSelectLocation={setLocation} initialLocation={location} />
+          {/* Aquí pasamos las props 'location', 'setLocation' y 'setLocationName' */}
+          <MapSelector
+            location={location}
+            setLocation={setLocation}
+            setLocationName={setLocationName}
+          />
         </div>
       </div>
 
