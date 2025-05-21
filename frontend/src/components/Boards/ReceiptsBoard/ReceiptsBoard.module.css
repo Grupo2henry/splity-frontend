@@ -1,0 +1,120 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(127, 255, 212, 0.1) 0%, rgba(250, 255, 0, 0.1) 100%);
+  border-radius: 1rem;
+  color: white;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(127, 255, 212, 0.2);
+}
+
+.content {
+  width: 100%;
+  max-width: 72rem;
+}
+
+.receiptsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.receiptCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(127, 255, 212, 0.2);
+}
+
+.receiptCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(250, 255, 0, 0.3);
+}
+
+.receiptHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.receiptTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #7FFFD4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.receiptAmount {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #FAFF00;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto 0.75rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 0px solid rgba(127, 255, 212, 0.2);
+  display: block;
+}
+
+.receiptImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  display: block;
+}
+
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(127, 255, 212, 0.2);
+}
+
+.noImageText {
+  color: rgba(127, 255, 212, 0.5);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.receiptFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: rgba(250, 255, 0, 0.8);
+}
+
+.noReceipts {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  color: #7FFFD4;
+  border: 1px solid rgba(127, 255, 212, 0.2);
+}
+
+.loading {
+  color: #FAFF00;
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+} 

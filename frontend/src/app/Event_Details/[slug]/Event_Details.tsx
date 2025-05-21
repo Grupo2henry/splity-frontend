@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import Image from "next/image";
 import { NavBar_Event_Details } from "@/components/NavBar/NavBar_Event_Details/NaBar_Event_Details";
 import ExpensesBoard from "@/components/Boards/ExpensesBoard/ExpensesBoard";
 import { useParams, useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import Loader from "@/components/Loader/Loader";
 import BalanceBoard from "@/components/Boards/BalanceBoard/BalanceBoard";
 import ReceiptsBoard from "@/components/Boards/ReceiptsBoard/ReceiptsBoard";
 import GoogleMapViewer from "@/components/MapSelector/GoogleMapViewer";
+import styles from "./Event_Details.module.css";
 
 // 📍 Tipo para coordenadas
 type LatLngLiteral = {
@@ -117,38 +117,35 @@ export const Event_Details = () => {
   console.log(selectedLocation);
 
   return (
-    <div className="flex flex-col w-full h-full items-center">
-      <Image src="/logo-splity.png" alt="Logo" width={165} height={175} />
-
-      <div className="flex flex-col w-full h-full items-center mb-6 gap-2">
-        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[#61587C] text-5xl">
+    <div className={styles.container}>
+      <div className={styles.eventHeader}>
+        <div className={styles.emojiContainer}>
           {actualGroupMembership?.group.emoji || "📁"}
         </div>
-        <p className="text-[16px] text-white text-center">
+        <h1 className={styles.eventName}>
           {actualGroupMembership?.group.name}
-        </p>
+        </h1>
         {actualGroupMembership?.group.id && (
           <Link
             href={`/Update_Event/${actualGroupMembership.group.id}`}
-            className="text-sm text-blue-500 hover:underline"
+            className={styles.editLink}
           >
             Editar Evento
           </Link>
         )}
       </div>
 
-      <div className="flex w-full rounded-lg bg-[#61587C] gap-2 p-2 items-center justify-between mb-6">
+      <div className={styles.tabsContainer}>
         {["Gastos", "Saldos", "Comprobantes"].map((item) => (
-          <div key={item} className="flex w-1/3 justify-center">
-            <button
-              className={`custom-input font-bold ${
-                viewState === item ? "text-gray-700" : "text-gray-400"
-              }`}
-              onClick={() => setViewState(item as typeof viewState)}
-            >
-              {item}
-            </button>
-          </div>
+          <button
+            key={item}
+            className={`${styles.tabButton} ${
+              viewState === item ? styles.tabButtonActive : ""
+            }`}
+            onClick={() => setViewState(item as typeof viewState)}
+          >
+            {item}
+          </button>
         ))}
       </div>
 
