@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+.eventHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.emojiContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7FFFD4 0%, rgba(127, 255, 212, 0.8) 100%);
+  font-size: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.emojiContainer:hover {
+  transform: scale(1.05);
+}
+
+.eventName {
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  text-align: center;
+  font-weight: 600;
+}
+
+.editLink {
+  color: #FAFF00;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.editLink:hover {
+  color: #7FFFD4;
+  text-decoration: underline;
+}
+
+.tabsContainer {
+  display: flex;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(127, 255, 212, 0.1) 0%, rgba(250, 255, 0, 0.1) 100%);
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(127, 255, 212, 0.2);
+}
+
+.tabButton {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tabButtonActive {
+  background: #FAFF00;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mapSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.mapTitle {
+  color: #7FFFD4;
+  font-size: 0.875rem;
+  margin-top: 1.25rem;
+}
+
+.mapContainer {
+  width: 100%;
+  height: 300px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(127, 255, 212, 0.2);
+}
+
+.locationInfo {
+  color: #FAFF00;
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.locationName {
+  margin-top: 0.25rem;
+  font-style: italic;
+  color: #7FFFD4;
+} 

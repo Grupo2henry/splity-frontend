@@ -1,8 +1,9 @@
- 'use client';
+'use client';
 
 import { useEffect } from 'react';
 import CustomAlert, { useCustomAlert } from '../../CustomAlert/CustomAlert';
 import { useBalance } from '@/context/BalanceContext';
+import styles from './BalanceBoard.module.css';
 
 const BalanceBoard = () => {
   const { message, showAlert, onClose } = useCustomAlert();
@@ -10,7 +11,7 @@ const BalanceBoard = () => {
     balanceByUser,
     recommendedLiquidations,
     loadingBalances,
-    balanceErrors,// Ya no lo usamos directamente aquí
+    balanceErrors,
   } = useBalance();
 
   useEffect(() => {
@@ -20,52 +21,49 @@ const BalanceBoard = () => {
   }, [balanceErrors, showAlert]);
 
   return (
-    <div className="flex flex-col items-center p-6 bg-[#61587C] rounded-lg text-white">
-      <h1 className="text-[24px] mb-6">Balance del Grupo</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Balance del Grupo</h1>
 
-      {loadingBalances && <p className="text-white">Cargando balance...</p>}
+      {loadingBalances && <p className={styles.loading}>Cargando balance...</p>}
 
       {!loadingBalances && balanceByUser && recommendedLiquidations && (
         <>
-          <div className="w-full max-w-xl mb-8">
-            <h2 className="text-[20px] mb-4">Saldos individuales</h2>
-            <ul className="space-y-3">
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Saldos individuales</h2>
+            <ul className={styles.list}>
               {balanceByUser.map((user) => (
                 <li
                   key={user.userId}
-                  className={`p-4 rounded-md flex justify-between shadow-md ${
+                  className={`${styles.balanceItem} ${
                     user.balance > 0
-                      ? 'bg-green-700'
+                      ? styles.positiveBalance
                       : user.balance < 0
-                      ? 'bg-red-700'
-                      : 'bg-gray-600'
+                      ? styles.negativeBalance
+                      : styles.neutralBalance
                   }`}
                 >
                   <span>{user.name}</span>
-                  <span>${user.balance.toFixed(2)}</span>
+                  <span>AR$ {user.balance.toFixed(2)}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="w-full max-w-xl">
-            <h2 className="text-[20px] mb-4">Recomendación de liquidación</h2>
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Recomendación de liquidación</h2>
             {recommendedLiquidations.length > 0 ? (
-              <ul className="space-y-3">
+              <ul className={styles.list}>
                 {recommendedLiquidations.map((liq, idx) => (
-                  <li
-                    key={idx}
-                    className="bg-[#4B4362] p-4 rounded-md flex justify-between shadow-md"
-                  >
+                  <li key={idx} className={styles.liquidationItem}>
                     <span>
                       {liq.debtorName} → {liq.creditorName}
                     </span>
-                    <span>${liq.amount.toFixed(2)}</span>
+                    <span>AR$ {liq.amount.toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-white">No hay deudas pendientes.</p>
+              <p className={styles.noDebts}>No hay deudas pendientes</p>
             )}
           </div>
         </>

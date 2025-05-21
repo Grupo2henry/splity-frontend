@@ -48,7 +48,14 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
      showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
   };
 
-  if (isLoading) return <p className="text-center mt-2.5">Cargando perfil</p>;
+  if (isLoading) {
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen pt-">
+      <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
+      <p>Cargando...</p>
+    </div>
+  );
+}
   if (error) return <p className="text-red-500 text-center mt-2">Error: {error.message}</p>;
   if (!user) return <p className="text-center mt-2">Usuario no encontrado</p>;
 
@@ -136,13 +143,13 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
       <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
         <button
           onClick={() => router.back()}
-          className="mt-6 px-3 py-1 bg-gray-200 rounded col-span-1"
+          className="mt-6 px-3 py-1 bg-green-900 rounded col-span-1"
         >
           Volver
         </button>
         
         <button
-          className="mt-6 px-3 py-1 bg-gray-200 rounded col-span-2"
+          className="mt-6 px-3 py-1 bg-gray-600 rounded col-span-2"
         >
           <Link href={`/AdminDashboard/UsersAdmin/UserGroups/${userId}`}>
            Grupos de usuario
