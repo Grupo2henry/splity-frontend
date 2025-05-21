@@ -7,9 +7,6 @@ export const useMembersAdmin = (
   page: number,
   token: string | null
 ) => {
-  if (!token) {
-    throw new Error("No hay token disponible. El usuario no está autenticado.");
-  }
   return useQuery({
     queryKey: ["members", groupId, page],
     queryFn: async () => {

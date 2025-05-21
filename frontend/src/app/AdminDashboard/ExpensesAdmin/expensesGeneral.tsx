@@ -113,7 +113,7 @@ const debouncedUntilAmount = useDebouncedValue(untilAmount || "", 300);
   setPage(1);
 };
 const router = useRouter();
-
+console.log("gastos", data)
 
   if (isLoading) {
   return (
@@ -138,7 +138,7 @@ const router = useRouter();
           onChange={handleSearchChange}
           className="border custom-input col-span-1 rounded-lg"
         /></div>
-        <div className="col-span-1 flex gap-4">
+        <div className="col-span-1 flex gap-1">
         <div className="w-1/2">
           <input
           type="number"
@@ -159,7 +159,7 @@ const router = useRouter();
         /></div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-1">
           <input
             type="date"
             placeholder="Fecha inicial"
@@ -184,7 +184,7 @@ const router = useRouter();
         >
           <option value="">Todos</option>
           <option value="true">De grupos activos</option>
-          <option value="false">De grupos inactivos</option>
+          <option value="false">De grupos desactivados</option>
         </select>
 
 
@@ -197,7 +197,7 @@ const router = useRouter();
                 href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${expense.group.id}`}
                 className="text-[#F59E0B] hover:underline"
               >
-                {expense.description} {expense.group ? (expense.group.active ? "(Grupo activo)" : "(Grupo inactivo)") : "(Sin grupo)"} - valor: ${expense.amount} fecha: {new Date(expense.created_at).toLocaleString('es-AR',{ dateStyle:'short', timeStyle: 'short'})} - pagado por: {expense.paid_by.name}
+                {expense.description} {expense.group ? (expense.group.active ? "(Grupo activo)" : "(Grupo desactivado)") : "(Sin grupo)"} - valor: ${expense.amount} fecha: {new Date(expense.created_at).toLocaleString('es-AR',{ dateStyle:'short', timeStyle: 'short'})} - gasto: {expense.active ? "activo": "desactivado"} - pagado por: {expense.paid_by.name}
               </Link>
             </li>
           ))
