@@ -2,7 +2,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import Image from "next/image";
+//import Image from "next/image";
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useExpenses } from "@/context/ExpensesContext";
 import { useMembership } from "@/context/MembershipContext";
@@ -21,7 +21,7 @@ export const ExpensesForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
+    //setValue,
     reset,
   } = useForm<IFormGasto>({ mode: "onBlur" });
 
