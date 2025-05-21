@@ -43,7 +43,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errors, setErrors] = useState<string[]>([]);
   const [userValidated, setUserValidated] = useState(false);
   const router = useRouter();
-
   useEffect(() => {
     if (errors.length > 0) {
       const timer = setTimeout(() => setErrors([]), 5000);
