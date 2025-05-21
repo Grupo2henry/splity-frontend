@@ -1,7 +1,7 @@
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import React, { useEffect, useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useGroupDetails } from "@/services/admin-services.ts/groupsDetailsHook";
 import { useRouter } from "next/navigation";
@@ -25,9 +25,10 @@ interface ToggleStatusResponse {
 
 
 export default function GroupsDetails({ params }: { params: Promise<{ id: string }> }) {
+  const [token, setToken] = useState<string | null>(null);
   // const {token} = useAuth()
   const resolvedParams = React.use(params);
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
   const groupId = resolvedParams.id;
    const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({});
   const [page, setPage] = useState(1);
@@ -46,6 +47,14 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
     setAlert({ type, message });
     setTimeout(() => setAlert(null), 3000);
   };
+  
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
 
   const deactivateMutation = useMutation({
     mutationFn: ({ groupId, token }: { groupId: string; token: string }) =>
@@ -69,7 +78,7 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
       showAlert("success", "Grupo desactivado con éxito");
     },
   });
-
+  console.log("esto llega", data)
   const activateMutation = useMutation({
     mutationFn: ({ groupId, token }: { groupId: string; token: string }) =>
       handleGroupActivate(groupId, token),
@@ -127,10 +136,15 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
     }
   };
 
-  if (!token) {
-    return <p className="text-red-500 text-center">Por favor, inicia sesión para continuar.</p>;
-  }
-  if (isLoading || detailIsLoading) return <p className="text-center">Cargando...</p>;
+  if (!token) return <p>Cargando token...</p>;
+  if (isLoading || detailIsLoading) {
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen pt-">
+      <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
+      <p>Cargando...</p>
+    </div>
+  );
+}
   if (error || detailError ) return <p className="text-red-500 text-center">Error en obtener datos</p>;
   if (!data || !detailData) {
     console.log("No data received:", data, detailData);
@@ -148,8 +162,8 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
           {alert.message}
         </div>
       )}
-      <h1 className="text-2xl text-white font-bold mb-4">Detalles del Grupo</h1>
-     <div className="grid grid-cols-2 gap-6 mb-6 w-full">
+      <h1 className="text-2xl text-white font-bold mb-10">Detalles del Grupo</h1>
+     <div className="grid grid-cols-2 gap-6 w-full">
   {/* Columna izquierda: Textos */}
   <div className="flex flex-col gap-4">
     <p className="text-white">
@@ -191,7 +205,7 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
   </div>
 </div>
       <div className="flex flex-col w-full items-center mx-auto m-10 min-h-min text-white">
-      <h1 className="text-2xl font-bold mb-4">Usuarios del Grupo:  {data.membershipCount}</h1>
+      <h1 className="text-xl mb-4 self-start">Usuarios del Grupo:  {data.membershipCount}</h1>
       {detailData.data.length === 0 ? (
         <p className="text-center">No hay miembros en este grupo</p>
       ) : (
@@ -239,14 +253,14 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
       <div className="flex gap-12 items-center">
         <button
           onClick={() => router.back()}
-          className="px-3 py-1 bg-gray-600 rounded hover:-translate-y-1 transition duration-300"
+          className="px-3 py-1 bg-green-900 rounded hover:-translate-y-1 transition duration-300"
         >
           Volver
         </button>
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className={`px-3 py-1 rounded ${
+          className={`px-3 py-1 rounded hover:-translate-y-1 transition duration-300 ${
             page === 1
               ? "bg-gray-500 cursor-not-allowed"
               : "bg-gray-600 hover:bg-gray-400"
@@ -258,7 +272,7 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
         <button
           onClick={() => setPage((prev) => (prev < detailData.lastPage ? prev + 1 : prev))}
           disabled={page === detailData.lastPage}
-          className={`px-3 py-1 rounded ${
+          className={`px-3 py-1 rounded hover:-translate-y-1 transition duration-300 ${
             page === detailData.lastPage
               ? "bg-gray-500 cursor-not-allowed"
               : "bg-gray-600 hover:bg-gray-400"

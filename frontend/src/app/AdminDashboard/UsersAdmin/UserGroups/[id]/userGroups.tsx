@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useGroupsAdmin } from "@/services/admin-services.ts/queryGroupsUsers";
 import Link from "next/link";
 import React from "react";
+import { useRouter } from "next/navigation";
 const useDebouncedValue = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -34,7 +35,7 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setPage(1);
   };
-
+const router = useRouter();
  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const value = e.target.value;
   if (value && !isNaN(new Date(value).getTime())) {
@@ -59,12 +60,19 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 
-  if (isLoading) return <p className="text-center">Cargando...</p>;
+  if (isLoading) {
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen pt-">
+      <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
+      <p>Cargando...</p>
+    </div>
+  );
+}
   if (error) return <p className="text-red-500 text-center">Error: {error.message}</p>;
   if (!data) return <p className="text-center">No se encontraron datos</p>;
   return (<div className="flex flex-col w-full items-center mx-auto m-10 min-h-min">
       <h1 className="text-2xl text-white font-bold mb-4">Grupos del usuario</h1>
-      <div className="flex flex-col gap-4 w-90 mb-4 mx-auto">
+      <div className="flex flex-col gap-4 w-full  mb-4 mx-auto">
         <input
           type="text"
           placeholder="Busca por nombre"
@@ -105,10 +113,16 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       </ul>
 
       <div className="flex gap-12">
+         <button
+          onClick={router.back}
+          className="px-3 py-1 bg-green-900 text-white rounded"
+          >
+              Volver
+          </button>
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-3 py-1 bg-gray-200 rounded"
+          className="px-3 py-1 bg-gray-600 rounded"
         >
           Anterior
         </button>
@@ -116,7 +130,7 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         <button
           onClick={() => setPage((prev) => (prev < data.lastPage ? prev + 1 : prev))}
           disabled={page === data.lastPage}
-          className="px-3 py-1 bg-gray-200 rounded"
+          className="px-3 py-1 bg-gray-600 rounded"
         >
           Siguiente
         </button>

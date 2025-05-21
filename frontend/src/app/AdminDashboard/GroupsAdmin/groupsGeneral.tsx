@@ -77,7 +77,15 @@ export default function GroupsGeneralAdmin() {
     setPage(1);
   };
 const router = useRouter();
-  if (isLoading) return <p className="text-center">Cargando...</p>;
+  if (isLoading) {
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen pt-">
+      <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
+      <p>Cargando...</p>
+    </div>
+  );
+}
+console.log("llega", data)
   if (error) return <p className="text-red-500 text-center">Error: {error.message}</p>;
   if (!data) return <p className="text-center">No se encontraron datos</p>;
 
@@ -127,7 +135,7 @@ const router = useRouter();
                 href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${group.id}`}
                 className="text-[#F59E0B] hover:underline"
               >
-                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"}
+                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"} -Fecha de creación: {new Date(group.created_at).toLocaleDateString()}
               </Link>
             </li>
           ))
