@@ -60,6 +60,14 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 console.log("gastos", data)
+ const handleResetFilters = () => {
+  setSearch("");
+  setStartDate("");
+  setEndDate("");
+  setSinceAmount("");
+  setUntilAmount("");
+  setPage(1);
+};
  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const value = e.target.value;
   if (value && !isNaN(new Date(value).getTime())) {
@@ -169,6 +177,12 @@ console.log("gastos", data)
         >
           Siguiente
         </button>
+        <button
+          onClick={handleResetFilters}
+          className="px-3 py-1 bg-blue-700 text-white rounded"
+          >
+           Resetear Filtros
+         </button>
       </div>
     </div>
   ); }
