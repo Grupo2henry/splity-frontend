@@ -13,7 +13,7 @@ export const ForgotPasswordForm = () => {
     const onSubmit: SubmitHandler<IFormForgotPassword> = async (data) => {
         try {
             await fetchForgotPassword(data);
-            showAlert("Se ha enviado un correo electrónico para restablecer la contraseña.");
+            showAlert("Se ha enviado un correo electrónico para restablecer la contraseña.", "./");
         } catch (error) {
             if (error instanceof Error) {
                 showAlert(error.message);
