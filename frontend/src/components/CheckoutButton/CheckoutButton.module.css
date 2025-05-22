@@ -1,0 +1,62 @@
+.checkoutButton {
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 1.5px solid rgba(59, 130, 246, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.3),
+    0 0 0 2px rgba(59, 130, 246, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.checkoutButton::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: rotate 8s linear infinite;
+}
+
+.checkoutButton:hover {
+  transform: translateY(-1px) scale(1.01);
+  background: linear-gradient(135deg, #60A5FA, #2563EB);
+  box-shadow: 
+    0 4px 15px rgba(59, 130, 246, 0.4),
+    0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.checkoutButton:active {
+  transform: translateY(1px);
+}
+
+.sparkle {
+  font-size: 0.875rem;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.sparkle:last-child {
+  animation-delay: 0.75s;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+@keyframes rotate {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+} 
