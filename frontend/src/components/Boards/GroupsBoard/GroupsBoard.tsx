@@ -54,26 +54,34 @@ export const GroupsBoard = () => {
       </div>
 
       <h3 className="text-lg font-semibold mb-4 text-white">Grupos Creados por Mí:</h3>
-      {filteredAdminGroups.map((group) => (
-        <GroupCard
-          key={group.id}
-          group={group}
-          subtitleText="miembros"
-          bgColor="bg-[#388E3C]"
-          subtitleColor="text-[#A5D6A7]"
-        />
-      ))}
+      {filteredAdminGroups.length > 0 ? (
+        filteredAdminGroups.map((group) => (
+          <GroupCard
+            key={group.id}
+            group={group}
+            subtitleText="miembros"
+            bgColor="bg-[#388E3C]"
+            subtitleColor="text-[#A5D6A7]"
+          />
+        ))
+      ) : (
+        <p className="text-gray-400 italic mb-4">No hay grupos creados</p>
+      )}
 
-      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Mis Grupos:</h3>
-      {filteredMemberGroups.map((group) => (
-        <GroupCard
-          key={group.id}
-          group={group}
-          subtitleText="amigos"
-          bgColor="bg-[#61587C]"
-          subtitleColor="text-[#FFCD82]"
-        />
-      ))}
+      <h3 className="text-lg font-semibold mt-8 mb-4 text-white">Grupos a los que pertenezco:</h3>
+      {filteredMemberGroups.length > 0 ? (
+        filteredMemberGroups.map((group) => (
+          <GroupCard
+            key={group.id}
+            group={group}
+            subtitleText="amigos"
+            bgColor="bg-[#61587C]"
+            subtitleColor="text-[#FFCD82]"
+          />
+        ))
+      ) : (
+        <p className="text-gray-400 italic">Todavia no hay grupos</p>
+      )}
     </div>
   );
 };

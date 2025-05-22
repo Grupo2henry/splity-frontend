@@ -19,9 +19,9 @@ const Button: React.FC<ButtonProps> = ({
   const buttonStyle = `text-white font-semibold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300 ${color} ${className}`;
 
   return (
-    <button className={buttonStyle} onClick={onClick}>
+    <div className={buttonStyle} onClick={onClick}>
       {children}
-    </button>
+    </div>
   );
 };
 

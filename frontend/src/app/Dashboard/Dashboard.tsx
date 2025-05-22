@@ -40,7 +40,7 @@ export const Dashboard = () => {
 
       {shouldBlockFeatures && (
         <>
-          <Button color="bg-yellow-500">
+          <Button color="bg-transparent">
             <CheckoutButton />
           </Button>
 
