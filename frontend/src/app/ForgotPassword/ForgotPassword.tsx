@@ -2,7 +2,6 @@ import ForgotPasswordForm from "@/components/Forms/ForgotPasswordForm/ForgotPass
 export const ForgotPassword = () => {
     return (
         <div>
-            <p>Ingresa tu correo electronico para restablecer tu contraseña</p>
             <ForgotPasswordForm />
         </div>
     );
