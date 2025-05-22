@@ -130,7 +130,7 @@ export const ExpensesForm = () => {
     };
 
     loadExpenseData();
-  }, [isUpdatePage, expenseId, memoizedGetExpenseById, reset]);
+  }, [isUpdatePage, expenseId]);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     if (!actualGroupMembership?.group.id) return;
