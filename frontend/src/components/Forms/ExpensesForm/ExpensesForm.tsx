@@ -24,7 +24,7 @@ export const ExpensesForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-    //setValue,
+    setValue,
     reset,
   } = useForm<IFormGasto>({ 
     mode: "onBlur"
