@@ -134,7 +134,7 @@ export const ExpensesForm = () => {
     };
 
     loadExpenseData();
-  }, [isUpdatePage, expenseId, memoizedGetExpenseById, reset]);
+  }, [isUpdatePage, expenseId]);
 
   useEffect(() => {
     // Set today's date when the form is mounted
