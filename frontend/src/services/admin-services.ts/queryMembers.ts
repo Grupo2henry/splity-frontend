@@ -20,7 +20,7 @@ export const useMembersAdmin = (
       queryParams.append("limit", "6");
 
       const res = await fetch(
-        `http://localhost:4000/MembershipsOfGroup/${groupId}?${queryParams}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/MembershipsOfGroup/${groupId}?${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
