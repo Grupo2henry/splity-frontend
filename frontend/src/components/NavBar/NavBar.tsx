@@ -54,7 +54,7 @@ export default function NavBar() {
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <Image
-              src="/Logo-splity.png"
+              src="https://res.cloudinary.com/dn52ctfur/image/upload/v1747872409/logo-splity_squ2hv.png"
               alt="Splity Logo"
               width={60}
               height={20}
@@ -62,6 +62,14 @@ export default function NavBar() {
           </Link>
           <nav className="flex items-center">
             <ul className={styles.navList}>
+              <li className="flex items-center">
+                <Link 
+                  href="/subscription" 
+                  className={`${styles.navLink} bg-transparent text-white px-3 py-1 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 border border-[#7FFFD4] shadow-[0_0_10px_rgba(127,255,212,0.3)] hover:shadow-[0_0_15px_rgba(127,255,212,0.5)] hover:border-[#A0FFE6] text-xs transform-none hover:transform-none`}
+                >
+                  Suscribirse
+                </Link>
+              </li>
               <li>
                 <Link href="/" className={styles.navLink}>
                   Home

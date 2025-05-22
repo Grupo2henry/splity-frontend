@@ -1,20 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
+import styles from "./CheckoutButton.module.css";
 
-const CheckoutButton = () => {
+export default function CheckoutButton() {
   const handleCheckout = async () => {
-    const res = await fetch('/api/createPreference', { method: 'POST' });
-    console.log(res);
-    const data = await res.json() as { id?: string }; // Explicitly type 'data'
-    if (data.id) {
-      console.log(data.id)
-      window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${data.id}`;
-    }
+    // Add your checkout logic here
+    console.log("Iniciando proceso de suscripción...");
   };
 
-
-  return <button onClick={handleCheckout}>Suscribirme</button>;
-};
-
-export default CheckoutButton;
+  return (
+    <button
+      onClick={handleCheckout}
+      className={styles.checkoutButton}
+    >
+      <span className={styles.sparkle}>✨</span>
+      Suscribirme
+      <span className={styles.sparkle}>✨</span>
+    </button>
+  );
+}

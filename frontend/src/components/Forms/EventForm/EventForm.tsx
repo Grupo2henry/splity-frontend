@@ -38,6 +38,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   const [location, setLocation] = useState<LatLngLiteral | null>(null);
   const [locationName, setLocationName] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     if (slug && actualGroupMembership?.group) {
@@ -111,6 +112,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   };
 
   const onSubmit: SubmitHandler<IFormEvent> = async (data) => {
+    setIsCreating(true);
     const participantsToSend = [...new Set([...data.participants, user?.id].filter(Boolean) as string[])];
 
     const groupDataToSend = {
@@ -122,16 +124,22 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       longitude: location?.lng,
     };
 
-    if (isUpdate && slug) {
-      await updateGroup(slug, groupDataToSend);
-      if (!updateGroupErrors.length && !updatingGroup) {
-        router.push(`/Event_Details/${slug}`);
+    try {
+      if (isUpdate && slug) {
+        await updateGroup(slug, groupDataToSend);
+        if (!updateGroupErrors.length && !updatingGroup) {
+          router.push(`/Event_Details/${slug}`);
+        }
+      } else {
+        await createGroup(groupDataToSend);
+        if (!groupErrors.length) {
+          router.push('/Dashboard');
+        }
       }
-    } else {
-      await createGroup(groupDataToSend);
-      if (!groupErrors.length) {
-        router.push('/Dashboard');
-      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -276,11 +284,11 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       <button
         type="submit"
         className={styles.submitButton}
-        disabled={updatingGroup}
+        disabled={updatingGroup || isCreating}
       >
         {isUpdate
           ? (updatingGroup ? "Actualizando Evento..." : "Actualizar Evento")
-          : "Crear Evento"}
+          : (isCreating ? "Creando Evento..." : "Crear Evento")}
       </button>
     </form>
   );

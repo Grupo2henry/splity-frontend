@@ -13,7 +13,7 @@ export const CustomAlert: React.FC<CustomAlertProps> = ({ message, onClose }) =>
         <div className="custom-alert">
             <div className="alert-box">
                 <p>{message}</p>
-                <button onClick={onClose} className="botonAzul">Cerrar</button>
+                <button onClick={onClose} className="text-white bg-transparent border border-white px-4 py-2 rounded hover:bg-white/10 transition-colors">Cerrar</button>
             </div>
         </div>
     );
