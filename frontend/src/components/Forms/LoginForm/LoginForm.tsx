@@ -71,7 +71,7 @@ export const LoginForm = () => {
             </div>
           </div>
 
-          <Link href="/forgot-password" className={styles.forgotPassword}>
+          <Link href="/ForgotPassword" className={styles.forgotPassword}>
             ¿Olvidaste tu contraseña?
           </Link>
 

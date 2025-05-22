@@ -1,11 +1,9 @@
 // src/components/MapSelector/GoogleMapSelector.tsx
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react"; // Agregamos useCallback
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
-import { LatLngLiteral } from "leaflet"; // Asegúrate de que LatLngLiteral esté importado correctamente si lo usas de 'leaflet'
-
-console.log(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+import { LatLngLiteral } from "leaflet";
 
 interface GoogleMapSelectorProps {
   location: LatLngLiteral | null;
@@ -49,13 +47,12 @@ const MapComponent: React.FC<GoogleMapSelectorProps> = ({
   setLocationName,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null); // Referencia para el campo de búsqueda
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const geocoder = useRef<google.maps.Geocoder | null>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null); // Referencia para Autocomplete
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
-  // Función para realizar geocodificación inversa y actualizar el nombre de la ubicación
   const reverseGeocode = useCallback(
     (latLng: LatLngLiteral) => {
       if (geocoder.current) {
@@ -88,29 +85,6 @@ const MapComponent: React.FC<GoogleMapSelectorProps> = ({
       });
       geocoder.current = new google.maps.Geocoder();
 
-      // Configurar el autocompletado en el campo de búsqueda
-      if (searchInputRef.current) {
-        autocompleteRef.current = new google.maps.places.Autocomplete(searchInputRef.current, {
-          types: ["geocode"], // Limitar a resultados geográficos
-        });
-
-        autocompleteRef.current.addListener("place_changed", () => {
-          const place = autocompleteRef.current?.getPlace();
-          if (place?.geometry?.location) {
-            const newLatLng = {
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng(),
-            };
-            setLocation(newLatLng); // Actualizar la ubicación en el estado superior
-            setLocationName(place.formatted_address || place.name || ""); // Actualizar el nombre
-            newMap.setCenter(newLatLng); // Centrar el mapa
-            markerRef.current?.setPosition(newLatLng); // Mover el marcador
-          } else {
-            console.error("No se encontraron detalles para el lugar seleccionado.");
-          }
-        });
-      }
-
       // Listener para el clic en el mapa
       newMap.addListener("click", (e: google.maps.MapMouseEvent) => {
         if (e.latLng && markerRef.current) {
@@ -120,22 +94,60 @@ const MapComponent: React.FC<GoogleMapSelectorProps> = ({
           };
           markerRef.current.setPosition(newPosition);
           setLocation(newPosition);
-          reverseGeocode(newPosition); // Actualizar el nombre de la ubicación al hacer clic
+          reverseGeocode(newPosition);
         }
       });
     }
+  }, [map, location, setLocation, reverseGeocode]);
 
-    // Actualización del mapa y marcador cuando la prop 'location' cambia externamente
+  useEffect(() => {
+    // Configurar el autocompletado en el campo de búsqueda una vez que el mapa esté inicializado
+    // y la librería de Places esté disponible.
+    if (map && searchInputRef.current && !autocompleteRef.current) {
+      // Acceder a google.maps.places a través de la instancia del mapa si es posible
+      // O asegurar que google.maps.places esté disponible globalmente.
+      // Ya que Wrapper carga la librería "places", debería estar disponible.
+      try {
+        if (window.google && window.google.maps && window.google.maps.places) {
+          autocompleteRef.current = new window.google.maps.places.Autocomplete(searchInputRef.current, {
+            types: ["geocode"],
+          });
+
+          autocompleteRef.current.addListener("place_changed", () => {
+            const place = autocompleteRef.current?.getPlace();
+            if (place?.geometry?.location) {
+              const newLatLng = {
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              };
+              setLocation(newLatLng);
+              setLocationName(place.formatted_address || place.name || "");
+              map.setCenter(newLatLng);
+              markerRef.current?.setPosition(newLatLng);
+            } else {
+              console.error("No se encontraron detalles para el lugar seleccionado.");
+            }
+          });
+        } else {
+          console.warn("google.maps.places no está disponible aún. Reintentando...");
+        }
+      } catch (e) {
+        console.error("Error al inicializar Autocomplete:", e);
+      }
+    }
+  }, [map, setLocation, setLocationName]); // Añadir map a las dependencias
+
+  // Actualización del mapa y marcador cuando la prop 'location' cambia externamente
+  useEffect(() => {
     if (map && location && markerRef.current) {
       map.setCenter(location);
       markerRef.current.setPosition(location);
-      // Actualizar el campo de texto de búsqueda si la ubicación cambia externamente
-      // Esto evita que el campo muestre una ubicación diferente a la del mapa si se actualiza el prop
-      if (searchInputRef.current && searchInputRef.current.value === "") { // Solo si el campo está vacío
+      if (searchInputRef.current && searchInputRef.current.value === "") {
         reverseGeocode(location);
       }
     }
-  }, [map, location, setLocation, reverseGeocode]); // Añadir reverseGeocode a las dependencias
+  }, [map, location, reverseGeocode]);
+
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
@@ -150,11 +162,11 @@ const MapComponent: React.FC<GoogleMapSelectorProps> = ({
           border: '1px solid #ccc',
           borderRadius: '4px',
           boxSizing: 'border-box',
-          position: 'absolute', // Posicionamiento absoluto para superponer al mapa
-          zIndex: 1, // Asegura que esté por encima del mapa
+          position: 'absolute',
+          zIndex: 1,
         }}
       />
-      <div ref={ref} style={{ height: "300px", width: "100%", marginTop: '50px' }} /> {/* Espacio para el input */}
+      <div ref={ref} style={{ height: "300px", width: "100%", marginTop: '50px' }} />
     </div>
   );
 };

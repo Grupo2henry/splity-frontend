@@ -1,13 +1,16 @@
 "use client";
 
+import { createMercadoPagoPreferenceAndRedirect } from "@/services/mercadopago-services/mercadopago-services";
 import styles from "./CheckoutButton.module.css";
-import { useRouter } from "next/navigation";
+
+
 
 export default function CheckoutButton() {
-  const router = useRouter();
+
 
   const handleCheckout = async () => {
-    router.push("/subscription");
+    await createMercadoPagoPreferenceAndRedirect();
+
   };
 
   return (
