@@ -12,7 +12,7 @@ import { EyeIcon } from '@/components/Icons/EyeIcon';
 import styles from "./LoginForm.module.css";
 
 export const LoginForm = () => {
-  const { login, loading, errors } = useAuth();
+  const { login, loading } = useAuth();
   const { message, showAlert, onClose } = useCustomAlert();
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -23,10 +23,10 @@ export const LoginForm = () => {
   };
 
   const onSubmit: SubmitHandler<IFormLogin> = async (data) => {
-    await login(data);
-    if (errors.length > 0) {
-      showAlert(errors.join(", "));
-    } else if (!loading) {
+    const result = await login(data);
+    if (!result.success) {
+      showAlert(result.error || "Error en el login");
+    } else {
       showAlert("Login successful!", "/Dashboard");
     }
   };
