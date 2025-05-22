@@ -145,7 +145,7 @@ console.log("gastos", data)
   data.data.map((expense: any) => (
     <li key={expense.id} className="border-b py-2 mx-auto p-4 ">
       <div className="text-[#F59E0B]">
-        {expense.name}- valor: ${expense.amount} fecha: {expense.createdAt}hs - gasto: {expense.active ? "activo": "desactivado" }
+        {expense.name}- valor: ${expense.amount} fecha: {expense.createdAt}hs 
       </div>
     </li>
 

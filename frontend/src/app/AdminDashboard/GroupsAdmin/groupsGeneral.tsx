@@ -135,7 +135,7 @@ console.log("llega", data)
                 href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${group.id}`}
                 className="text-[#F59E0B] hover:underline"
               >
-                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"} -Fecha de creación: {new Date(group.created_at).toLocaleDateString()}
+                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"} - Fecha de creación: {new Date(group.created_at).toLocaleDateString()}
               </Link>
             </li>
           ))
@@ -146,31 +146,41 @@ console.log("llega", data)
        <div className="flex gap-12">
          <button
           onClick={router.back}
-          className="px-3 py-1 bg-green-900 text-white rounded"
+          className="px-3 py-1 bg-green-900 text-white rounded hover:-translate-y-1 transition duration-300"
           >
               Volver
           </button>
           <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-3 py-1 bg-gray-600 rounded"
+          className={`px-3 py-1 rounded hover:-translate-y-1 transition duration-300 ${
+            page === 1
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-gray-600 hover:bg-gray-400"
+          }`}
+
           >
            Anterior
           </button>
 
-           <span>Página {data.page} de {data.lastPage}</span>
+           <span>Página {data.page} de {data.lastPage == 0 ? 1 : data.lastPage}</span>
 
           <button
           onClick={() => setPage((prev) => (prev < data.lastPage ? prev + 1 : prev))}
           disabled={page === data.lastPage}
-          className="px-3 py-1 bg-gray-600 rounded"
+              className={`px-3 py-1 rounded hover:-translate-y-1 transition duration-300 ${
+            page === data.lastPage
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-gray-600 hover:bg-gray-400"
+          }`}
+
           >
             Siguiente
           </button>
 
           <button
           onClick={handleResetFilters}
-          className="px-3 py-1 bg-blue-700 text-white rounded"
+          className="px-3 py-1 bg-blue-700 text-white rounded hover:-translate-y-1 transition duration-300"
           >
            Resetear Filtros
          </button>

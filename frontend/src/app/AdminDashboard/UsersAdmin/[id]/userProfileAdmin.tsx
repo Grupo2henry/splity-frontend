@@ -24,28 +24,30 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
   const userId = resolvedParams.id;
   const router = useRouter();
   const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string,  position?: 'top-right' | 'bottom-center'; } | null>(null);
+  
 
   const { data: user, isLoading, error, refetch } = useQuery<User, Error>({
     queryKey: ["user", userId],
     queryFn: () => fetchUser(userId, token)
   });
 
-  const showAlert = (type: "success" | "error", message: string, backgroundColor?: string, textColor?: string) => {
-    setAlert({ type, message});
+  const showAlert = (type: "success" | "error", message: string) => {
+    setAlert({ type, message });
+    setTimeout(() => setAlert(null), 3000);
   };
   const handlePhotoDelete = async () => {
     const response = await handleDeletePhoto(userId, token, refetch);
-     showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
+     showAlert(response.success ? "success"  : "error", response.message,);
   };
 
   const handleUserActivation = async () => {
     const response = await handleActivateUser(userId, token, refetch);
-    showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
+    showAlert(response.success ? "success"  : "error", response.message,);
   };
 
   const handleUserDeactivation = async () => {
     const response = await handleDesactivateUser(userId, token, refetch);
-     showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
+     showAlert(response.success ? "success"  : "error", response.message,);
   };
 
   if (isLoading) {
