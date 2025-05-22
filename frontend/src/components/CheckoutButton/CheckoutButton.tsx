@@ -1,11 +1,13 @@
 "use client";
 
 import styles from "./CheckoutButton.module.css";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutButton() {
+  const router = useRouter();
+
   const handleCheckout = async () => {
-    // Add your checkout logic here
-    console.log("Iniciando proceso de suscripción...");
+    router.push("/subscription");
   };
 
   return (
