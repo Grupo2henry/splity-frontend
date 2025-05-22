@@ -5,6 +5,8 @@ import React, { useEffect, useRef, useState, useCallback } from "react"; // Agre
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { LatLngLiteral } from "leaflet"; // Asegúrate de que LatLngLiteral esté importado correctamente si lo usas de 'leaflet'
 
+console.log(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
+
 interface GoogleMapSelectorProps {
   location: LatLngLiteral | null;
   setLocation: (location: LatLngLiteral) => void;
@@ -21,10 +23,10 @@ const GoogleMapSelector: React.FC<GoogleMapSelectorProps> = ({
   setLocation,
   setLocationName,
 }) => {
-  const apiKey = process.env.NEXT_PUBLIC_MAPS_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   if (!apiKey) {
-    console.error("Falta NEXT_PUBLIC_Maps_API_KEY");
+    console.error("Falta NEXT_PUBLIC_GOOGLE_MAPS_API_KEY");
     return <p>Error: falta API Key</p>;
   }
 
