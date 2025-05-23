@@ -4,9 +4,9 @@ import {
   GoogleMap,
   Marker,
   InfoWindow,
-  useJsApiLoader,
 } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
+import { useGoogleMaps } from "@/context/GoogleMapsContext"; // Importa el hook del contexto
 
 interface LatLngLiteral {
   lat: number;
@@ -25,7 +25,8 @@ const containerStyle = {
   height: "300px",
 };
 
-const libraries: ("places")[] = [];
+// Ya no necesitamos 'libraries' aquí, se maneja en el contexto.
+// const libraries: ("places")[] = [];
 
 const GoogleMapViewer: React.FC<GoogleMapViewerProps> = ({
   location,
@@ -33,10 +34,8 @@ const GoogleMapViewer: React.FC<GoogleMapViewerProps> = ({
   markerTitle = "Ubicación del Evento",
   zoom = 10,
 }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries,
-  });
+  // Usa el hook useGoogleMaps para obtener el estado de carga
+  const { isLoaded, loadError } = useGoogleMaps();
 
   const [mapCenter, setMapCenter] = useState<LatLngLiteral>(
     location || { lat: -34.6037, lng: -58.3816 } // Default: Buenos Aires
@@ -50,9 +49,13 @@ const GoogleMapViewer: React.FC<GoogleMapViewerProps> = ({
     if (location) {
       setMapCenter(location);
       setMarkerPosition(location);
+      // Cuando la ubicación cambie externamente, si hay un nombre de ubicación,
+      // podrías abrir la InfoWindow automáticamente, o dejarla cerrada.
+      // Por ahora, solo actualizamos el centro y el marcador.
     }
   }, [location]);
 
+  // Manejo de estados de carga y error usando el contexto
   if (loadError) return <div>Error al cargar el mapa</div>;
   if (!isLoaded) return <div>Cargando mapa...</div>;
 
@@ -64,9 +67,9 @@ const GoogleMapViewer: React.FC<GoogleMapViewerProps> = ({
       options={{
         disableDefaultUI: true,
         zoomControl: true,
-        draggable: false,
-        scrollwheel: false,
-        clickableIcons: false,
+        draggable: false, // El visor no debería ser arrastrable
+        scrollwheel: false, // El scrollwheel no debería cambiar el zoom
+        clickableIcons: false, // Los íconos de lugares no son clickables
       }}
     >
       {markerPosition && (
