@@ -77,6 +77,13 @@ export default function NavBar() {
                   Home
                 </Link>
               </li>
+               {user && user.role === "admin" && (
+                <li>
+                  <Link href="/AdminDashboard" className={styles.navLink}>
+                    Admin Dashboard
+                  </Link>
+                </li>
+              )}
               {user && (
                 <li>
                   <Link href="/Dashboard" className={styles.navLink}>
