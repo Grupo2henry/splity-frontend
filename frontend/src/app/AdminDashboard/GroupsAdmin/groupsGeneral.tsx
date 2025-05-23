@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src\app\AdminDashboard\UsersAdmin
@@ -22,12 +23,16 @@ export default function GroupsGeneralAdmin() {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [active, setActive] = useState<string>("true"); // Nuevo estado para filtro active
+  const [active, setActive] = useState<string>("true");
+  const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const debouncedSearch = useDebouncedValue(search, 300);
   const debouncedStartDate = useDebouncedValue(startDate, 300);
   const debouncedEndDate = useDebouncedValue(endDate, 300);
-
+const showAlert = (type: "success" | "error", message: string) => {
+    setAlert({ type, message });
+    setTimeout(() => setAlert(null), 3000);
+  };
   const { data, isLoading, error } = useGroupsGeneral(
     page,
     debouncedSearch,
@@ -52,7 +57,7 @@ export default function GroupsGeneralAdmin() {
     const value = e.target.value;
     if (value && !isNaN(new Date(value).getTime())) {
       if (endDate && new Date(value) > new Date(endDate)) {
-        alert("La fecha inicial no puede ser posterior a la fecha final");
+        showAlert("error", "La fecha inicial no puede ser posterior a la la final");
         return;
       }
       setStartDate(value);
@@ -64,7 +69,7 @@ export default function GroupsGeneralAdmin() {
     const value = e.target.value;
     if (value && !isNaN(new Date(value).getTime())) {
       if (startDate && new Date(value) < new Date(startDate)) {
-        alert("La fecha final no puede ser anterior a la fecha inicial");
+        showAlert("error", "La fecha inicial no puede ser posterior a la la final");
         return;
       }
       setEndDate(value);

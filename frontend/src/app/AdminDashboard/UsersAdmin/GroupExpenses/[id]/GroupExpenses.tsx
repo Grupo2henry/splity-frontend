@@ -32,6 +32,12 @@ export default function GroupExpenses({params}: {params: Promise <{id:string}>})
   const debouncedSinceAmount = useDebouncedValue(sinceAmount || "", 300);
 const debouncedUntilAmount = useDebouncedValue(untilAmount || "", 300);
   const { data, isLoading, error } = useExpensesOfGroups(groupId, page, debouncedSearch, debouncedStartDate, debouncedEndDate, debouncedSinceAmount, debouncedUntilAmount,);
+  const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
+const showAlert = (type: "success" | "error", message: string) => {
+    setAlert({ type, message });
+    setTimeout(() => setAlert(null), 3000);
+  };
+  
 
   /////
   console.log('Debounced values:', { debouncedSearch, debouncedStartDate, debouncedEndDate, debouncedSinceAmount, debouncedUntilAmount })
@@ -52,7 +58,7 @@ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const value = e.target.value;
   if (value && !isNaN(new Date(value).getTime())) {
     if (endDate && new Date(value) > new Date(endDate)) {
-      alert('La fecha inicial no puede ser posterior a la fecha final');
+      showAlert("error", "La fecha inicial no puede ser posterior a la la final");
       return;
     }
     setStartDate(value);
@@ -72,12 +78,19 @@ console.log("gastos", data)
   const value = e.target.value;
   if (value && !isNaN(new Date(value).getTime())) {
     if (startDate && new Date(value) < new Date(startDate)) {
-      alert('La fecha final no puede ser anterior a la fecha inicial');
+      showAlert("error", 'La fecha final no puede ser anterior a la fecha inicial');
       return;
     }
     setEndDate(value);
     setPage(1);
   }
+};
+const formatCurrency = (amount: number): string => {
+  return amount.toLocaleString('es-AR', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 };
   const router = useRouter();
 
@@ -145,7 +158,7 @@ console.log("gastos", data)
   data.data.map((expense: any) => (
     <li key={expense.id} className="border-b py-2 mx-auto p-4 ">
       <div className="text-[#F59E0B]">
-        {expense.name}- valor: ${expense.amount} fecha: {expense.createdAt}hs 
+        {expense.name}- valor: ${formatCurrency(expense.amount)} fecha: {expense.createdAt}hs 
       </div>
     </li>
 
@@ -165,7 +178,7 @@ console.log("gastos", data)
           <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-3 py-1 bg-gray-600 rounded"
+          className="px-3 py-1 bg-gray-600 rounded hover:-translate-y-1 transition duration-300"
           >
            Anterior
           </button>
@@ -173,13 +186,13 @@ console.log("gastos", data)
         <button
           onClick={() => setPage((prev) => (prev < data.lastPage ? prev + 1 : prev))}
           disabled={page === data.lastPage}
-          className="px-3 py-1 bg-gray-600 rounded"
+          className="px-3 py-1 bg-gray-600 rounded hover:-translate-y-1 transition duration-300"
         >
           Siguiente
         </button>
         <button
           onClick={handleResetFilters}
-          className="px-3 py-1 bg-blue-700 text-white rounded"
+          className="px-3 py-1 bg-blue-700 text-white rounded hover:-translate-y-1 transition duration-300"
           >
            Resetear Filtros
          </button>

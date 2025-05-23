@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 // src\app\AdminDashboard\UsersAdmin
 // src\app\AdminDashboard\UsersAdmin\GroupsGeneralAdmin.tsx
@@ -41,10 +42,22 @@ export default function ExpensesGeneralAdmin() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [sinceAmount, setSinceAmount] = useState("");
-    const [untilAmount, setUntilAmount] = useState("");
+  const [untilAmount, setUntilAmount] = useState("");
   const [active, setActive] = useState<string>("");
+  const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const showAlert = (type: "success" | "error", message: string) => {
+      setAlert({ type, message });
+      setTimeout(() => setAlert(null), 3000);
+    };
+    
   
-
+const formatCurrency = (amount: number): string => {
+  return amount.toLocaleString('es-AR', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
   const debouncedSearch = useDebouncedValue(search, 300);
   const debouncedStartDate = useDebouncedValue(startDate, 300);
   const debouncedEndDate = useDebouncedValue(endDate, 300);
@@ -79,7 +92,7 @@ const debouncedUntilAmount = useDebouncedValue(untilAmount || "", 300);
     const value = e.target.value;
     if (value && !isNaN(new Date(value).getTime())) {
       if (endDate && new Date(value) > new Date(endDate)) {
-        alert("La fecha inicial no puede ser posterior a la fecha final");
+        showAlert("error","La fecha inicial no puede ser posterior a la fecha final");
         return;
       }
       setStartDate(value);
@@ -91,7 +104,7 @@ const debouncedUntilAmount = useDebouncedValue(untilAmount || "", 300);
     const value = e.target.value;
     if (value && !isNaN(new Date(value).getTime())) {
       if (startDate && new Date(value) < new Date(startDate)) {
-        alert("La fecha final no puede ser anterior a la fecha inicial");
+        showAlert("error","La fecha final no puede ser anterior a la fecha inicial");
         return;
       }
       setEndDate(value);
@@ -197,7 +210,7 @@ console.log("gastos", data)
                 href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${expense.group.id}`}
                 className="text-[#F59E0B] hover:underline"
               >
-                {expense.description} {expense.group ? (expense.group.active ? "(Grupo activo)" : "(Grupo desactivado)") : "(Sin grupo)"} - valor: ${expense.amount} fecha: {new Date(expense.created_at).toLocaleString('es-AR',{ dateStyle:'short', timeStyle: 'short'})} - pagado por: {expense.paid_by.name}
+                {expense.description} {expense.group ? (expense.group.active ? "(Grupo activo)" : "(Grupo desactivado)") : "(Sin grupo)"} - valor: ${formatCurrency(expense.amount)} fecha: {new Date(expense.created_at).toLocaleString('es-AR',{ dateStyle:'short', timeStyle: 'short'})} - pagado por: {expense.paid_by.name}
               </Link>
             </li>
           ))

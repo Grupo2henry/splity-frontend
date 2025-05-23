@@ -21,14 +21,25 @@ export default function AdminUserButton() {
    const {token} = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [active, setActive] = useState<string>("");
   const debouncedSearch = useDebouncedValue(search, 300);
-  const { data, isLoading, error } = useUsers(page, debouncedSearch, token);
+  const { data, isLoading, error } = useUsers(page, debouncedSearch, token, active);
+  const handleResetFilters = () => {
+  setSearch("");
+  setActive("")
+  setPage(1);
+};
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
     setPage(1);
   };
+  const handleActiveChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setActive(e.target.value);
+    setPage(1);
+  };
+  console.log("esto llega", data)
   const router = useRouter();
-  if (isLoading) {
+  if (isLoading || !token) {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen pt-">
       <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
@@ -41,11 +52,28 @@ export default function AdminUserButton() {
   return (
     <div className="flex flex-col w-full items-center mx-auto m-10 min-h-min">
       <h1 className="text-2xl text-white font-bold mb-4">Usuarios</h1>
-      <input type="text" placeholder="Busca por nombre" value={search} onChange={handleSearchChange} className="border custom-input rounded-lg self-start mb-4 mx-auto"/>
+     <div className="grid grid-cols-2 gap-4 mb-4 w-full">
+  <input
+    type="text"
+    placeholder="Busca por nombre"
+    value={search}
+    onChange={handleSearchChange}
+    className="border custom-input rounded-lg"
+  />
+  <select
+    value={active}
+    onChange={handleActiveChange}
+    className="border custom-input rounded-lg"
+  >
+    <option value="">Todos</option>
+    <option value="true">Usuarios activos</option>
+    <option value="false">Usuarios desactivados</option>
+  </select>
+</div>
       <ul className="mb-4 w-full my-0">
         {data.data.map((user: any) => (
           <li key={user.id} className="border-b py-2 mx-auto p-4"> <Link href={`/AdminDashboard/UsersAdmin/${user.id}`} className="text-[#F59E0B] hover:underline">
-            {user.name} - {user.email}
+            {user.name} - {user.email} - {user.active ? "usuario activo" : "usuario desactivado"}
             </Link>
           </li>
         ))}
@@ -83,6 +111,12 @@ export default function AdminUserButton() {
         >
           Siguiente
         </button>
+        <button
+          onClick={handleResetFilters}
+          className="px-3 py-1 bg-blue-700 text-white rounded hover:-translate-y-1 transition duration-300"
+          >
+           Resetear Filtros
+         </button>
       </div>
     </div>
   );

@@ -145,13 +145,13 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
       <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
         <button
           onClick={() => router.back()}
-          className="mt-6 px-3 py-1 bg-green-900 rounded col-span-1"
+          className="mt-6 px-3 py-1 bg-green-900 rounded col-span-1 hover:-translate-y-1 transition duration-300"
         >
           Volver
         </button>
         
         <button
-          className="mt-6 px-3 py-1 bg-gray-600 rounded col-span-2"
+          className="mt-6 px-3 py-1 bg-gray-600 rounded col-span-2 hover:-translate-y-1 transition duration-300"
         >
           <Link href={`/AdminDashboard/UsersAdmin/UserGroups/${userId}`}>
            Grupos de usuario
