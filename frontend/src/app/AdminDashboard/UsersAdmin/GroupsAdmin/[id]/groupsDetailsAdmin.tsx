@@ -1,13 +1,14 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useGroupDetails } from "@/services/admin-services.ts/groupsDetailsHook";
 import { useRouter } from "next/navigation";
 import { handleGroupDeactivate, handleGroupActivate } from "@/services/handlerUserAdmin/handlerGroup";
 import Link from "next/link";
 import { useMembersAdmin } from "@/services/admin-services.ts/queryMembers";
+import { useAuth } from "@/context/AuthContext";
 // Interfaz para los datos de usuario
 interface Member {
   id: string;
@@ -25,8 +26,8 @@ interface ToggleStatusResponse {
 
 
 export default function GroupsDetails({ params }: { params: Promise<{ id: string }> }) {
-  const [token, setToken] = useState<string | null>(null);
-  // const {token} = useAuth()
+  
+  const {token} = useAuth()
   const resolvedParams = React.use(params);
   // const token = localStorage.getItem("token");
   const groupId = resolvedParams.id;
@@ -48,13 +49,6 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
     setTimeout(() => setAlert(null), 3000);
   };
   
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-    }
-  }, []);
 
   const deactivateMutation = useMutation({
     mutationFn: ({ groupId, token }: { groupId: string; token: string }) =>
@@ -136,7 +130,10 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
     }
   };
 
-  if (!token) return <p>Cargando token...</p>;
+  if (!token) return (<div className="flex flex-col justify-center items-center min-h-screen pt-">
+      <div className="animate-spin rounded-full h-15 w-15 border-t-2 border-b-2 border-blue-500 block mb-2.5 "></div>
+      <p>Cargando...</p>
+    </div>);
   if (isLoading || detailIsLoading) {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen pt-">
@@ -231,7 +228,7 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
                       : "bg-green-500 hover:bg-green-600"
                   }`}
                 >
-                  {loadingStates[user.id] ? "Cargando..." : "Activar"}
+                  {loadingStates[user.id] ? "Cargando..." : "Activar membresía"}
                 </button>
                 <button
                   onClick={() => toggleUserStatus(user.id)}
@@ -242,7 +239,7 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
                       : "bg-red-500 hover:bg-red-600"
                   }`}
                 >
-                  {loadingStates[user.id] ? "Cargando..." : "Desactivar"}
+                  {loadingStates[user.id] ? "Cargando..." : "Desactivar membresía"}
                 </button>
               </div>
             </li>
@@ -268,7 +265,7 @@ export default function GroupsDetails({ params }: { params: Promise<{ id: string
         >
           Anterior
         </button>
-        <span>Página {detailData.page} de {detailData.lastPage}</span>
+        <span>Página {detailData.page} de {detailData.lastPage == 0 ? 1 : detailData.lastPage}</span>
         <button
           onClick={() => setPage((prev) => (prev < detailData.lastPage ? prev + 1 : prev))}
           disabled={page === detailData.lastPage}
