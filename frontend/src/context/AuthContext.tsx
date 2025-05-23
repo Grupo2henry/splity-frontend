@@ -17,7 +17,7 @@ interface AuthContextType {
   token: string | null; // Agregado
   loading: boolean;
   errors: string[];
-  login: (credentials: IFormLogin) => Promise<void>;
+  login: (credentials: IFormLogin) => Promise<{success: boolean ; error?: string}>;
   register: (credentials: IFormRegister) => Promise<void>;
   logout: () => void;
   userValidated: boolean;
@@ -50,25 +50,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [errors]);
 
-  const login = async (credentials: IFormLogin): Promise<void> => {
+  const login = async (credentials: IFormLogin): Promise<{success: boolean ; error?: string}> => {
     setLoading(true);
     setErrors([]);
     try {
       const responseData = await fetchLogin(credentials);
-      const accessToken = responseData?.access_token;
-      if (accessToken) {
-        localStorage.setItem('token', accessToken);
-        setToken(accessToken); // Actualiza el estado del token
-        const userData = await fetchGetUser(accessToken);
-        setUser(userData);
-        setUserValidated(true);
-        router.push("/Dashboard");
-      } else {
-        setErrors(["No se recibió el token de autenticación."]);
+      const accessToken = responseData.access_token;
+      if (!accessToken) {
+        throw new Error("No se recibió el token de autenticación.");
       }
+      localStorage.setItem('token', accessToken);
+      setToken(accessToken); // Actualiza el estado del token
+      const userData = await fetchGetUser(accessToken);
+      setUser(userData);
+      setUserValidated(true);
+      router.push("/Dashboard");
+      return {success: true};      
     } catch (error: any) {
-      console.error("Error en el inicio de sesión:", error);
-      setErrors([error.message || "Error en el inicio de sesión"]);
+      const message = error.message || "Error en el inicio de sesión";
+      console.error("Error en el inicio de sesión:", message);
+      setErrors([message || "Error en el inicio de sesión"]);
+      return {success: false, error: message};
     } finally {
       setLoading(false);
     }
