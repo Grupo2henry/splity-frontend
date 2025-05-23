@@ -41,9 +41,65 @@
 }
 
 .navLink:hover {
-  color: #7FFFD4; /* Using the brand's aqua color */
-  background-color: rgba(127, 255, 212, 0.1); /* Aqua tinted background */
+  color: #7FFFD4;
+  background-color: rgba(127, 255, 212, 0.1);
   transform: translateY(-1px);
+}
+
+/* Subscription button styles */
+.navLink.subscribeButton {
+  background: transparent;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid #7FFFD4;
+  box-shadow: 
+    0 0 10px rgba(127, 255, 212, 0.3),
+    0 0 20px rgba(127, 255, 212, 0.1),
+    inset 0 0 10px rgba(127, 255, 212, 0.1);
+  position: relative;
+  overflow: hidden;
+  font-size: 0.875rem;
+  transform: none !important;
+}
+
+.navLink.subscribeButton::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(127, 255, 212, 0.1) 45%,
+    rgba(127, 255, 212, 0.3) 50%,
+    rgba(127, 255, 212, 0.1) 55%,
+    transparent 100%
+  );
+  transform-origin: center;
+  animation: borderGlow 3s linear infinite;
+}
+
+.navLink.subscribeButton:hover {
+  border-color: #A0FFE6;
+  box-shadow: 
+    0 0 15px rgba(127, 255, 212, 0.4),
+    0 0 30px rgba(127, 255, 212, 0.2),
+    inset 0 0 15px rgba(127, 255, 212, 0.2);
+  color: white;
+  background: rgba(127, 255, 212, 0.1);
+  transform: none !important;
+}
+
+@keyframes borderGlow {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .sidebarEnter {

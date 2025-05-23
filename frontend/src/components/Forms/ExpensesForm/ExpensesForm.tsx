@@ -17,13 +17,18 @@ export const ExpensesForm = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    //setValue,
+    setValue,
     reset,
-  } = useForm<IFormGasto>({ mode: "onBlur" });
+  } = useForm<IFormGasto>({ 
+    mode: "onBlur"
+  });
 
   const {
     createExpense,
@@ -122,7 +127,6 @@ export const ExpensesForm = () => {
           description: "",
           amount: undefined,
           paid_by: "",
-          date: "",
           imgUrl: "",
         });
       }
@@ -130,7 +134,12 @@ export const ExpensesForm = () => {
     };
 
     loadExpenseData();
-  }, [isUpdatePage, expenseId, memoizedGetExpenseById, reset]);
+  }, [isUpdatePage, expenseId]);
+
+  useEffect(() => {
+    // Set today's date when the form is mounted
+    setValue('date', today);
+  }, []);
 
   const onSubmit: SubmitHandler<IFormGasto> = async (data) => {
     if (!actualGroupMembership?.group.id) return;
