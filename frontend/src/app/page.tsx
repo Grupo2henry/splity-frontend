@@ -4,8 +4,11 @@
 import Link from "next/link";
 import styles from "./page.module.css";
 //import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { user } = useAuth();
+  
   return (
     <div>
       <div className={styles.container}>
@@ -37,10 +40,12 @@ export default function Home() {
 
         <p className={styles.callToAction}>¡Únete ahora y comienza a organizar tus gastos!</p>
 
-        <div className={styles.buttonGroup}>
-          <Link href="/Login" className={styles.button}>Iniciar Sesión</Link>
-          <Link href="/Register" className={styles.button}>Registrarse</Link>
-        </div>
+        {!user && (
+          <div className={styles.buttonGroup}>
+            <Link href="/Login" className={styles.button}>Iniciar Sesión</Link>
+            <Link href="/Register" className={styles.button}>Registrarse</Link>
+          </div>
+        )}
       </div>
     </div>
   );
