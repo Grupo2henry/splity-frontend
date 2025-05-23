@@ -24,28 +24,30 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
   const userId = resolvedParams.id;
   const router = useRouter();
   const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string,  position?: 'top-right' | 'bottom-center'; } | null>(null);
+  
 
   const { data: user, isLoading, error, refetch } = useQuery<User, Error>({
     queryKey: ["user", userId],
     queryFn: () => fetchUser(userId, token)
   });
 
-  const showAlert = (type: "success" | "error", message: string, backgroundColor?: string, textColor?: string) => {
-    setAlert({ type, message});
+  const showAlert = (type: "success" | "error", message: string) => {
+    setAlert({ type, message });
+    setTimeout(() => setAlert(null), 3000);
   };
   const handlePhotoDelete = async () => {
     const response = await handleDeletePhoto(userId, token, refetch);
-     showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
+     showAlert(response.success ? "success"  : "error", response.message,);
   };
 
   const handleUserActivation = async () => {
     const response = await handleActivateUser(userId, token, refetch);
-    showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
+    showAlert(response.success ? "success"  : "error", response.message,);
   };
 
   const handleUserDeactivation = async () => {
     const response = await handleDesactivateUser(userId, token, refetch);
-     showAlert(response.success ? "success" : "error", response.message, response.success ? "bg-green-500" : "bg-red-500", "text-white");
+     showAlert(response.success ? "success"  : "error", response.message,);
   };
 
   if (isLoading) {
@@ -143,13 +145,13 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
       <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
         <button
           onClick={() => router.back()}
-          className="mt-6 px-3 py-1 bg-green-900 rounded col-span-1"
+          className="mt-6 px-3 py-1 bg-green-900 rounded col-span-1 hover:-translate-y-1 transition duration-300"
         >
           Volver
         </button>
         
         <button
-          className="mt-6 px-3 py-1 bg-gray-600 rounded col-span-2"
+          className="mt-6 px-3 py-1 bg-gray-600 rounded col-span-2 hover:-translate-y-1 transition duration-300"
         >
           <Link href={`/AdminDashboard/UsersAdmin/UserGroups/${userId}`}>
            Grupos de usuario

@@ -15,7 +15,7 @@ export const handleDeletePhoto = async (
 ): Promise<HandlerResponse> => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-image`,
+      `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-picture`,
       {
         method: "DELETE",
         headers: {

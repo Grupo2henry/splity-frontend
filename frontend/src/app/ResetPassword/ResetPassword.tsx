@@ -3,7 +3,6 @@ import ResetPasswordForm from "@/components/Forms/ForgotPasswordForm/ResetPasswo
 export const ResetPassword = () => {
     return (
         <div>
-            <p>Ingresa tu nueva contraseña</p>
             <ResetPasswordForm />
         </div>
     );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src\app\AdminDashboard\UsersAdmin
@@ -22,12 +23,16 @@ export default function GroupsGeneralAdmin() {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [active, setActive] = useState<string>("true"); // Nuevo estado para filtro active
+  const [active, setActive] = useState<string>("true");
+  const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const debouncedSearch = useDebouncedValue(search, 300);
   const debouncedStartDate = useDebouncedValue(startDate, 300);
   const debouncedEndDate = useDebouncedValue(endDate, 300);
-
+const showAlert = (type: "success" | "error", message: string) => {
+    setAlert({ type, message });
+    setTimeout(() => setAlert(null), 3000);
+  };
   const { data, isLoading, error } = useGroupsGeneral(
     page,
     debouncedSearch,
@@ -52,7 +57,7 @@ export default function GroupsGeneralAdmin() {
     const value = e.target.value;
     if (value && !isNaN(new Date(value).getTime())) {
       if (endDate && new Date(value) > new Date(endDate)) {
-        alert("La fecha inicial no puede ser posterior a la fecha final");
+        showAlert("error", "La fecha inicial no puede ser posterior a la la final");
         return;
       }
       setStartDate(value);
@@ -64,7 +69,7 @@ export default function GroupsGeneralAdmin() {
     const value = e.target.value;
     if (value && !isNaN(new Date(value).getTime())) {
       if (startDate && new Date(value) < new Date(startDate)) {
-        alert("La fecha final no puede ser anterior a la fecha inicial");
+        showAlert("error", "La fecha inicial no puede ser posterior a la la final");
         return;
       }
       setEndDate(value);
@@ -135,7 +140,7 @@ console.log("llega", data)
                 href={`/AdminDashboard/UsersAdmin/GroupsAdmin/${group.id}`}
                 className="text-[#F59E0B] hover:underline"
               >
-                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"} -Fecha de creación: {new Date(group.created_at).toLocaleDateString()}
+                {group.name} {group.active ? "(Grupo activo)" : "(Grupo inactivo)"} - Fecha de creación: {new Date(group.created_at).toLocaleDateString()}
               </Link>
             </li>
           ))
@@ -146,31 +151,41 @@ console.log("llega", data)
        <div className="flex gap-12">
          <button
           onClick={router.back}
-          className="px-3 py-1 bg-green-900 text-white rounded"
+          className="px-3 py-1 bg-green-900 text-white rounded hover:-translate-y-1 transition duration-300"
           >
               Volver
           </button>
           <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-3 py-1 bg-gray-600 rounded"
+          className={`px-3 py-1 rounded hover:-translate-y-1 transition duration-300 ${
+            page === 1
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-gray-600 hover:bg-gray-400"
+          }`}
+
           >
            Anterior
           </button>
 
-           <span>Página {data.page} de {data.lastPage}</span>
+           <span>Página {data.page} de {data.lastPage == 0 ? 1 : data.lastPage}</span>
 
           <button
           onClick={() => setPage((prev) => (prev < data.lastPage ? prev + 1 : prev))}
           disabled={page === data.lastPage}
-          className="px-3 py-1 bg-gray-600 rounded"
+              className={`px-3 py-1 rounded hover:-translate-y-1 transition duration-300 ${
+            page === data.lastPage
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-gray-600 hover:bg-gray-400"
+          }`}
+
           >
             Siguiente
           </button>
 
           <button
           onClick={handleResetFilters}
-          className="px-3 py-1 bg-blue-700 text-white rounded"
+          className="px-3 py-1 bg-blue-700 text-white rounded hover:-translate-y-1 transition duration-300"
           >
            Resetear Filtros
          </button>
