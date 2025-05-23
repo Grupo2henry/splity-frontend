@@ -36,8 +36,9 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
   const [selectedParticipants, setSelectedParticipants] = useState<UserSuggestion[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emoji, setEmoji] = useState("");
+  // `location` y `locationName` se siguen manejando aquí, pero `locationName` se actualiza desde MapSelector
   const [location, setLocation] = useState<LatLngLiteral | null>(null);
-  const [locationName, setLocationName] = useState("");
+  const [locationName, setLocationName] = useState(""); // Este estado ahora será actualizado por MapSelector
   const [isUpdate, setIsUpdate] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -50,28 +51,13 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       setEmoji(groupEmoji || "");
       setValue("emoji", groupEmoji || "");
 
-      // Asegurarse de que `location` se establezca correctamente para el mapa
       if (latitude !== undefined && longitude !== undefined && latitude !== null && longitude !== null) {
         setLocation({ lat: latitude, lng: longitude });
       } else {
-        setLocation(null); // Asegúrate de que sea null si no hay coordenadas
+        setLocation(null);
       }
-      // También se debe establecer el nombre de la ubicación para el input
-      setLocationName(groupLocationName || name);
-
-
-      const initialParticipants = participants
-        .filter(member => member.user.id !== user?.id)
-        .map(member => ({
-          id: member.user.id,
-          name: member.user.name,
-          email: member.user.email,
-        }));
-
-      setSelectedParticipants([
-        ...(user ? [{ id: user.id, name: user.name, email: user.email }] : []),
-        ...initialParticipants
-      ]);
+      // Establecer el nombre de la ubicación para que se refleje en el Autocomplete del MapSelector
+      setLocationName(groupLocationName || name); // Se propaga a MapSelector para inicializar su input
     } else if (!slug && user) {
       setIsUpdate(false);
       reset({ name: "", emoji: "", participants: [] });
@@ -128,7 +114,7 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
       name: data.name,
       emoji,
       participants: participantsToSend,
-      locationName: locationName || data.name, // Usar locationName del estado
+      locationName: locationName || data.name, // Usar `locationName` del estado, que ahora viene del MapSelector
       latitude: location?.lat,
       longitude: location?.lng,
     };
@@ -276,21 +262,27 @@ export const EventForm: React.FC<EventFormProps> = ({ slug }) => {
         </div>
       )}
 
+      {/* Aquí unificamos los campos de ubicación */}
       <div className={styles.inputGroup}>
         <label className={styles.label}>Ubicación del evento</label>
-        <input
-          type="text"
-          value={locationName}
-          onChange={(e) => setLocationName(e.target.value)}
-          placeholder="Nombre de la ubicación"
-          className={styles.input}
-        />
         <div className={styles.mapContainer}>
-          {/* Aquí pasamos las props 'location', 'setLocation' y 'setLocationName' */}
+          {/* MapSelector ahora maneja tanto el input de búsqueda como el mapa */}
           <MapSelector
             location={location}
-            setLocation={setLocation}
-            setLocationName={setLocationName}
+            onLocationChange={(latLng, name) => {
+              setLocation(latLng);
+              // Aquí es donde el nombre de la ubicación se actualiza
+              // desde el MapSelector y se guarda en el estado local de EventForm
+              if (name) {
+                setLocationName(name);
+              } else if (latLng) {
+                // Si no viene nombre (ej. por clic en el mapa), podrías
+                // decidir qué hacer, por ejemplo, limpiar el nombre o intentar un reverse geocode
+                setLocationName(""); // Limpiar si se selecciona por clic y no hay nombre inmediato
+              }
+            }}
+            // Prop para inicializar el valor del input de búsqueda en MapSelector
+            initialLocationName={locationName}
           />
         </div>
       </div>

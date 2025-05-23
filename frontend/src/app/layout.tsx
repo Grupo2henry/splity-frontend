@@ -12,6 +12,7 @@ import { GroupProvider } from "@/context/GroupContext";
 import { ExpensesProvider } from "@/context/ExpensesContext";
 import { MembershipProvider } from "@/context/MembershipContext";
 import { BalanceProvider } from "@/context/BalanceContext";
+import { GoogleMapsProvider } from "@/context/GoogleMapsContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "700"],
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${roboto.variable} antialiased bg-[#0d101b]`}>
+        <GoogleMapsProvider>
         <QueryClientWrapper>
           <AuthProvider>
             <MembershipProvider>
@@ -48,6 +50,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </MembershipProvider>
           </AuthProvider>
         </QueryClientWrapper>
+        </GoogleMapsProvider>
       </body>
     </html>
   );
